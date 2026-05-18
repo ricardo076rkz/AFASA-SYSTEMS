@@ -1,5 +1,5 @@
 
-CREATE TABLE usuario (
+CREATE TABLE IF NOT EXISTS usuario (
     id_usuario INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     cpf VARCHAR(11) NOT NULL UNIQUE,
     nome VARCHAR(100) NOT NULL,
@@ -7,7 +7,7 @@ CREATE TABLE usuario (
     senha VARCHAR(255) NOT NULL
 );
 
-CREATE TABLE perfil (
+CREATE TABLE IF NOT EXISTS perfil (
     id_perfil INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     id_usuario INT NOT NULL,
     xp INT DEFAULT 0,
@@ -15,27 +15,27 @@ CREATE TABLE perfil (
 );
 
 
-CREATE TABLE consumidor (
+CREATE TABLE IF NOT EXISTS consumidor (
     id_consumidor INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     id_perfil INT NOT NULL,
     CONSTRAINT fk_perfil_consumidor FOREIGN KEY (id_perfil) REFERENCES perfil(id_perfil) ON DELETE CASCADE
 );
 
 
-CREATE TABLE profissional (
+CREATE TABLE IF NOT EXISTS profissional (
     id_perfil INT PRIMARY KEY,
     descricao TEXT,
     CONSTRAINT fk_perfil_prof FOREIGN KEY (id_perfil) REFERENCES perfil(id_perfil) ON DELETE CASCADE
 );
 
 
-CREATE TABLE curador (
+CREATE TABLE IF NOT EXISTS curador (
     id_perfil INT PRIMARY KEY,
     CONSTRAINT fk_perfil_curador FOREIGN KEY (id_perfil) REFERENCES perfil(id_perfil) ON DELETE CASCADE
 );
 
 
-CREATE TABLE post (
+CREATE TABLE IF NOT EXISTS post (
     id_post INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     conteudo TEXT NOT NULL,
     data DATE NOT NULL DEFAULT CURRENT_DATE,
@@ -45,13 +45,13 @@ CREATE TABLE post (
 );
 
 
-CREATE TABLE categoria_curso (
+CREATE TABLE IF NOT EXISTS categoria_curso (
     id_categoria INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     nome VARCHAR(100) NOT NULL
 );
 
 
-CREATE TABLE curso (
+CREATE TABLE IF NOT EXISTS curso (
     id_curso INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     nome VARCHAR(150) NOT NULL,
     descricao TEXT,
@@ -61,7 +61,7 @@ CREATE TABLE curso (
 );
 
 
-CREATE TABLE aula (
+CREATE TABLE IF NOT EXISTS aula (
     id_aula INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     nome VARCHAR(150) NOT NULL,
     duracao INTERVAL NOT NULL,
@@ -70,7 +70,7 @@ CREATE TABLE aula (
 );
 
 
-CREATE TABLE planta (
+CREATE TABLE IF NOT EXISTS planta (
     id_planta INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     nome VARCHAR(100) NOT NULL,
     descricao TEXT,
@@ -78,7 +78,7 @@ CREATE TABLE planta (
 );
 
 
-CREATE TABLE data_plantio (
+CREATE TABLE IF NOT EXISTS data_plantio (
     id_data INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     data DATE NOT NULL,
     id_planta INT NOT NULL,
@@ -88,7 +88,7 @@ CREATE TABLE data_plantio (
 );
 
 
-CREATE TABLE receita (
+CREATE TABLE IF NOT EXISTS receita (
     id_receita INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     data DATE NOT NULL,
     status VARCHAR(20),
@@ -96,7 +96,7 @@ CREATE TABLE receita (
 );
 
 
-CREATE TABLE avalia (
+CREATE TABLE IF NOT EXISTS avalia (
     id_avaliacao INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     data DATE NOT NULL DEFAULT CURRENT_DATE,
     motivo TEXT,
