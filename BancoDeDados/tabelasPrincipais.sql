@@ -1,4 +1,4 @@
-
+-- qualquer coisa
 CREATE TABLE IF NOT EXISTS usuario (
     id_usuario INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     cpf VARCHAR(11) NOT NULL UNIQUE,
