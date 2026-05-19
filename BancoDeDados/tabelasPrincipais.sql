@@ -106,3 +106,14 @@ CREATE TABLE IF NOT EXISTS avalia (
     CONSTRAINT fk_post_avalia FOREIGN KEY (id_post) REFERENCES post(id_post)
 );
 
+
+CREATE TABLE IF NOT EXISTS consumidor_curso (
+    id_consumidor INT NOT NULL,
+    id_curso INT NOT NULL,
+
+    CONSTRAINT pk_consumidor_curso PRIMARY KEY (id_consumidor, id_curso),
+
+    CONSTRAINT fk_consumidor_curso_consumidor FOREIGN KEY (id_consumidor) REFERENCES consumidor(id_consumidor) ON DELETE CASCADE,
+
+    CONSTRAINT fk_consumidor_curso_curso FOREIGN KEY (id_curso) REFERENCES curso(id_curso) ON DELETE CASCADE
+);
