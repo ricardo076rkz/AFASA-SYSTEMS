@@ -117,3 +117,21 @@ CREATE TABLE IF NOT EXISTS consumidor_curso (
 
     CONSTRAINT fk_consumidor_curso_curso FOREIGN KEY (id_curso) REFERENCES curso(id_curso) ON DELETE CASCADE
 );
+
+CREATE TABLE IF NOT EXISTS post_planta (
+    id_post INT NOT NULL,
+    id_planta INT NOT NULL,
+
+CONSTRAINT pk_post_planta 
+    PRIMARY KEY (id_post, id_planta),
+
+CONSTRAINT fk_post_planta_post 
+    FOREIGN KEY (id_post) 
+    REFERENCES post(id_post) 
+    ON DELETE CASCADE,
+
+CONSTRAINT fk_post_planta_planta 
+    FOREIGN KEY (id_planta) 
+    REFERENCES planta(id_planta) 
+    ON DELETE CASCADE
+);
