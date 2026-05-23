@@ -135,3 +135,21 @@ CONSTRAINT fk_post_planta_planta
     REFERENCES planta(id_planta) 
     ON DELETE CASCADE
 );
+
+CREATE TABLE IF NOT EXISTS aula_curso (
+    id_aula INT NOT NULL,
+    id_curso INT NOT NULL,
+
+CONSTRAINT pk_aula_curso 
+    PRIMARY KEY (id_aula, id_planta),
+
+CONSTRAINT fk_aula_curso_aula
+    FOREIGN KEY (id_aula) 
+    REFERENCES post(id_aula) 
+    ON DELETE CASCADE,
+
+CONSTRAINT fk_aula_curso_curso
+    FOREIGN KEY (id_curso) 
+    REFERENCES planta(id_curso) 
+    ON DELETE CASCADE
+);
