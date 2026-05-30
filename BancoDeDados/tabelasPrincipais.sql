@@ -153,3 +153,5 @@ CONSTRAINT fk_aula_curso_curso
     REFERENCES planta(id_curso) 
     ON DELETE CASCADE
 );
+
+-- Giseli esteve aqui 
