@@ -159,6 +159,42 @@ CREATE TABLE IF NOT EXISTS post_planta (
         ON DELETE CASCADE
 );
 
+CREATE TABLE IF NOT EXISTS curso_planta (
+    id_curso INT NOT NULL,
+    id_planta INT NOT NULL,
+
+    CONSTRAINT pk_curso_planta
+        PRIMARY KEY (id_curso, id_planta),
+
+    CONSTRAINT fk_curso_planta_curso
+        FOREIGN KEY (id_curso)
+        REFERENCES curso(id_curso)
+        ON DELETE CASCADE,
+
+    CONSTRAINT fk_curso_planta_planta
+        FOREIGN KEY (id_planta)
+        REFERENCES planta(id_planta)
+        ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS curador_curso (
+    id_perfil INT NOT NULL,
+    id_curso INT NOT NULL,
+
+    CONSTRAINT pk_curador_curso
+        PRIMARY KEY (id_perfil, id_curso),
+
+    CONSTRAINT fk_curador_curso_curador
+        FOREIGN KEY (id_perfil)
+        REFERENCES curador(id_perfil)
+        ON DELETE CASCADE,
+
+    CONSTRAINT fk_curador_curso_curso
+        FOREIGN KEY (id_curso)
+        REFERENCES curso(id_curso)
+        ON DELETE CASCADE
+);
+
 INSERT INTO usuario (cpf, nome, email, senha) VALUES
 ('11122233344', 'Maria Silva', 'maria.silva@email.com', 'senha123'),
 ('22233344455', 'João Santos', 'joao.santos@email.com', 'senha456'),
@@ -285,4 +321,8 @@ INSERT INTO post_planta (id_post, id_planta) VALUES
 (1,3),(2,1),(3,2),(4,1),(5,9),
 (6,4),(7,5),(8,6),(9,1),(10,4);
 
--- SELECT * FROM usuario;
+INSERT INTO curso_planta (id_curso, id_planta) VALUES
+(1,3),(1,4),(2,3),(2,9),(3,2),(4,1),(5,5),(6,6),(7,1),(8,7),(9,4),(9,1),(9,7),(10,3),(10,9);
+
+INSERT INTO curador_curso (id_perfil, id_curso) VALUES
+(1,1),(2,2),(3,3),(4,4),(5,5),(6,6),(7,7),(8,8),(9,9),(10,10),(1,9),(2,7),(3,8),(4,1),(5,2);
