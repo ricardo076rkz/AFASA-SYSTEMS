@@ -214,26 +214,3 @@ INSERT INTO post_curador (id_post, id_curador) VALUES
 -- Outras associações simples
 (403, 30); -- Nayara Souza curou o post de SQL
 
-INSERT INTO profissional (id_perfil, nome, especialidade) VALUES 
-(50, 'Chef Thiago Rocha', 'Gastronomia Vegana e Funcional'),
-(60, 'Profª Marina Silva', 'Horticultura Urbana e Orgânica'),
-(70, 'Chef Helena Rizzo', 'Confeitaria e Panificação Artesanal');
-
-INSERT INTO post (id_post, titulo, conteudo) VALUES 
-(601, 'Como plantar Alecrim e Manjericão em apartamento', 'Dicas de sol, rega e o vaso ideal para suas ervas...'),
-(602, 'Do pé ao prato: Receitas com tomates cereja da sua horta', 'Aprenda a fazer um confit perfeito com sua colheita...'),
-(603, 'Guia definitivo da compostagem doméstica', 'Transforme resíduos orgânicos em adubo rico para suas plantas...');
-
-INSERT INTO post_profissional (id_post, id_profissional) VALUES 
--- Marina (Professora de Plantação) escreveu sobre plantar ervas em apartamento
-(601, 60), 
-
---Colaboração perfeita! 
--- Marina (Plantação) e Thiago (Culinária) criaram juntos o post "Do pé ao prato"
-(602, 60), -- Marina entra com a parte de colher o tomate
-(602, 50), -- Thiago entra com a receita do confit
-
---Thiago e Helena colaboraram no guia de compostagem 
--- (para reaproveitar restos da cozinha na horta)
-(603, 50), 
-(603, 70);
