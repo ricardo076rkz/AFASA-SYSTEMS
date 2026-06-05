@@ -154,4 +154,86 @@ CONSTRAINT fk_aula_curso_curso
     ON DELETE CASCADE
 );
 
--- Giseli esteve aqui 
+-- Giseli esteve aqui
+
+CREATE TABLE IF NOT EXISTS post_curador (
+    id_post INT NOT NULL,
+    id_curador INT NOT NULL,
+
+    CONSTRAINT pk_post_curador
+        PRIMARY KEY (id_post, id_curador),
+
+    CONSTRAINT fk_post_curador_post
+        FOREIGN KEY (id_post)
+        REFERENCES post(id_post)
+        ON DELETE CASCADE,
+
+    CONSTRAINT fk_post_curador_curador
+        FOREIGN KEY (id_curador)
+        REFERENCES curador(id_perfil)
+        ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS post_profissional (
+    id_post INT NOT NULL,
+    id_profissional INT NOT NULL,
+
+    CONSTRAINT pk_post_profissional
+        PRIMARY KEY (id_post, id_profissional),
+
+    CONSTRAINT fk_post_profissional_post
+        FOREIGN KEY (id_post)
+        REFERENCES post(id_post)
+        ON DELETE CASCADE,
+
+    CONSTRAINT fk_post_profissional_profissional
+        FOREIGN KEY (id_profissional)
+        REFERENCES profissional(id_perfil)
+        ON DELETE CASCADE
+);
+
+INSERT INTO curador (id_perfil, nome) VALUES 
+(10, 'Giuliana Lima'),
+(20, 'Juca Costa'),
+(30, 'Nayara Souza');
+
+INSERT INTO post (id_post, titulo, conteudo) VALUES 
+(100, 'Tendências de Tecnologia 2026', 'Conteúdo sobre IA e computação quântica...'),
+(201, 'Guia de Culinária Vegana', 'Receitas práticas para o dia a dia...'),
+(302, 'História da Arte Moderna', 'Uma análise do cubismo ao surrealismo...'),
+(403, 'Introdução ao SQL', 'Aprenda a gerenciar bancos de dados relacionais...');
+
+INSERT INTO post_curador (id_post, id_curador) VALUES
+(100, 10), -- Giuliana Lima curou o post de Tecnologia
+(100, 20), -- Juca Costa também curou o post de Tecnologia
+
+--Um curador com múltiplos posts
+(201, 10), -- Giuliana Lima também curou o post de Culinária
+(302, 20), -- Juca Costa curou o post de Arte Moderna
+
+-- Outras associações simples
+(403, 30); -- Nayara Souza curou o post de SQL
+
+INSERT INTO profissional (id_perfil, nome, especialidade) VALUES 
+(50, 'Chef Thiago Rocha', 'Gastronomia Vegana e Funcional'),
+(60, 'Profª Marina Silva', 'Horticultura Urbana e Orgânica'),
+(70, 'Chef Helena Rizzo', 'Confeitaria e Panificação Artesanal');
+
+INSERT INTO post (id_post, titulo, conteudo) VALUES 
+(601, 'Como plantar Alecrim e Manjericão em apartamento', 'Dicas de sol, rega e o vaso ideal para suas ervas...'),
+(602, 'Do pé ao prato: Receitas com tomates cereja da sua horta', 'Aprenda a fazer um confit perfeito com sua colheita...'),
+(603, 'Guia definitivo da compostagem doméstica', 'Transforme resíduos orgânicos em adubo rico para suas plantas...');
+
+INSERT INTO post_profissional (id_post, id_profissional) VALUES 
+-- Marina (Professora de Plantação) escreveu sobre plantar ervas em apartamento
+(601, 60), 
+
+--Colaboração perfeita! 
+-- Marina (Plantação) e Thiago (Culinária) criaram juntos o post "Do pé ao prato"
+(602, 60), -- Marina entra com a parte de colher o tomate
+(602, 50), -- Thiago entra com a receita do confit
+
+--Thiago e Helena colaboraram no guia de compostagem 
+-- (para reaproveitar restos da cozinha na horta)
+(603, 50), 
+(603, 70);
