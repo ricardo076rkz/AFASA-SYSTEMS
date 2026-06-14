@@ -14,8 +14,17 @@ INSERT INTO perfil (id_usuario, xp) VALUES
 (1,1500),(2,800),(3,1200),(4,3000),(5,2500),
 (6,2200),(7,2800),(8,450),(9,600),(10,750);
 
-INSERT INTO consumidor (id_perfil) VALUES
-(1),(2),(8),(9),(10),(3),(4),(5),(6),(7);
+INSERT INTO consumidor (id_perfil, pago) VALUES
+(1, TRUE),
+(2, TRUE),
+(8, FALSE),
+(9, TRUE),
+(10, FALSE),
+(3, TRUE),
+(4, TRUE),
+(5, FALSE),
+(6, TRUE),
+(7, FALSE);
 
 INSERT INTO profissional (id_perfil, descricao) VALUES
 (1,'Especialista em hortas urbanas e temperos'),
