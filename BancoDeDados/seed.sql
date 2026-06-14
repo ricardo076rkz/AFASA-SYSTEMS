@@ -72,7 +72,7 @@ INSERT INTO post (conteudo, data, informacao, id_perfil) VALUES
 ('Minha primeira colheita de alface!','2024-05-25','Hortas',1),
 ('Receita de salada fresca da horta','2024-05-26','Pratos',2),
 ('Dúvida: Minhas folhas estão amareladas','2024-05-27','Hortas',8),
-('Olha esse manjericão gigante!','2024-05-28','Hortas',3),
+('Olha esse manjericão gigante! ಠ_ಠ ','2024-05-28','Hortas',3),
 ('Almoço de hoje 100% orgânico','2024-05-29','Pratos',1),
 ('Dica de vaso autoirrigável','2024-05-29','Hortas',10),
 ('Composteira funcionando a todo vapor','2024-05-20','Hortas',6),
@@ -92,7 +92,7 @@ INSERT INTO planta (nome, descricao, categoria) VALUES
 ('Salsa','Rica em ferro, prefere meia sombra','Temperos'),
 ('Espada de São Jorge','Planta ornamental clássica','Ornamental');
 
-INSERT INTO receita (data, status, valor) VALUES
+INSERT INTO saldo (data, status, valor) VALUES
 ('2024-05-20','Aprovado',234.10),
 ('2024-05-21','Aprovado',91.70),
 ('2024-05-22','Em Revisão',0.00),
