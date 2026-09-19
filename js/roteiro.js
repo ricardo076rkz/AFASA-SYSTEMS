@@ -306,11 +306,11 @@ function handleLogin(event) {
         
         // Redirecionar baseado no perfil
         if (selectedUserProfile === 'curator') {
-            window.location.href = 'curator-dashboard.html';
+            window.location.href = 'curador/curador-dashboard.html';
         } else if (selectedUserProfile === 'professional') {
-            window.location.href = 'professional-dashboard.html';
+            window.location.href = 'profissional/profissional-dashboard.html';
         } else {
-            window.location.href = 'home.html';
+            window.location.href = 'consumidor/home.html';
         }
     } catch (error) {
         console.error('Error in handleLogin:', error);
@@ -396,4 +396,8 @@ window.switchTab = switchTab;
 window.approveContent = approveContent;
 window.rejectContent = rejectContent;
 
+// [Reorganização de pastas] Nenhuma lógica foi alterada aqui. As únicas mudanças neste
+// arquivo foram os 3 caminhos de redirecionamento de login (curador-dashboard.html,
+// profissional-dashboard.html e home.html), atualizados para refletir as novas pastas
+// curador/, profissional/ e consumidor/ criadas na reorganização de estrutura.
 console.log('Script.js loaded successfully');

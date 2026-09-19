@@ -1,17 +1,24 @@
 <!DOCTYPE html>
+<!--
+    [AFASA SYSTEMS] profissional/profissional-dashboard.html
+    Perfil: Profissional
+    O que esta página faz: Painel do Profissional: conteúdos publicados, métricas de monetização e gráfico de ganhos.
+-->
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Painel Profissional - AFASA SYSTEMS</title>
-    <link rel="stylesheet" href="css/style.css">
+        <!-- Carrega o CSS consolidado (main.css), que por sua vez importa base/ + components/ + o CSS específico deste perfil -->
+<link rel="stylesheet" href="../css/principal.css">
 </head>
 <body>
     <!-- Header -->
-    <div class="dashboard-header">
+        <!-- Cabeçalho do painel: título da tela + botão "Sair" -->
+<div class="dashboard-header">
         <div class="dashboard-header-content">
             <div class="dashboard-logo-section">
-                <img src="images/logo.png" alt="AFASA SYSTEMS" style="width: 40px; height: 40px; border-radius: 8px; object-fit: contain;">
+                <img src="../imagens/logo.png" alt="AFASA SYSTEMS" style="width: 40px; height: 40px; border-radius: 8px; object-fit: contain;">
                 <div class="dashboard-title-group">
                     <h1>Painel Profissional</h1>
                     <p>Crie e monetize conteúdo</p>
@@ -211,6 +218,7 @@
     <!-- Tab Content: Ganhos -->
     <div class="content-section" data-tab-content="earnings" style="display: none;">
         <!-- Stats Grid -->
+        <!-- Grade de indicadores/estatísticas rápidas no topo da tela -->
         <div class="stats-grid">
             <div class="stat-card">
                 <div class="stat-card-content">
@@ -273,6 +281,8 @@
         </div>
 
         <!-- Chart -->
+        <!-- Gráfico de evolução de ganhos (30 dias). As barras (.chart-bar) são renderizadas
+             de forma estática neste protótipo; em produção viriam de dados reais da API -->
         <div class="chart-container">
             <h3>Evolução de Ganhos (30 dias)</h3>
             <div class="chart">
@@ -328,6 +338,7 @@
         </div>
     </div>
 
-    <script src="js/script.js"></script>
+        <!-- Lógica compartilhada: login/redirecionamento por perfil, curtidas, FAQ, gráfico de ganhos, navegação ativa etc. -->
+<script src="../js/roteiro.js"></script>
 </body>
 </html>

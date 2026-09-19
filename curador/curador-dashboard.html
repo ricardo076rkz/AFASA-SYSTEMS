@@ -1,17 +1,24 @@
 <!DOCTYPE html>
+<!--
+    [AFASA SYSTEMS] curador/curador-dashboard.html
+    Perfil: Curador
+    O que esta página faz: Painel do Curador: fila de conteúdos pendentes de revisão, com ações de Aprovar/Rejeitar.
+-->
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Painel do Curador - AFASA SYSTEMS</title>
-    <link rel="stylesheet" href="css/style.css">
+        <!-- Carrega o CSS consolidado (main.css), que por sua vez importa base/ + components/ + o CSS específico deste perfil -->
+<link rel="stylesheet" href="../css/principal.css">
 </head>
 <body>
     <!-- Header -->
-    <div class="dashboard-header">
+        <!-- Cabeçalho do painel: título da tela + botão "Sair" -->
+<div class="dashboard-header">
         <div class="dashboard-header-content">
             <div class="dashboard-logo-section">
-                <img src="images/logo.png" alt="AFASA SYSTEMS" style="width: 40px; height: 40px; border-radius: 8px; object-fit: contain;">
+                <img src="../imagens/logo.png" alt="AFASA SYSTEMS" style="width: 40px; height: 40px; border-radius: 8px; object-fit: contain;">
                 <div class="dashboard-title-group">
                     <h1>Painel do Curador</h1>
                     <p>Moderação de Conteúdo</p>
@@ -22,6 +29,7 @@
     </div>
 
     <!-- Stats Grid -->
+    <!-- Grade de indicadores/estatísticas rápidas no topo da tela -->
     <div class="stats-grid">
         <div class="stat-card">
             <div class="stat-card-content">
@@ -116,6 +124,8 @@
                     <span>📚 8 aulas</span>
                     <span>⏱️ 2h 15min</span>
                 </div>
+                <!-- Botões de decisão do Curador: Aprovar libera o conteúdo publicamente,
+             Rejeitar deve vir acompanhado de um motivo (ver RN-004/RF-007 no DRS) -->
                 <div class="action-buttons">
                     <button class="btn btn-reject" onclick="rejectContent(1)">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -316,6 +326,7 @@
         </div>
     </div>
 
-    <script src="js/script.js"></script>
+        <!-- Lógica compartilhada: login/redirecionamento por perfil, curtidas, FAQ, gráfico de ganhos, navegação ativa etc. -->
+<script src="../js/roteiro.js"></script>
 </body>
 </html>
