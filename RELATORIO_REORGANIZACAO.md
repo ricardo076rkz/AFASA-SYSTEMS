@@ -101,3 +101,14 @@ não apareciam em nenhum HTML estático.
   em css/componentes/componentes.css.
 - Não há CSS único no projeto ativo — apenas os 8 arquivos divididos, agregados via
   css/principal.css.
+
+## 11. Correções finais (bugs + código morto) — versão com Backend
+
+- **Corrigido `signup.html`**: `action="home.html"` → `action="consumidor/home.html"`; `src="imagens/logo.jpg"` (inexistente) → `src="imagens/logo.png"`.
+- **NOVO BUG PRÉ-EXISTENTE encontrado e corrigido**: `var(--zinc-700)` era usada em 2 lugares (`css/paginas/profissional.css`, `css/componentes/componentes.css`) mas nunca foi definida em `:root` — nem no projeto original. Adicionada em `css/base/variaveis.css` seguindo a mesma escala de cor (Tailwind zinc) já usada para `--zinc-800`/`--zinc-900`.
+- **Corrigido `.spinner` sem estilo**: adicionada animação de carregamento simples em `css/componentes/componentes.css`, usando cores já existentes no projeto (`--zinc-800`, `--green`).
+- **Removido código morto**: `.btn-secondary` (+ `:hover`), `.nav-icon`, `.dashboard-logo` (isolada), `.stat-icon.purple` — nenhuma era usada em nenhum HTML, confirmado antes de remover.
+- **Correção de auditoria anterior**: `calculateImpact()` e `showPlantDetails()` NÃO estavam faltando — estão implementadas como `<script>` inline dentro de `calculator.html` e `plant-guide.html`, respectivamente. Erro de análise da rodada anterior (só tinha verificado `js/roteiro.js`), já corrigido no relato.
+- **Mantidos sem alteração, por decisão do usuário**: senha do PostgreSQL em texto puro no `server.js`; as 6 duplicatas de CSS já documentadas (não são bugs funcionais, remover exigiria decisão de design fora do escopo desta correção).
+- **`node_modules/` excluído da entrega** — reinstalável via `npm install`, não é código do projeto.
+- `Backend/`, `server.js`, `package.json`, `package-lock.json` entregues exatamente como recebidos, sem nenhuma alteração.
