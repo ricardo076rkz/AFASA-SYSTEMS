@@ -1,0 +1,26 @@
+{
+  "name": "afasa-systems",
+  "version": "1.0.0",
+  "description": "- 🔭 Desenvolvendo com html, css e js\r - 🤔 Criando projeto de rumo alimentar\r - 💬 Projeto em andamento da Faculdade Nova Roma Caruaru\r - 👥 Participantes  Ricardo, Rafael, Marcos, Jõao e Giseli",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ricardo076rkz/AFASA-SYSTEMS.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/ricardo076rkz/AFASA-SYSTEMS/issues"
+  },
+  "homepage": "https://github.com/ricardo076rkz/AFASA-SYSTEMS#readme",
+  "dependencies": {
+    "cors": "^2.8.6",
+    "express": "^5.2.1",
+    "pg": "^8.23.0"
+  }
+}
