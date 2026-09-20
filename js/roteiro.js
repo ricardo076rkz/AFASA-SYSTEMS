@@ -321,7 +321,9 @@ function handleLogout() {
     try {
         localStorage.removeItem('isLoggedIn');
         localStorage.removeItem('userProfile');
-        window.location.href = 'login.html';
+        // [Correção pós-reorganização] Chamada a partir de curador/ ou profissional/,
+        // por isso precisa subir uma pasta ('../') para alcançar login.html na raiz.
+        window.location.href = '../login.html';
     } catch (error) {
         console.error('Error in handleLogout:', error);
     }

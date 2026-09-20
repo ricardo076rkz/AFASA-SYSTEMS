@@ -17,12 +17,9 @@
         <div style="width: 100%; max-width: 400px;">
             <div class="logo-container">
                 <div class="logo-box">
-                <!-- ⚠️ FALHA CONHECIDA: este caminho aponta para "imagens/logo.jpg", que NÃO existe
-                     dentro de images/ (só existe imagens/logo.png ali). Existe um logo.jpg
-                     solto na raiz do projeto, mas não é o caminho referenciado aqui.
-                     Resultado: esta imagem não carrega. Não corrigido automaticamente
-                     por decisão do usuário (ver RELATORIO_REORGANIZACAO.md). -->
-                <img class="logo" src="imagens/logo.jpg" alt="Logo">
+                <!-- [CORRIGIDO] Antes apontava para "imagens/logo.jpg", que não existe (só existe
+                     imagens/logo.png). Caminho ajustado para o arquivo real da logo. -->
+                <img class="logo" src="imagens/logo.png" alt="Logo">
             </a>
                 </div>
                 <div class="brand-name">AFASA SYSTEMS</div>
@@ -36,7 +33,7 @@
             </div>
 
                         <!-- Formulário desta tela. A submissão é tratada via JavaScript (ver atributo onsubmit) em js/roteiro.js -->
-<form action="home.html" method="get" onsubmit="localStorage.setItem('isLoggedIn', 'true');">
+<form action="consumidor/home.html" method="get" onsubmit="localStorage.setItem('isLoggedIn', 'true');">
                 <div class="form-group">
                     <label for="signup-name">Nome Completo</label>
                     <input type="text" id="signup-name" placeholder="Seu nome" required>
