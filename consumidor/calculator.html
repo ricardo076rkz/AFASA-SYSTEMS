@@ -1,13 +1,20 @@
 <!DOCTYPE html>
+<!--
+    [AFASA SYSTEMS] consumidor/calculator.html
+    Perfil: Consumidor
+    O que esta página faz: Ferramenta/calculadora de apoio ao cultivo (ex: cálculo de insumos).
+-->
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calculadora de Impacto - AFASA SYSTEMS</title>
-    <link rel="stylesheet" href="css/style.css">
+        <!-- Carrega o CSS consolidado (main.css), que por sua vez importa base/ + components/ + o CSS específico deste perfil -->
+<link rel="stylesheet" href="../css/principal.css">
 </head>
 <body>
-    <div class="header">
+        <!-- Cabeçalho da página: botão voltar (quando existe) + logo -->
+<div class="header">
         <div class="header-content container">
             <a href="home.html" class="back-btn">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
@@ -16,7 +23,7 @@
                 Voltar
             </a>
             <a href="home.html" class="header-logo">
-                <img class="logo" src="images/logo.png" alt="Logo">
+                <img class="logo" src="../imagens/logo.png" alt="Logo">
             </a>
         </div>
     </div>
@@ -29,7 +36,8 @@
                 <p style="color: var(--gray-light); font-size: 16px;">Descubra quanto você está economizando e ajudando o planeta</p>
             </div>
 
-            <form id="impact-form" onsubmit="calculateImpact(event)">
+                        <!-- Formulário desta tela. A submissão é tratada via JavaScript (ver atributo onsubmit) em js/roteiro.js -->
+<form id="impact-form" onsubmit="calculateImpact(event)">
                 <div class="form-group">
                     <label>🥬 Alimentos salvos do desperdício (kg/mês)</label>
                     <input type="number" id="food-saved" min="0" step="0.1" placeholder="Ex: 5" required>
@@ -98,7 +106,8 @@
         </div>
     </div>
 
-    <div class="bottom-nav">
+        <!-- Barra de navegação inferior fixa, presente em todas as telas do perfil Consumidor -->
+<div class="bottom-nav">
         <a href="home.html" class="nav-item">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
@@ -131,7 +140,8 @@
         </a>
     </div>
 
-    <script src="js/script.js"></script>
+        <!-- Lógica compartilhada: login/redirecionamento por perfil, curtidas, FAQ, gráfico de ganhos, navegação ativa etc. -->
+<script src="../js/roteiro.js"></script>
     <script>
         function calculateImpact(e) {
             e.preventDefault();

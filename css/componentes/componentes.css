@@ -1,0 +1,898 @@
+/* [COMPONENTES] Peças de UI reutilizadas por 2+ perfis: botões, cabeçalhos, navegação
+   inferior, cards de estatística, modal, abas, badges de status e telas de
+   autenticação (login/signup). Mudar algo aqui afeta múltiplas telas de uma vez —
+   confira o impacto nos 3 perfis antes de alterar. */
+
+/* ── Utilitários base ── */
+/* Utility Classes */
+.hidden { display: none !important; }
+
+
+/* ── Botões (.btn, variantes e estados) ── */
+/* Buttons */
+.btn {
+    padding: 14px 24px;
+    border-radius: 8px;
+    border: none;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    width: 100%;
+}
+
+
+.btn-primary {
+    background-color: var(--orange);
+    color: var(--white);
+}
+
+
+.btn-primary:hover {
+    background-color: var(--orange-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(255, 140, 0, 0.3);
+}
+
+
+/* ⚠️ FALHA: classe definida mas não encontrada em uso em nenhum HTML atual (código possivelmente morto). */
+.btn-secondary {
+    background-color: transparent;
+    color: var(--green);
+    border: 2px solid var(--green);
+}
+
+
+/* ⚠️ FALHA: hover de uma classe (.btn-secondary) que não é usada em nenhum HTML atual. */
+.btn-secondary:hover {
+    background-color: var(--green);
+    color: var(--white);
+}
+
+
+.link-btn {
+    background: none;
+    border: none;
+    color: var(--green);
+    cursor: pointer;
+    font-size: 16px;
+    text-decoration: underline;
+    transition: color 0.3s;
+}
+
+
+.link-btn:hover {
+    color: var(--green-hover);
+}
+
+
+/* Floating Action Button */
+.fab {
+    position: fixed;
+    bottom: 80px;
+    right: 20px;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background-color: var(--orange);
+    color: var(--white);
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(255, 140, 0, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    transition: transform 0.3s, box-shadow 0.3s;
+    z-index: 99;
+    text-decoration: none;
+}
+
+
+.fab:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 20px rgba(255, 140, 0, 0.6);
+}
+
+
+.btn svg {
+    width: 16px;
+    height: 16px;
+}
+
+
+/* ── Logo e marca ── */
+/* Logo */
+.logo-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    padding: 24px 0;
+}
+
+
+.logo-box {
+    width: 80px;
+    height: 80px;
+    background-color: var(--bg-dark);
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+
+.logo {
+    width: 64px;
+    background: linear-gradient(135deg, #2ECC71 0%, #FF8C00 100%);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    font-weight: 700;
+}
+
+
+.brand-name {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--white);
+    text-align: center;
+}
+
+
+.header-logo {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--white);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+.header-logo img.logo {
+    height: 40px;
+    width: auto;
+    object-fit: contain;
+}
+
+
+.logout-btn {
+    background: none;
+    border: none;
+    color: var(--gray-light);
+    font-size: 14px;
+    cursor: pointer;
+    transition: color 0.3s;
+}
+
+
+.logout-btn:hover {
+    color: var(--white);
+}
+
+
+/* ── Cabeçalho (telas do Consumidor) ── */
+/* Header */
+.header {
+    position: sticky;
+    top: 0;
+    background-color: var(--bg-dark);
+    z-index: 100;
+    border-bottom: 1px solid var(--zinc-800);
+    padding: 16px 20px;
+}
+
+
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+
+.header-icons {
+    display: flex;
+    gap: 16px;
+}
+
+
+/* ── Botão voltar e ícones do topo ── */
+.back-btn {
+    background: var(--bg-card);
+    border: 1px solid var(--zinc-800);
+    padding: 8px 12px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: var(--gray-light);
+    text-decoration: none;
+    font-size: 14px;
+}
+
+
+.back-btn:hover {
+    background: var(--zinc-900);
+    border-color: var(--green);
+    color: var(--green);
+}
+
+
+.back-btn svg {
+    width: 20px;
+    height: 20px;
+    stroke: currentColor;
+}
+
+
+.icon-btn {
+    background: var(--bg-card);
+    border: 1px solid var(--zinc-800);
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+
+.icon-btn:hover {
+    background: var(--zinc-900);
+    border-color: var(--green);
+    transform: translateY(-2px);
+}
+
+
+.icon-btn svg {
+    width: 20px;
+    height: 20px;
+    stroke: var(--gray-light);
+    transition: stroke 0.2s;
+}
+
+
+.icon-btn:hover svg {
+    stroke: var(--green);
+}
+
+
+/* ── Navegação inferior (bottom nav) ── */
+/* Bottom Navigation */
+.bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: var(--bg-darker);
+    border-top: 1px solid var(--zinc-800);
+    display: flex;
+    justify-content: space-around;
+    padding: 12px 0;
+    z-index: 100;
+}
+
+
+.nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    color: var(--gray);
+    text-decoration: none;
+    cursor: pointer;
+    padding: 8px 12px;
+    border-radius: 8px;
+    transition: all 0.3s;
+    font-size: 12px;
+}
+
+
+.nav-item:hover, .nav-item.active {
+    color: var(--green);
+    background-color: rgba(46, 204, 113, 0.1);
+}
+
+
+/* ⚠️ FALHA: classe definida mas os <svg> dentro de .nav-item não recebem essa classe em nenhum HTML — nunca é aplicada. */
+.nav-icon {
+    font-size: 24px;
+}
+
+
+.nav-item svg {
+    width: 24px;
+    height: 24px;
+    stroke: var(--gray);
+    transition: stroke 0.3s;
+}
+
+
+.nav-item:hover svg,
+
+
+.nav-item.active svg {
+    stroke: var(--green);
+}
+
+
+/* ── Formulários ── */
+/* Form Groups */
+.form-group {
+    margin-bottom: 20px;
+    position: relative;
+}
+
+
+.password-toggle {
+    position: absolute;
+    right: 16px;
+    top: 46px;
+    background: none;
+    border: none;
+    color: var(--gray);
+    cursor: pointer;
+    font-size: 18px;
+}
+
+
+/* ── Cards de estatística e progresso ── */
+/* ⚠️ FALHA: ".stats-grid" é definida DUAS VEZES no CSS original (aqui e mais abaixo). A segunda definição prevalece na cascata. Recomenda-se unificar. */
+/* Stats */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-top: 20px;
+}
+
+
+/* ⚠️ FALHA: ".stat-card" é definida DUAS VEZES no CSS original com valores diferentes (aqui e mais abaixo). A segunda prevalece na cascata. Recomenda-se unificar. */
+.stat-card {
+    background-color: var(--bg-card);
+    padding: 16px;
+    border-radius: 12px;
+    text-align: center;
+    border: 1px solid var(--zinc-800);
+}
+
+
+/* ⚠️ FALHA: ".stat-label" é definida DUAS VEZES no CSS original com pequenas diferenças (aqui e mais abaixo). A segunda prevalece na cascata. Recomenda-se unificar. */
+.stat-label {
+    color: var(--gray-light);
+    font-size: 12px;
+}
+
+
+/* ⚠️ FALHA: ".progress-bar" é definida DUAS VEZES no CSS original com valores diferentes (aqui e mais abaixo). A segunda prevalece. Recomenda-se unificar. */
+.progress-bar {
+    width: 100%;
+    height: 8px;
+    background-color: rgba(255, 255, 255, 0.3);
+    border-radius: 4px;
+    margin-top: 12px;
+    overflow: hidden;
+}
+
+
+/* ⚠️ FALHA: ".progress-fill" é definida DUAS VEZES no CSS original com valores diferentes (aqui e mais abaixo). A segunda prevalece na cascata. Recomenda-se unificar. */
+.progress-fill {
+    height: 100%;
+    background-color: var(--white);
+    border-radius: 4px;
+    transition: width 0.3s;
+}
+
+
+/* Stats Grid */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    padding: 24px;
+}
+
+
+.stat-card {
+    background-color: var(--zinc-900);
+    border: 1px solid var(--zinc-800);
+    border-radius: 12px;
+    padding: 16px;
+}
+
+
+.stat-card-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+
+.stat-icon {
+    width: 20px;
+    height: 20px;
+}
+
+
+.stat-icon.green { color: var(--green); }
+
+
+.stat-icon.orange { color: var(--orange); }
+
+
+.stat-icon.blue { color: #3B82F6; }
+
+
+/* ⚠️ FALHA: modificador de cor definido mas nunca aplicado — os dashboards só usam red/blue/green/orange/yellow. */
+.stat-icon.purple { color: #A855F7; }
+
+
+.stat-value {
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--white);
+    margin: 0;
+}
+
+
+.stat-label {
+    font-size: 12px;
+    color: var(--gray-light);
+    margin: 0;
+}
+
+
+.progress-bar {
+    flex: 1;
+    height: 8px;
+    background-color: var(--zinc-800);
+    border-radius: 999px;
+    overflow: hidden;
+}
+
+
+.progress-fill {
+    height: 100%;
+    background-color: var(--green);
+    border-radius: 999px;
+}
+
+
+/* ── Modal (janela sobreposta) ── */
+/* Modal */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.8);
+    z-index: 1000;
+    overflow-y: auto;
+}
+
+
+.modal.active {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 20px;
+}
+
+
+.modal-content {
+    background-color: var(--bg-card);
+    border-radius: 16px;
+    padding: 24px;
+    max-width: 500px;
+    width: 100%;
+    margin: 40px auto;
+    position: relative;
+}
+
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+
+.modal-title {
+    font-size: 24px;
+    font-weight: 600;
+}
+
+
+.close-btn {
+    background: none;
+    border: none;
+    color: var(--gray);
+    cursor: pointer;
+    font-size: 32px;
+    padding: 0;
+    line-height: 1;
+    width: 32px;
+    height: 32px;
+}
+
+
+.close-btn:hover {
+    color: var(--white);
+}
+
+
+.chevron {
+    transition: transform 0.3s;
+}
+
+
+/* ── Animações ── */
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+.fade-in {
+    animation: fadeIn 0.5s ease;
+}
+
+
+/* ── Seletor de perfil (login) ── */
+/* ✅ NOVO: Profile Selector Styles */
+.profile-selector-container {
+    margin-bottom: 24px;
+}
+
+
+.profile-selector {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+
+.profile-option {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 16px 12px;
+    border-radius: 12px;
+    border: 2px solid var(--zinc-800);
+    background-color: var(--zinc-900);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: var(--gray-light);
+}
+
+
+.profile-option:hover {
+    border-color: var(--zinc-700);
+}
+
+
+.profile-option.active {
+    border-color: var(--green);
+    background-color: rgba(46, 204, 113, 0.1);
+}
+
+
+.profile-option.active .profile-icon,
+
+
+.profile-option.active .profile-label {
+    color: var(--green);
+}
+
+
+.profile-icon {
+    width: 24px;
+    height: 24px;
+}
+
+
+.profile-label {
+    font-size: 12px;
+    font-weight: 500;
+}
+
+
+.profile-description {
+    text-align: center;
+    font-size: 12px;
+    color: var(--gray);
+    margin: 0;
+}
+
+
+/* ── Cabeçalho dos painéis (Curador/Profissional) ── */
+/* ✅ NOVO: Dashboard Styles */
+.dashboard-header {
+    background-color: var(--zinc-900);
+    border-bottom: 1px solid var(--zinc-800);
+    padding: 16px 24px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+
+.dashboard-header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+
+.dashboard-logo-section {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+
+/* ⚠️ FALHA: classe definida mas não usada — só existe .dashboard-logo-section no HTML, não .dashboard-logo sozinho. */
+.dashboard-logo {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+}
+
+
+.dashboard-title-group h1 {
+    font-size: 18px;
+    margin: 0;
+    color: var(--white);
+}
+
+
+.dashboard-title-group p {
+    font-size: 14px;
+    color: var(--gray-light);
+    margin: 0;
+}
+
+
+/* ── Abas (tabs) ── */
+/* Tabs */
+.tabs-container {
+    padding: 0 24px;
+    margin-top: 24px;
+}
+
+
+.tabs {
+    display: flex;
+    gap: 8px;
+    background-color: var(--zinc-900);
+    padding: 4px;
+    border-radius: 12px;
+}
+
+
+.tab-btn {
+    flex: 1;
+    padding: 12px 16px;
+    border-radius: 8px;
+    border: none;
+    background: transparent;
+    color: var(--gray-light);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+
+.tab-btn.active {
+    background-color: var(--orange);
+    color: var(--white);
+}
+
+
+.tab-btn svg {
+    width: 16px;
+    height: 16px;
+}
+
+
+.tab-btn:hover:not(.active):not(.active-green) {
+    color: var(--white);
+}
+
+
+/* ── Cards de conteúdo genéricos e seções ── */
+/* ⚠️ FALHA: ".section-title" é definida DUAS VEZES no CSS original com valores diferentes (aqui e mais abaixo). A segunda prevalece. Recomenda-se unificar. */
+.section-title {
+    font-size: 20px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+
+/* Content Card */
+.content-card {
+    background-color: var(--zinc-900);
+    border: 1px solid var(--zinc-800);
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 16px;
+}
+
+
+.content-card-body {
+    padding: 16px;
+}
+
+
+.content-title {
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--white);
+    margin-bottom: 8px;
+}
+
+
+/* Content Section */
+.content-section {
+    padding: 24px;
+}
+
+
+.section-title {
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--white);
+    margin: 0 0 16px 0;
+}
+
+/* ── Caixas de alerta ── */
+/* Alert Box */
+.alert-box {
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+}
+
+
+.alert-box.error {
+    background-color: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+
+.alert-box.warning {
+    background-color: rgba(245, 158, 11, 0.1);
+    border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+
+.alert-content {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+}
+
+
+.alert-content svg {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+
+.alert-box.error .alert-content svg,
+
+
+.alert-box.error .alert-title {
+    color: #EF4444;
+}
+
+
+.alert-box.warning .alert-content svg,
+
+
+.alert-box.warning p {
+    color: #F59E0B;
+}
+
+
+.alert-title {
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 4px;
+}
+
+
+.alert-box p {
+    font-size: 12px;
+    margin: 0;
+}
+
+
+.alert-box ul {
+    margin: 4px 0 0 0;
+    padding-left: 16px;
+}
+
+
+.alert-box li {
+    font-size: 12px;
+    color: #F87171;
+}
+
+
+/* ── Badges de status (aprovado/rejeitado/pendente) ── */
+/* Status Badges */
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    padding: 4px 8px;
+    border-radius: 999px;
+}
+
+
+.status-badge.approved {
+    background-color: rgba(46, 204, 113, 0.2);
+    color: var(--green);
+}
+
+
+.status-badge.rejected {
+    background-color: rgba(239, 68, 68, 0.2);
+    color: #EF4444;
+}
+
+
+.status-badge svg {
+    width: 12px;
+    height: 12px;
+}
+
+
+/* ── Responsivo ── */
+@media (min-width: 769px) {
+    .bottom-nav {
+        max-width: 480px;
+        left: 50%;
+        transform: translateX(-50%);
+        border-radius: 16px 16px 0 0;
+    }
+}
+
+

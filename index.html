@@ -1,11 +1,17 @@
 <!DOCTYPE html>
+<!--
+    [AFASA SYSTEMS] index.html
+    Perfil: Auth (compartilhada)
+    O que esta página faz: Tela de redirecionamento automático: manda o usuário direto para login.html. Não tem UI própria de fato, é só uma "porta de entrada".
+-->
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="refresh" content="0; url=login.html">
     <title>AFASA SYSTEMS - Redirecionando...</title>
-    <link rel="stylesheet" href="css/style.css">
+        <!-- Carrega o CSS consolidado (main.css), que por sua vez importa base/ + components/ + o CSS específico deste perfil -->
+<link rel="stylesheet" href="css/principal.css">
 </head>
 <body>
     <div style="min-height: 100vh; display: flex; align-items: center; justify-content: center; text-align: center; padding: 24px;">

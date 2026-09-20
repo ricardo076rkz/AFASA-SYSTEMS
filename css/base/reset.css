@@ -1,0 +1,52 @@
+/* [BASE] Reset universal (zera margin/padding padrão do navegador) + estilos base de
+   tags HTML puras (body, inputs, textarea, select). Não contém classes específicas. */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+
+body {
+    font-family: 'Poppins', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background-color: var(--bg-dark);
+    color: var(--white);
+    line-height: 1.6;
+    overflow-x: hidden;
+    min-height: 100vh;
+}
+
+
+/* Input Fields */
+input, textarea, select {
+    width: 100%;
+    padding: 14px 16px;
+    border-radius: 8px;
+    border: 1px solid var(--zinc-800);
+    background-color: var(--zinc-900);
+    color: var(--white);
+    font-size: 16px;
+    font-family: inherit;
+}
+
+
+input::placeholder, textarea::placeholder {
+    color: var(--gray);
+}
+
+
+input:focus, textarea:focus, select:focus {
+    outline: none;
+    border-color: var(--green);
+}
+
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--white);
+    font-size: 14px;
+    font-weight: 500;
+}
+

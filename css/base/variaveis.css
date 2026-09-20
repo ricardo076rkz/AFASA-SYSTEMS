@@ -1,0 +1,18 @@
+/* [BASE] Variáveis globais de tema: paleta de cores e tokens usados em TODO o projeto.
+   Mudar uma cor aqui reflete em todas as telas dos 3 perfis. */
+
+:root {
+    --bg-dark: #121212;
+    --bg-darker: #0A0A0A;
+    --bg-card: #1E1E1E;
+    --green: #2ECC71;
+    --green-hover: #27ae60;
+    --orange: #FF8C00;
+    --orange-hover: #e67e00;
+    --gray: #71717A;
+    --gray-light: #A1A1AA;
+    --white: #FFFFFF;
+    --zinc-900: #18181b;
+    --zinc-800: #27272a;
+}
+

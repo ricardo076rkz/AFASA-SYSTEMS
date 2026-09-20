@@ -1,17 +1,25 @@
 <!DOCTYPE html>
+<!--
+    [AFASA SYSTEMS] signup.html
+    Perfil: Auth (compartilhada)
+    O que esta página faz: Tela de cadastro de novo usuário. Ao concluir, leva para login.html.
+-->
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Criar Conta - AFASA SYSTEMS</title>
-    <link rel="stylesheet" href="css/style.css">
+        <!-- Carrega o CSS consolidado (main.css), que por sua vez importa base/ + components/ + o CSS específico deste perfil -->
+<link rel="stylesheet" href="css/principal.css">
 </head>
 <body>
     <div style="min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 32px 24px;">
         <div style="width: 100%; max-width: 400px;">
             <div class="logo-container">
                 <div class="logo-box">
-                <img class="logo" src="images/logo.jpg" alt="Logo">
+                <!-- [CORRIGIDO] Antes apontava para "imagens/logo.jpg", que não existe (só existe
+                     imagens/logo.png). Caminho ajustado para o arquivo real da logo. -->
+                <img class="logo" src="imagens/logo.png" alt="Logo">
             </a>
                 </div>
                 <div class="brand-name">AFASA SYSTEMS</div>
@@ -24,7 +32,8 @@
                 </p>
             </div>
 
-            <form action="home.html" method="get" onsubmit="localStorage.setItem('isLoggedIn', 'true');">
+                        <!-- Formulário desta tela. A submissão é tratada via JavaScript (ver atributo onsubmit) em js/roteiro.js -->
+<form action="consumidor/home.html" method="get" onsubmit="localStorage.setItem('isLoggedIn', 'true');">
                 <div class="form-group">
                     <label for="signup-name">Nome Completo</label>
                     <input type="text" id="signup-name" placeholder="Seu nome" required>
@@ -50,6 +59,7 @@
         </div>
     </div>
 
-    <script src="js/script.js"></script>
+        <!-- Lógica compartilhada: login/redirecionamento por perfil, curtidas, FAQ, gráfico de ganhos, navegação ativa etc. -->
+<script src="js/roteiro.js"></script>
 </body>
 </html>
