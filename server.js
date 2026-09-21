@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 const express = require('express');
 const cors = require('cors');
 const { Pool } = require('pg');
@@ -8,11 +10,11 @@ app.use(cors());
 app.use(express.json());
 
 const pool = new Pool({
-    user: 'postgres',
-    host: 'localhost',
-    database: 'afasa_db',
-    password: '433088',
-    port: 5432,
+    user: process.env.DB_USER,
+    host: process.env.DB_HOST,
+    database: process.env.DB_NAME,
+    password: process.env.DB_PASSWORD,
+    port: Number(process.env.DB_PORT),
 });
 
 app.get('/api/teste', async (req, res) => {
@@ -23,6 +25,16 @@ app.get('/api/teste', async (req, res) => {
         console.error(erro);
         res.status(500).json({ status: 'erro', mensagem: erro.message });
 
+    }
+});
+
+app.get('/api/teste/texto-hora', async (req, res) => {
+    try {
+        const teste = await pool.query('SELECT NOW() AS agora');
+        res.json({ status: 'Olá, Afasa!', hora: teste.rows[0].agora });
+    } catch (erro) {
+        console.error(erro);
+        res.status(500).json({ status: 'erro', mensagem: erro.message });
     }
 });
 

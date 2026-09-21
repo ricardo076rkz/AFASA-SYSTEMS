@@ -20,6 +20,7 @@
   "homepage": "https://github.com/ricardo076rkz/AFASA-SYSTEMS#readme",
   "dependencies": {
     "cors": "^2.8.6",
+    "dotenv": "^18.0.1",
     "express": "^5.2.1",
     "pg": "^8.23.0"
   }
