@@ -1,21 +1,10 @@
-require('dotenv').config();
-
+const pool = require('./config/db');
 const express = require('express');
 const cors = require('cors');
-const { Pool } = require('pg');
-
 
 const app = express();
 app.use(cors());
 app.use(express.json());
-
-const pool = new Pool({
-    user: process.env.DB_USER,
-    host: process.env.DB_HOST,
-    database: process.env.DB_NAME,
-    password: process.env.DB_PASSWORD,
-    port: Number(process.env.DB_PORT),
-});
 
 app.get('/api/teste', async (req, res) => {
     try {
@@ -28,13 +17,31 @@ app.get('/api/teste', async (req, res) => {
     }
 });
 
-app.get('/api/teste/texto-hora', async (req, res) => {
+const QUERY_LISTAR_POSTS = `
+    SELECT
+        post.id_post,
+        post.conteudo,
+        post.data,
+        post.informacao,
+        usuario.id_usuario,
+        usuario.nome as autor,
+        usuario.email
+    FROM post
+    JOIN perfil ON post.id_perfil = perfil.id_perfil
+    JOIN usuario ON perfil.id_usuario = usuario.id_usuario
+    ORDER BY post.data DESC
+`;
+
+app.get('/api/posts', async (req, res) => {
     try {
-        const teste = await pool.query('SELECT NOW() AS agora');
-        res.json({ status: 'Olá, Afasa!', hora: teste.rows[0].agora });
+        const resultado = await pool.query(QUERY_LISTAR_POSTS);
+        res.status(200).json(resultado.rows);
     } catch (erro) {
-        console.error(erro);
-        res.status(500).json({ status: 'erro', mensagem: erro.message });
+        console.error('Erro ao buscar post:', erro);
+        res.status(500).json({
+            status: 'erro',
+            mensagem: 'Não foi possivel busvar os posts.'
+        });
     }
 });
 
