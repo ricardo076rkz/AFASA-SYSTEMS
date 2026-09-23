@@ -1,19 +1,10 @@
+const pool = require('./config/db');
 const express = require('express');
 const cors = require('cors');
-const { Pool } = require('pg');
-
 
 const app = express();
 app.use(cors());
 app.use(express.json());
-
-const pool = new Pool({
-    user: 'postgres',
-    host: 'localhost',
-    database: 'afasa_db',
-    password: '433088',
-    port: 5432,
-});
 
 app.get('/api/teste', async (req, res) => {
     try {
@@ -23,6 +14,34 @@ app.get('/api/teste', async (req, res) => {
         console.error(erro);
         res.status(500).json({ status: 'erro', mensagem: erro.message });
 
+    }
+});
+
+const QUERY_LISTAR_POSTS = `
+    SELECT
+        post.id_post,
+        post.conteudo,
+        post.data,
+        post.informacao,
+        usuario.id_usuario,
+        usuario.nome as autor,
+        usuario.email
+    FROM post
+    JOIN perfil ON post.id_perfil = perfil.id_perfil
+    JOIN usuario ON perfil.id_usuario = usuario.id_usuario
+    ORDER BY post.data DESC
+`;
+
+app.get('/api/posts', async (req, res) => {
+    try {
+        const resultado = await pool.query(QUERY_LISTAR_POSTS);
+        res.status(200).json(resultado.rows);
+    } catch (erro) {
+        console.error('Erro ao buscar post:', erro);
+        res.status(500).json({
+            status: 'erro',
+            mensagem: 'Não foi possivel busvar os posts.'
+        });
     }
 });
 
