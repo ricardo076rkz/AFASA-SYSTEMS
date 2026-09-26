@@ -3,9 +3,9 @@ function togglePassword(inputId) {
     try {
         const input = document.getElementById(inputId);
         if (!input) return;
-        
+
         const button = input.nextElementSibling;
-        
+
         if (input.type === 'password') {
             input.type = 'text';
             if (button) button.textContent = '🙈';
@@ -46,11 +46,11 @@ function searchCourses() {
         const query = document.getElementById('course-search')?.value.toLowerCase() || '';
         const courses = document.querySelectorAll('.course-card');
         let foundCount = 0;
-        
+
         courses.forEach(course => {
             const title = course.querySelector('.course-title')?.textContent.toLowerCase() || '';
             const meta = course.querySelector('.course-meta')?.textContent.toLowerCase() || '';
-            
+
             if (title.includes(query) || meta.includes(query) || query === '') {
                 course.style.display = 'block';
                 foundCount++;
@@ -60,7 +60,7 @@ function searchCourses() {
                 course.style.display = 'none';
             }
         });
-        
+
         // Show no results message
         let noResultsMsg = document.getElementById('no-results-message');
         if (foundCount === 0 && query !== '') {
@@ -135,12 +135,12 @@ function toggleFAQ(button) {
     try {
         const faqItem = button.closest('.faq-item');
         const isExpanded = faqItem.classList.contains('expanded');
-        
+
         // Close all other FAQs
         document.querySelectorAll('.faq-item').forEach(item => {
             item.classList.remove('expanded');
         });
-        
+
         // Toggle current FAQ
         if (!isExpanded) {
             faqItem.classList.add('expanded');
@@ -155,11 +155,11 @@ function filterPosts(category) {
     try {
         const posts = document.querySelectorAll('.post-card');
         const buttons = document.querySelectorAll('.filter-btn');
-        
+
         // Update active button
         buttons.forEach(btn => btn.classList.remove('active'));
         event.target.classList.add('active');
-        
+
         // Filter posts
         posts.forEach(post => {
             if (category === 'todos') {
@@ -183,9 +183,9 @@ function toggleLike(button) {
         button.classList.toggle('liked');
         const countSpan = button.querySelector('span:last-child');
         if (!countSpan) return;
-        
+
         let count = parseInt(countSpan.textContent);
-        
+
         if (button.classList.contains('liked')) {
             countSpan.textContent = count + 1;
         } else {
@@ -197,24 +197,29 @@ function toggleLike(button) {
 }
 
 // Create Post
-function createPost(e) {
+async function createPost(e) {
+    e.preventDefault();
+    const conteudo = document.getElementById('post-descricao').value;
+    const idPerfil = localStorage.getItem('userIdPerfil');
+
     try {
-        e.preventDefault();
+        await api.post('/posts', { conteudo, id_perfil: idPerfil });
         alert('Post publicado com sucesso! 🎉');
         window.location.href = 'community.html';
     } catch (error) {
-        console.error('Error in createPost:', error);
+        console.error('Erro ao criar post:', error);
+        alert('Não foi possível publicar o post.');
     }
 }
 
 // Initialize on page load
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     try {
         console.log('DOM Content Loaded - Initializing...');
-        
+
         // Close modals when clicking outside
         document.querySelectorAll('.modal').forEach(modal => {
-            modal.addEventListener('click', function(e) {
+            modal.addEventListener('click', function (e) {
                 if (e.target === modal) {
                     closeModal(modal.id);
                 }
@@ -242,7 +247,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 item.classList.add('active');
             }
         });
-        
+
         console.log('Initialization complete');
     } catch (error) {
         console.error('Error in DOMContentLoaded:', error);
@@ -273,47 +278,79 @@ const profileDescriptions = {
 function selectProfile(profile) {
     try {
         selectedUserProfile = profile;
-        
+
         // Atualizar visual dos botões
         document.querySelectorAll('.profile-option').forEach(btn => {
             btn.classList.remove('active');
         });
-        
+
         const selectedButton = document.querySelector(`[data-profile="${profile}"]`);
         if (selectedButton) {
             selectedButton.classList.add('active');
         }
-        
+
         // Atualizar descrição
         const descriptionElement = document.getElementById('profile-description');
         if (descriptionElement) {
             descriptionElement.textContent = profileDescriptions[profile];
         }
-        
+
         console.log('Profile selected:', profile);
     } catch (error) {
         console.error('Error in selectProfile:', error);
     }
 }
 
-function handleLogin(event) {
+async function handleSignup(event) {
+    event.preventDefault(); // impede o recarregamento padrão da página
+
+    const nome = document.getElementById('signup-name').value;
+    const email = document.getElementById('signup-email').value;
+    const senha = document.getElementById('signup-password').value;
+    const cpf = document.getElementById('signup-cpf').value;
+
     try {
-        event.preventDefault();
-        
-        // Salvar perfil e status de login
+        await api.post('/cadastro', { nome, email, senha, cpf });
+        alert('Conta criada com sucesso! Faça login para continuar.');
+        window.location.href = 'login.html';
+
+    } catch (error) {
+        const mensagem = error.response?.data?.mensagem || 'Erro ao criar conta.';
+        alert(mensagem);
+        console.error('Erro no cadastro:', error);
+    }
+}
+
+window.handleSignup = handleSignup;
+
+
+async function handleLogin(event) {
+    event.preventDefault();
+
+    const email = document.getElementById('login-email').value;
+    const senha = document.getElementById('login-password').value;
+
+    try {
+        const response = await api.post('/login', { email, senha });
+        const { usuario, role } = response.data;
+
         localStorage.setItem('isLoggedIn', 'true');
-        localStorage.setItem('userProfile', selectedUserProfile);
-        
-        // Redirecionar baseado no perfil
-        if (selectedUserProfile === 'curator') {
+        localStorage.setItem('userProfile', role);
+        localStorage.setItem('userNome', usuario.nome);
+        localStorage.setItem('userIdPerfil', usuario.idPerfil);
+
+        if (role === 'curator') {
             window.location.href = 'curador/curador-dashboard.html';
-        } else if (selectedUserProfile === 'professional') {
+        } else if (role === 'professional') {
             window.location.href = 'profissional/profissional-dashboard.html';
         } else {
             window.location.href = 'consumidor/home.html';
         }
+
     } catch (error) {
-        console.error('Error in handleLogin:', error);
+        const mensagem = error.response?.data?.mensagem || 'Erro ao fazer login.';
+        alert(mensagem);
+        console.error('Erro no login:', error);
     }
 }
 
@@ -334,12 +371,12 @@ function switchTab(tabName, tabGroupId) {
     try {
         const tabGroup = document.querySelector(`#${tabGroupId}`);
         if (!tabGroup) return;
-        
+
         // Atualizar botões de tab
         tabGroup.querySelectorAll('.tab-btn').forEach(btn => {
             btn.classList.remove('active', 'active-green');
         });
-        
+
         const activeTab = tabGroup.querySelector(`[data-tab="${tabName}"]`);
         if (activeTab) {
             // Adicionar classe apropriada baseada no tipo
@@ -349,17 +386,17 @@ function switchTab(tabName, tabGroupId) {
                 activeTab.classList.add('active');
             }
         }
-        
+
         // Mostrar/esconder conteúdo
         document.querySelectorAll(`[data-tab-content]`).forEach(content => {
             content.style.display = 'none';
         });
-        
+
         const activeContent = document.querySelector(`[data-tab-content="${tabName}"]`);
         if (activeContent) {
             activeContent.style.display = 'block';
         }
-        
+
         console.log('Tab switched to:', tabName);
     } catch (error) {
         console.error('Error in switchTab:', error);
@@ -403,3 +440,206 @@ window.rejectContent = rejectContent;
 // profissional-dashboard.html e home.html), atualizados para refletir as novas pastas
 // curador/, profissional/ e consumidor/ criadas na reorganização de estrutura.
 console.log('Script.js loaded successfully');
+
+// ====================================================
+// ETAPA 3 - Integração com API via Axios (GET /api/posts)
+// ====================================================
+
+// 1) Instância do Axios já configurada com o endereço base da API.
+const api = axios.create({
+    baseURL: 'http://localhost:3000/api'
+});
+
+// 2) Busca os posts no backend e desenha os cards na tela.
+async function carregarPosts() {
+    const container = document.getElementById('posts-container');
+    if (!container) return;
+
+    try {
+        const response = await api.get('/posts');
+        const posts = response.data;
+
+        container.innerHTML = '';
+
+        if (posts.length === 0) {
+            container.innerHTML = '<p>Nenhum post encontrado ainda.</p>';
+            return;
+        }
+
+        posts.forEach(post => {
+            const inicialNome = post.autor ? post.autor.charAt(0).toUpperCase() : '?';
+            const dataFormatada = new Date(post.data).toLocaleDateString('pt-BR');
+
+            const card = document.createElement('div');
+            card.className = 'post-card';
+            card.innerHTML = `
+                <div class="post-header">
+                    <div class="user-avatar">${inicialNome}</div>
+                    <div class="user-info">
+                        <div class="user-name">${post.autor}</div>
+                        <div class="post-time">${dataFormatada}</div>
+                    </div>
+                </div>
+                <div class="post-description">
+                    ${post.conteudo}
+                </div>
+            `;
+            container.appendChild(card);
+        });
+
+
+    } catch (error) {
+        console.error('Erro ao carregar posts:', error);
+        container.innerHTML = '<p>Não foi possível carregar os posts. Tente novamente mais tarde.</p>';
+    }
+}
+
+// ==============================================================================
+// ETAPA 4: RENDERIZAÇÃO DINÂMICA DE CURSOS E INICIALIZAÇÃO DA PÁGINA
+// ==============================================================================
+
+/**
+ * Busca a lista de cursos cadastrados no backend (/api/cursos)
+ * e gera dinamicamente os cards no container HTML (#cursos-container).
+ */
+
+function formatarDuracao(intervalo) {
+  if (!intervalo) return 'N/A';
+  if (typeof intervalo === 'string') return intervalo;
+  const horas = intervalo.hours || 0;
+  const minutos = intervalo.minutes || 0;
+  return minutos > 0 ? `${horas}h ${minutos}min` : `${horas}h`;
+}
+
+async function carregarCursos() {
+    const containers = document.querySelectorAll('.cursos-dinamicos');
+    if (containers.length === 0) return;
+
+    try {
+        const response = await api.get('/cursos');
+        const cursos = response.data;
+
+        containers.forEach(container => {
+            container.innerHTML = '';
+            if (cursos.length === 0) {
+                container.innerHTML = '<p>Nenhum curso encontrado ainda.</p>';
+                return;
+            }
+            cursos.forEach(curso => {
+                const card = document.createElement('a');
+                card.href = `course.html?id=${curso.id_curso}`;
+                card.className = 'course-card';
+                card.innerHTML = `
+                    <div class="course-info">
+                        <div class="course-title">${curso.nome}</div>
+                        <div class="course-meta">
+                            <span>📚 ${curso.categoria}</span>
+                            <span>⏱️ ${formatarDuracao(curso.tempo)}</span>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        });
+
+    } catch (error) {
+        console.error('Erro ao carregar cursos:', error);
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    carregarPosts();
+    carregarCursos();
+});
+
+
+async function carregarAulas() {
+    const container = document.getElementById('aulas-container');
+    if (!container) return;
+
+    const params = new URLSearchParams(window.location.search);
+    const idCurso = params.get('id');
+    if (!idCurso) return;
+
+    try {
+        const response = await api.get(`/cursos/${idCurso}/aulas`);
+        const aulas = response.data;
+
+        container.innerHTML = '';
+        aulas.forEach((aula, index) => {
+            const card = document.createElement('div');
+            card.className = 'course-card';
+            card.innerHTML = `
+                <div class="course-info">
+                    <div class="course-title">${index + 1}. ${aula.nome}</div>
+                    <div class="course-meta"><span>⏱️ ${aula.duracao}</span></div>
+                </div>
+            `;
+            container.appendChild(card);
+        });
+    } catch (error) {
+        console.error('Erro ao carregar aulas:', error);
+    }
+}
+
+document.addEventListener('DOMContentLoaded', carregarAulas);
+
+
+async function carregarPlantas() {
+    const container = document.getElementById('plantas-container');
+    if (!container) return;
+
+    try {
+        const response = await api.get('/plantas');
+        const plantas = response.data;
+
+        container.innerHTML = '';
+        plantas.forEach(planta => {
+            const card = document.createElement('div');
+            card.className = 'stat-card';
+            card.style.cssText = 'text-align:left; padding:20px; cursor:pointer;';
+            card.innerHTML = `
+                <div style="font-weight:600; font-size:18px;">${planta.nome}</div>
+                <div class="stat-label">${planta.categoria ?? ''}</div>
+                <div>${planta.descricao ?? ''}</div>
+            `;
+            container.appendChild(card);
+        });
+    } catch (error) {
+        console.error('Erro ao carregar plantas:', error);
+    }
+}
+
+document.addEventListener('DOMContentLoaded', carregarPlantas);
+
+
+// ------------------------------------------------------------------------------
+// ATUALIZAÇÃO DO PERFIL COM DADOS DO USUÁRIO LOGADO
+// ------------------------------------------------------------------------------
+function carregarDadosPerfil() {
+  const nomeUsuario = localStorage.getItem('userNome');
+  
+  const elNome = document.getElementById('user-profile-name');
+  const elAvatar = document.getElementById('user-profile-avatar');
+
+  if (nomeUsuario) {
+    if (elNome) {
+      elNome.innerText = nomeUsuario;
+    }
+    if (elAvatar) {
+      // Pega a primeira letra do nome e coloca em maiúscula para o avatar
+      elAvatar.innerText = nomeUsuario.charAt(0).toUpperCase();
+    }
+  }
+}
+
+document.addEventListener('DOMContentLoaded', carregarDadosPerfil);
+
+document.addEventListener('DOMContentLoaded', () => {
+  const nomeUsuario = localStorage.getItem('userNome');
+  const elementoNome = document.getElementById('user-name-display');
+
+  if (nomeUsuario && elementoNome) {
+    elementoNome.innerText = nomeUsuario;
+  }
+});

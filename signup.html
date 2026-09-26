@@ -33,12 +33,17 @@
             </div>
 
                         <!-- Formulário desta tela. A submissão é tratada via JavaScript (ver atributo onsubmit) em js/roteiro.js -->
-<form action="consumidor/home.html" method="get" onsubmit="localStorage.setItem('isLoggedIn', 'true');">
+<form id="signup-form" onsubmit="handleSignup(event)">
                 <div class="form-group">
                     <label for="signup-name">Nome Completo</label>
                     <input type="text" id="signup-name" placeholder="Seu nome" required>
                 </div>
 
+                <div class="form-group">
+                    <label for="signup-cpf">CPF</label>
+                    <input type="text" id="signup-cpf" placeholder="Somente números" maxlength="11" required>
+                </div>
+                
                 <div class="form-group">
                     <label for="signup-email">E-mail</label>
                     <input type="email" id="signup-email" placeholder="seu@email.com" required>
@@ -60,6 +65,7 @@
     </div>
 
         <!-- Lógica compartilhada: login/redirecionamento por perfil, curtidas, FAQ, gráfico de ganhos, navegação ativa etc. -->
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script src="js/roteiro.js"></script>
 </body>
 </html>
