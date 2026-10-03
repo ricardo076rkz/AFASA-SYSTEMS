@@ -1,6 +1,6 @@
 ## Olá seja bem-vindo ao nosso projeto👋
 
-- 🔭 Desenvolvendo com html, css e js
+- 🔭 Desenvolvendo com html, css, Js, Json, Node e Sql
 - 🤔 Criando projeto de rumo alimentar
 - 💬 Projeto em andamento da Faculdade Nova Roma Caruaru
 - 👥 Participantes  Ricardo, Rafael, Marcos, Jõao e Leticia
