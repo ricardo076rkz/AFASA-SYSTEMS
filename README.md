@@ -6,10 +6,12 @@
 - 👥 Participantes  Ricardo, Rafael, Marcos, Jõao e Leticia
 
 ## Tecnologias ultilizadas
-- 👨‍💻 Html Css JS
+- 👨‍💻 Html Css JS Json Node Sql
 - 💻 Web Front-end Html Css
-- 💻 Web Back-end Html Css JS
-- 📝 Jira Miro Gemini
+- 💻 Web Back-end JS Json Sql
+- 📝 Jira Miro Gemini Github Git
+- 🐘 PostgreSQL
+  
 
 ## Funcionalidades
 - Aba Bem-vindo tendo, Consumidor Profissional e curador
@@ -44,6 +46,9 @@
 - HTML5
 - CSS3
 - JavaScript
+- Json
+- Sql
+- Node
 
 🚀 Funcionalidades Principais
 
