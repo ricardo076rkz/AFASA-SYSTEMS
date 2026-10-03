@@ -3,7 +3,7 @@
 - 🔭 Desenvolvendo com html, css e js
 - 🤔 Criando projeto de rumo alimentar
 - 💬 Projeto em andamento da Faculdade Nova Roma Caruaru
-- 👥 Participantes  Ricardo, Rafael, Marcos, Jõao e Giseli
+- 👥 Participantes  Ricardo, Rafael, Marcos, Jõao e Leticia
 
 ## Tecnologias ultilizadas
 - 👨‍💻 Html Css JS
