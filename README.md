@@ -37,6 +37,7 @@
 
 ## Protótipo
  - Siga esse link para o nosso protótipo
+ - Plataforma que usamos para hospedar o site (https://vercel.com)
  - [Clique aqui para ver o protótipo rodando](https://afasa-systems.vercel.app/signup.html)
 
 ## 📚 Tecnologias Utilizadas
