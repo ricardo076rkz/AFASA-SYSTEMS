@@ -30,7 +30,7 @@
 ## Perfil Curador
 - Pendentes e Revisados
 - Aprovação de receita
-- Regeitar receirta
+- Regeitar receita
 - Visualização de " Aprovados hoje, Com problemas, Taxa de Aprovação, Aguardando Revisão "
 
  ## Perfil Profissional
