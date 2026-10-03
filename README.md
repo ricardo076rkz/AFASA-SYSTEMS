@@ -9,7 +9,7 @@
 - 👨‍💻 Html Css JS Json Node Sql
 - 💻 Web Front-end Html Css
 - 💻 Web Back-end JS Json Sql
-- 📝 Jira Miro Gemini Github Git
+- 📝 Jira Miro Gemini Claude ChatGpt Github Git
 - 🐘 PostgreSQL
   
 
