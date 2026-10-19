@@ -200,10 +200,10 @@ function toggleLike(button) {
 async function createPost(e) {
     e.preventDefault();
     const conteudo = document.getElementById('post-descricao').value;
-    const idPerfil = localStorage.getItem('userIdPerfil');
+    // (o servidor agora descobre o perfil pelo token; não precisamos mais mandar o id)
 
     try {
-        await api.post('/posts', { conteudo, id_perfil: idPerfil });
+        await api.post('/posts', { conteudo });
         alert('Post publicado com sucesso! 🎉');
         window.location.href = 'community.html';
     } catch (error) {
@@ -332,8 +332,9 @@ async function handleLogin(event) {
 
     try {
         const response = await api.post('/login', { email, senha });
-        const { usuario, role } = response.data;
+        const { usuario, role, token } = response.data;
 
+        localStorage.setItem('token', token);
         localStorage.setItem('isLoggedIn', 'true');
         localStorage.setItem('userProfile', role);
         localStorage.setItem('userNome', usuario.nome);
@@ -354,8 +355,12 @@ async function handleLogin(event) {
     }
 }
 
-function handleLogout() {
+async function handleLogout() {
     try {
+        // Avisa o servidor para revogar a sessão no banco (se falhar, sai mesmo assim).
+        try { await api.post('/logout'); } catch (e) { /* token já expirado ou servidor fora */ }
+
+        localStorage.removeItem('token');
         localStorage.removeItem('isLoggedIn');
         localStorage.removeItem('userProfile');
         // [Correção pós-reorganização] Chamada a partir de curador/ ou profissional/,
@@ -448,6 +453,15 @@ console.log('Script.js loaded successfully');
 // 1) Instância do Axios já configurada com o endereço base da API.
 const api = axios.create({
     baseURL: 'http://localhost:3000/api'
+});
+
+// Interceptor: antes de CADA requisição, anexa o token (se existir) no cabeçalho Authorization.
+api.interceptors.request.use((config) => {
+    const token = localStorage.getItem('token');
+    if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
 });
 
 // 2) Busca os posts no backend e desenha os cards na tela.
