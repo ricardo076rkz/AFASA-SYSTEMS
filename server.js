@@ -1,10 +1,55 @@
+require('dotenv').config();
 const pool = require('./config/db');
 const express = require('express');
 const cors = require('cors');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+const crypto = require('crypto');
+
+// O segredo assina os tokens. Quem souber esse valor consegue fabricar tokens falsos,
+// por isso ele fica no .env (que NÃO vai pro GitHub) e nunca no código.
+const JWT_SECRET = process.env.JWT_SECRET;
+if (!JWT_SECRET) {
+    console.error('Defina JWT_SECRET no arquivo .env antes de iniciar o servidor.');
+    process.exit(1);
+}
+const JWT_EXPIRA = '2h';
 
 const app = express();
 app.use(cors());
 app.use(express.json());
+
+// Middleware: roda ANTES da rota e decide se a requisição pode seguir.
+async function verificarToken(req, res, next) {
+    const [tipo, token] = (req.headers.authorization || '').split(' ');
+    if (tipo !== 'Bearer' || !token) {
+        return res.status(401).json({ status: 'erro', mensagem: 'Token ausente.' });
+    }
+
+    try {
+        // 1) A assinatura confere e o token não expirou? (lança erro se não)
+        const payload = jwt.verify(token, JWT_SECRET);
+
+        // 2) A sessão ainda existe no banco e não foi encerrada?
+        const sessao = await pool.query(
+            'SELECT 1 FROM sessao WHERE jti = $1 AND revogado = FALSE AND expira_em > NOW()',
+            [payload.jti]
+        );
+        if (sessao.rowCount === 0) {
+            return res.status(401).json({ status: 'erro', mensagem: 'Sessão encerrada ou expirada.' });
+        }
+
+        req.usuario = {
+            id: payload.idUsuario,
+            idPerfil: payload.idPerfil,
+            role: payload.role,
+            jti: payload.jti
+        };
+        next();
+    } catch (erro) {
+        return res.status(401).json({ status: 'erro', mensagem: 'Token inválido ou expirado.' });
+    }
+}
 
 app.get('/api/teste', async (req, res) => {
     try {
@@ -80,13 +125,16 @@ app.post('/api/cadastro', async (req, res) => {
         return res.status(400).json({ status: 'erro', mensagem: 'Todos os campos são obrigatórios.' });
     }
 
+    // Nunca guardamos a senha em texto puro: guardamos só o hash (10 = custo do cálculo).
+    const senhaHash = await bcrypt.hash(senha, 10);
+
     const client = await pool.connect(); // pega UMA conexão exclusiva do pool
     try {
         await client.query('BEGIN'); // inicia a transação
 
         const resultadoUsuario = await client.query(
             'INSERT INTO usuario (cpf, nome, email, senha) VALUES ($1, $2, $3, $4) RETURNING id_usuario',
-            [cpf, nome, email, senha]
+            [cpf, nome, email, senhaHash]
         );
         const idUsuario = resultadoUsuario.rows[0].id_usuario;
 
@@ -152,7 +200,9 @@ app.post('/api/login', async (req, res) => {
 
         const usuario = resultado.rows[0];
 
-        if (usuario.senha !== senha) {
+        // compare() refaz o hash da senha digitada e confere com o hash guardado no banco.
+        const senhaCorreta = await bcrypt.compare(senha, usuario.senha);
+        if (!senhaCorreta) {
             return res.status(401).json({ status: 'erro', mensagem: 'E-mail ou senha inválidos.' });
         }
 
@@ -160,8 +210,23 @@ app.post('/api/login', async (req, res) => {
         if (usuario.id_curador) role = 'curator';
         else if (usuario.id_profissional) role = 'professional';
 
+        // jti = identificador único deste token. É ele que guardamos na tabela "sessao".
+        const jti = crypto.randomUUID();
+        const token = jwt.sign(
+            { idUsuario: usuario.id_usuario, idPerfil: usuario.id_perfil, role },
+            JWT_SECRET,
+            { expiresIn: JWT_EXPIRA, jwtid: jti }
+        );
+        const { exp } = jwt.decode(token); // exp vem em segundos desde 1970
+
+        await pool.query(
+            'INSERT INTO sessao (jti, id_usuario, expira_em) VALUES ($1, $2, to_timestamp($3))',
+            [jti, usuario.id_usuario, exp]
+        );
+
         res.status(200).json({
             status: 'sucesso',
+            token,
             usuario: { id: usuario.id_usuario, nome: usuario.nome, email: usuario.email, idPerfil: usuario.id_perfil },
             role: role
         });
@@ -169,6 +234,19 @@ app.post('/api/login', async (req, res) => {
     } catch (erro) {
         console.error('Erro no login:', erro);
         res.status(500).json({ status: 'erro', mensagem: 'Não foi possível processar o login.' });
+    }
+});
+
+
+// Logout de verdade: marca a sessão como revogada no banco.
+// Mesmo que alguém ainda tenha o token, o middleware vai recusar.
+app.post('/api/logout', verificarToken, async (req, res) => {
+    try {
+        await pool.query('UPDATE sessao SET revogado = TRUE WHERE jti = $1', [req.usuario.jti]);
+        res.status(200).json({ status: 'sucesso', mensagem: 'Sessão encerrada.' });
+    } catch (erro) {
+        console.error('Erro no logout:', erro);
+        res.status(500).json({ status: 'erro', mensagem: 'Não foi possível encerrar a sessão.' });
     }
 });
 
@@ -200,11 +278,13 @@ app.get('/api/cursos/:id/aulas', async (req, res) => {
 
 
 
-app.post('/api/posts', async (req, res) => {
-    const { conteudo, id_perfil } = req.body;
+app.post('/api/posts', verificarToken, async (req, res) => {
+    const { conteudo } = req.body;
+    // O perfil vem do TOKEN (confiável), não do corpo da requisição (o cliente pode mentir).
+    const id_perfil = req.usuario.idPerfil;
 
-    if (!conteudo || !id_perfil) {
-        return res.status(400).json({ status: 'erro', mensagem: 'Conteúdo e perfil são obrigatórios.' });
+    if (!conteudo) {
+        return res.status(400).json({ status: 'erro', mensagem: 'O conteúdo é obrigatório.' });
     }
 
     try {
