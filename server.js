@@ -302,7 +302,21 @@ app.post('/api/posts', verificarToken, async (req, res) => {
 
 
 
-const PORTA = 3000;
+
+
+
+// abaixo é como conectar localmente, descomente e apague o Render para voltar
+const PORTA = process.env.PORT || 3000;
 app.listen(PORTA, () => {
-    console.log(`Servidor rodando em http://localhost:${PORTA}`);
+    // Agora o console.log se adapta dinamicamente!
+    if (process.env.PORT) {
+        console.log(`Servidor rodando em produção na URL oficial!`);
+    } else {
+        console.log(`Servidor rodando localmente em http://localhost:${PORTA}`);
+    }
 });
+
+
+// app.listen(PORTA, () => {
+//     console.log(`Servidor rodando em http://localhost:${PORTA}`);
+// });
