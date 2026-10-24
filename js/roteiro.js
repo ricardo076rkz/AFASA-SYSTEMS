@@ -451,8 +451,12 @@ console.log('Script.js loaded successfully');
 // ====================================================
 
 // 1) Instância do Axios já configurada com o endereço base da API.
+const ESTA_LOCAL = ['localhost', '127.0.0.1'].includes(window.location.hostname);
+
 const api = axios.create({
-    baseURL: 'https://afasa-systems.onrender.com/api'
+    baseURL: ESTA_LOCAL
+        ? 'http://localhost:3000/api'
+        : 'https://afasa-systems.onrender.com/api'
 });
 
 // Interceptor: antes de CADA requisição, anexa o token (se existir) no cabeçalho Authorization.

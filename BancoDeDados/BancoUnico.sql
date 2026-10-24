@@ -385,6 +385,11 @@ UPDATE usuario
 SET senha = crypt(senha, gen_salt('bf', 10))
 WHERE senha NOT LIKE '$2%';
 
+-- TESTE RENDER ****
+
+SELECT COUNT(*) FROM usuario;
+SELECT COUNT(*) FROM post;
+SELECT LEFT(senha, 4) FROM usuario LIMIT 3;
 
 -- ============================================================
 -- CONSULTAS DE EXEMPLO (deixadas comentadas de propósito).
