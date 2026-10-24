@@ -316,7 +316,6 @@ app.listen(PORTA, () => {
     }
 });
 
-
 // app.listen(PORTA, () => {
 //     console.log(`Servidor rodando em http://localhost:${PORTA}`);
 // });
