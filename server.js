@@ -116,6 +116,20 @@ app.get('/api/cursos', async (req, res) => {
     }
 });
 
+app.get('/api/categorias', async (req, res) => {
+    try {
+        const resultado = await pool.query(
+            'SELECT id_categoria, nome AS nome_categoria FROM categoria_curso ORDER BY nome'
+        );
+        res.status(200).json(resultado.rows);
+    } catch (erro) {
+        console.error('Erro ao buscar categorias:', erro);
+        res.status(500).json({
+            status: 'erro',
+            mensagem: 'Não foi possivel buscar categorias.'
+        });
+    }
+});
 
 app.post('/api/cadastro', async (req, res) => {
     const { nome, email, senha, cpf } = req.body;
@@ -306,15 +320,24 @@ app.post('/api/cursos', verificarToken, async (req, res) => {
     }
 
     const { nome, descricao, tempo, id_categoria } = req.body;
+    const id_perfil = req.usuario.idPerfil;
 
     if (!nome || !id_categoria) {
         return res.status(400).json({ status: 'erro', mensagem: 'Nome e categoria são obrigatórios.' });
     }
 
+    if (nome.length > 40) {
+        return res.status(400).json({ status: 'erro', mensagem: 'O nome deve ter no máximo 40 caracteres.' });
+    }
+
+    if (descricao && descricao.length > 300) {
+        return res.status(400).json({ status: 'erro', mensagem: 'A descrição deve ter no máximo 300 caracteres.' });
+    }
+
     try {
         const resultado = await pool.query(
-            'INSERT INTO curso (nome, descricao, tempo, id_categoria) VALUES ($1, $2, $3, $4) RETURNING id_curso',
-            [nome, descricao || null, tempo || null, id_categoria]
+            'INSERT INTO curso (nome, descricao, tempo, id_categoria, id_perfil) VALUES ($1, $2, $3, $4, $5) RETURNING id_curso',
+            [nome, descricao || null, tempo || null, id_categoria, id_perfil]
         );
         res.status(201).json({ status: 'sucesso', id_curso: resultado.rows[0].id_curso });
     } catch (erro) {

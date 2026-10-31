@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+
+<!-- essa página faz: Layout do formulário de receita (ainda sem endpoint/tabela definidos). -->
+
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Criar Receita - AFASA SYSTEMS</title>
+    <link rel="stylesheet" href="../css/principal.css">
+</head>
+
+<body>
+    <div class="header">
+        <div class="header-content container">
+            <a href="profissional-dashboard.html" class="back-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+                </svg>
+                Voltar
+            </a>
+            <a href="profissional-dashboard.html" class="header-logo">
+                <img class="logo" src="../imagens/logo.png" alt="Logo">
+            </a>
+        </div>
+    </div>
+
+    <div class="container">
+        <div style="padding: 24px 20px 100px;">
+            <h1 style="font-size: 28px; margin-bottom: 8px;">🍽️ Criar Receita</h1>
+            <p style="color: var(--gray-light); margin-bottom: 32px;">Compartilhe uma receita sustentável</p>
+            <form onsubmit="criarReceita(event)">
+                <div class="form-group">
+                    <label>Descrição</label>
+                    <textarea id="receita-descricao" placeholder="Escreva a receita..." rows="6" required></textarea>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 24px;">
+                    <a href="profissional-dashboard.html" class="btn"
+                        style="background: var(--zinc-900); color: var(--white); text-align: center; text-decoration: none; display: flex; align-items: center; justify-content: center;">CANCELAR</a>
+                    <button type="submit" id="btn-publicar-receita" class="btn btn-primary">📤 PUBLICAR</button>
+                </div>
+            </form>
+            </button>
+        </div>
+        </form>
+    </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="../js/roteiro.js"></script>
+</body>
+
+</html>

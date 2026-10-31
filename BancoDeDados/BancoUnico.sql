@@ -84,9 +84,14 @@ CREATE TABLE IF NOT EXISTS curso (
     descricao TEXT,
     tempo INTERVAL,
     id_categoria INT NOT NULL,
+    id_perfil INT,
     CONSTRAINT fk_cat_curso
         FOREIGN KEY (id_categoria)
-        REFERENCES categoria_curso(id_categoria)
+        REFERENCES categoria_curso(id_categoria),
+    CONSTRAINT fk_perfil_curso
+        FOREIGN KEY (id_perfil)
+        REFERENCES perfil(id_perfil)
+        ON DELETE SET NULL
 );
 
 CREATE TABLE IF NOT EXISTS aula (
@@ -214,6 +219,13 @@ CREATE TABLE IF NOT EXISTS curador_curso (
         ON DELETE CASCADE
 );
 
+
+INSERT INTO categoria_curso (nome)
+SELECT v.nome
+FROM (VALUES ('Horta em Casa'), ('Compostagem'), ('Culinária Sustentável')) AS v(nome)
+WHERE NOT EXISTS (SELECT 1 FROM categoria_curso c WHERE c.nome = v.nome);
+
+SELECT * FROM categoria_curso ORDER BY id_categoria;
 
 -- ******************** TABELA DE SESSÕES (login com token JWT)
 -- Cada login gera uma linha aqui. É onde o token "aparece" no banco.

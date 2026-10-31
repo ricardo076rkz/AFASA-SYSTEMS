@@ -212,6 +212,93 @@ async function createPost(e) {
     }
 }
 
+// Carregar categorias no <select> da tela de criar curso (GET /api/categorias)
+async function carregarCategorias() {
+    const select = document.getElementById('curso-categoria');
+    if (!select) return;
+
+    try {
+        const response = await api.get('/categorias');
+        response.data.forEach(cat => {
+            const option = document.createElement('option');
+            option.value = cat.id_categoria;
+            option.textContent = cat.nome_categoria;
+            select.appendChild(option);
+        });
+    } catch (error) {
+        console.error('Erro ao carregar categorias:', error);
+        alert('Não foi possível carregar as categorias.');
+    }
+}
+
+// Create Curso (POST /api/cursos) - só profissional
+async function criarCurso(e) {
+    e.preventDefault();
+    const botao = document.getElementById('btn-criar-curso');
+    const nome = document.getElementById('curso-nome').value.trim();
+    const descricao = document.getElementById('curso-descricao').value.trim();
+    const horas = document.getElementById('curso-tempo').value;
+    const id_categoria = document.getElementById('curso-categoria').value;
+
+    botao.disabled = true;
+    botao.textContent = '⏳ SALVANDO...';
+
+    try {
+        // O token vai sozinho no cabeçalho (interceptor do api). O papel é conferido no servidor.
+        await api.post('/cursos', {
+            nome,
+            descricao,
+            tempo: horas ? `${horas} hours` : null,
+            id_categoria
+        });
+        alert('Curso criado com sucesso! 🎉');
+        window.location.href = 'profissional-dashboard.html';
+    } catch (error) {
+        console.error('Erro ao criar curso:', error);
+        if (error.response && error.response.status === 401) {
+            alert('Sessão expirada. Faça login novamente.');
+            window.location.href = '../login.html';
+            return;
+        }
+        const mensagem = (error.response && error.response.data && error.response.data.mensagem)
+            || 'Não foi possível criar o curso.';
+        alert(mensagem);
+        botao.disabled = false;
+        botao.textContent = '✅ CRIAR CURSO';
+    }
+}
+
+// Create Receita: publica como post (POST /api/posts), o mesmo que o createPost usa
+async function criarReceita(e) {
+    e.preventDefault();
+    const botao = document.getElementById('btn-publicar-receita');
+    const conteudo = document.getElementById('receita-descricao').value.trim();
+
+    if (!conteudo) {
+        alert('Escreva a receita antes de publicar.');
+        return;
+    }
+
+    botao.disabled = true;
+    botao.textContent = '⏳ PUBLICANDO...';
+
+    try {
+        await api.post('/posts', { conteudo });
+        alert('Receita publicada com sucesso! 🍽️');
+        window.location.href = 'profissional-dashboard.html';
+    } catch (error) {
+        console.error('Erro ao publicar receita:', error);
+        if (error.response && error.response.status === 401) {
+            alert('Sessão expirada. Faça login novamente.');
+            window.location.href = '../login.html';
+            return;
+        }
+        alert('Não foi possível publicar a receita.');
+        botao.disabled = false;
+        botao.textContent = '📤 PUBLICAR';
+    }
+}
+
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', function () {
     try {
@@ -265,6 +352,8 @@ window.toggleFAQ = toggleFAQ;
 window.filterPosts = filterPosts;
 window.toggleLike = toggleLike;
 window.createPost = createPost;
+window.criarCurso = criarCurso;
+window.criarReceita = criarReceita;
 
 // ✅ NOVO: Profile Selection Functions
 let selectedUserProfile = 'consumer'; // Estado global do perfil selecionado
@@ -522,11 +611,11 @@ async function carregarPosts() {
  */
 
 function formatarDuracao(intervalo) {
-  if (!intervalo) return 'N/A';
-  if (typeof intervalo === 'string') return intervalo;
-  const horas = intervalo.hours || 0;
-  const minutos = intervalo.minutes || 0;
-  return minutos > 0 ? `${horas}h ${minutos}min` : `${horas}h`;
+    if (!intervalo) return 'N/A';
+    if (typeof intervalo === 'string') return intervalo;
+    const horas = intervalo.hours || 0;
+    const minutos = intervalo.minutes || 0;
+    return minutos > 0 ? `${horas}h ${minutos}min` : `${horas}h`;
 }
 
 async function carregarCursos() {
@@ -568,6 +657,7 @@ async function carregarCursos() {
 document.addEventListener('DOMContentLoaded', () => {
     carregarPosts();
     carregarCursos();
+    carregarCategorias();
 });
 
 
@@ -635,31 +725,31 @@ document.addEventListener('DOMContentLoaded', carregarPlantas);
 // ATUALIZAÇÃO DO PERFIL COM DADOS DO USUÁRIO LOGADO
 // ------------------------------------------------------------------------------
 function carregarDadosPerfil() {
-  const nomeUsuario = localStorage.getItem('userNome');
-  
-  const elNome = document.getElementById('user-profile-name');
-  const elAvatar = document.getElementById('user-profile-avatar');
+    const nomeUsuario = localStorage.getItem('userNome');
 
-  if (nomeUsuario) {
-    if (elNome) {
-      elNome.innerText = nomeUsuario;
+    const elNome = document.getElementById('user-profile-name');
+    const elAvatar = document.getElementById('user-profile-avatar');
+
+    if (nomeUsuario) {
+        if (elNome) {
+            elNome.innerText = nomeUsuario;
+        }
+        if (elAvatar) {
+            // Pega a primeira letra do nome e coloca em maiúscula para o avatar
+            elAvatar.innerText = nomeUsuario.charAt(0).toUpperCase();
+        }
     }
-    if (elAvatar) {
-      // Pega a primeira letra do nome e coloca em maiúscula para o avatar
-      elAvatar.innerText = nomeUsuario.charAt(0).toUpperCase();
-    }
-  }
 }
 
 document.addEventListener('DOMContentLoaded', carregarDadosPerfil);
 
 document.addEventListener('DOMContentLoaded', () => {
-  const nomeUsuario = localStorage.getItem('userNome');
-  const elementoNome = document.getElementById('user-name-display');
+    const nomeUsuario = localStorage.getItem('userNome');
+    const elementoNome = document.getElementById('user-name-display');
 
-  if (nomeUsuario && elementoNome) {
-    elementoNome.innerText = nomeUsuario;
-  }
+    if (nomeUsuario && elementoNome) {
+        elementoNome.innerText = nomeUsuario;
+    }
 });
 // === Lógica do Modal de Recuperação de Senha ===
 
