@@ -4,10 +4,17 @@
 -- É seguro rodar mais de uma vez: as tabelas só são criadas se não
 -- existirem e os dados de teste só entram se a tabela usuario estiver vazia.
 -- ============================================================
+INSERT INTO profissional (id_perfil)
+SELECT p.id_perfil FROM perfil p
+JOIN usuario u ON u.id_usuario = p.id_usuario
+WHERE u.email = 'poco@poco.com';
 
-
+-- Tornar outra conta CURADORA
+INSERT INTO curador (id_perfil)
+SELECT p.id_perfil FROM perfil p
+JOIN usuario u ON u.id_usuario = p.id_usuario
+WHERE u.email = 'teste@teste.com';
 -- ******************** TABELAS
-
 CREATE TABLE IF NOT EXISTS usuario (
     id_usuario INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     cpf VARCHAR(11) NOT NULL UNIQUE,
@@ -64,6 +71,7 @@ CREATE TABLE IF NOT EXISTS post (
         REFERENCES perfil(id_perfil)
         ON DELETE CASCADE
 );
+
 
 CREATE TABLE IF NOT EXISTS categoria_curso (
     id_categoria INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,

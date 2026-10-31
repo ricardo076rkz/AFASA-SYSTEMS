@@ -299,6 +299,35 @@ app.post('/api/posts', verificarToken, async (req, res) => {
     }
 });
 
+app.post('/api/cursos', verificarToken, async (req, res) => {
+    // Só profissionais criam cursos. O papel vem do TOKEN, não do corpo.
+    if (req.usuario.role !== 'professional') {
+        return res.status(403).json({ status: 'erro', mensagem: 'Apenas profissionais podem criar cursos.' });
+    }
+
+    const { nome, descricao, tempo, id_categoria } = req.body;
+
+    if (!nome || !id_categoria) {
+        return res.status(400).json({ status: 'erro', mensagem: 'Nome e categoria são obrigatórios.' });
+    }
+
+    try {
+        const resultado = await pool.query(
+            'INSERT INTO curso (nome, descricao, tempo, id_categoria) VALUES ($1, $2, $3, $4) RETURNING id_curso',
+            [nome, descricao || null, tempo || null, id_categoria]
+        );
+        res.status(201).json({ status: 'sucesso', id_curso: resultado.rows[0].id_curso });
+    } catch (erro) {
+        console.error('Erro ao criar curso:', erro);
+        if (erro.code === '23503') {
+            return res.status(400).json({ status: 'erro', mensagem: 'Categoria inexistente.' });
+        }
+        if (erro.code === '22007' || erro.code === '22P02') {
+            return res.status(400).json({ status: 'erro', mensagem: 'Formato de tempo ou categoria inválido. Ex.: "10 hours".' });
+        }
+        res.status(500).json({ status: 'erro', mensagem: 'Não foi possível criar o curso.' });
+    }
+});
 
 
 
