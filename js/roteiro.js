@@ -661,3 +661,37 @@ document.addEventListener('DOMContentLoaded', () => {
     elementoNome.innerText = nomeUsuario;
   }
 });
+// === Lógica do Modal de Recuperação de Senha ===
+
+function openForgotModal() {
+    const modal = document.getElementById('forgot-modal');
+    if (modal) modal.classList.add('active');
+}
+
+function closeForgotModal() {
+    const modal = document.getElementById('forgot-modal');
+    if (modal) modal.classList.remove('active');
+}
+
+function closeForgotModalOnOverlay(event) {
+    if (event.target.classList.contains('modal-overlay')) {
+        closeForgotModal();
+    }
+}
+
+async function handleForgotPassword(event) {
+    event.preventDefault();
+    const email = document.getElementById('forgot-email').value;
+
+    try {
+        // Envio com Axios (descomente e substitua o endpoint correto da sua API):
+        // await axios.post('/api/auth/forgot-password', { email });
+
+        alert(`Instruções de redefinição enviadas com sucesso para: ${email}`);
+        document.getElementById('forgot-password-form').reset();
+        closeForgotModal();
+    } catch (error) {
+        console.error("Erro ao solicitar redefinição:", error);
+        alert("Ocorreu um erro ao enviar a solicitação. Tente novamente.");
+    }
+}
