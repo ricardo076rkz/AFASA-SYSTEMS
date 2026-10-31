@@ -2,15 +2,15 @@
 <!--
     [AFASA SYSTEMS] login.html
     Perfil: Auth (compartilhada)
-    O que esta página faz: Tela de login com seletor de tipo de conta (Consumidor / Profissional / Curador). O redirecionamento após o login é feito em js/roteiro.js, função handleLogin().
+    O que esta página faz: Tela de login com seletor de tipo de conta (Consumidor / Profissional / Curador).
 -->
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - AFASA SYSTEMS</title>
-        <!-- Carrega o CSS consolidado (main.css), que por sua vez importa base/ + components/ + o CSS específico deste perfil -->
-<link rel="stylesheet" href="css/principal.css">
+    <!-- Carrega o CSS consolidado da aplicação -->
+    <link rel="stylesheet" href="css/principal.css">
 </head>
 <body>
     <div style="min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 32px 24px;">
@@ -29,7 +29,7 @@
                 </p>
             </div>
 
-            <!-- ✅ NOVO: Seletor de Perfil -->
+            <!-- Seletor de Perfil -->
             <div class="profile-selector-container">
                 <label style="font-size: 14px; margin-bottom: 12px; display: block;">Tipo de Conta</label>
                 <div class="profile-selector">
@@ -58,12 +58,8 @@
                 <p id="profile-description" class="profile-description">Acesse cursos e aprenda</p>
             </div>
 
-                        <!-- Formulário desta tela. A submissão é tratada via JavaScript (ver atributo onsubmit) em js/roteiro.js -->
-<!-- Ao enviar, chama handleLogin() em js/roteiro.js, que salva o perfil escolhido no
-                 localStorage e redireciona: Curador -> curador/curador-dashboard.html,
-                 Profissional -> profissional/profissional-dashboard.html,
-                 Consumidor -> consumidor/home.html -->
-<form id="login-form" onsubmit="handleLogin(event)">
+            <!-- Formulário de Login -->
+            <form id="login-form" onsubmit="handleLogin(event)">
                 <div class="form-group">
                     <label for="login-email">E-mail</label>
                     <input type="email" id="login-email" placeholder="seu@email.com" required>
@@ -81,11 +77,37 @@
                     <a href="signup.html" class="link-btn">Criar Conta</a>
                 </div>
             </form>
+
+            <!-- Link acionador do Modal -->
+            <div style="text-align: center; margin-top: 16px;">
+                <a href="javascript:void(0)" onclick="openForgotModal()" class="link-btn">Esqueci minha senha</a>
+            </div>
         </div>
     </div>
 
-        <!-- Lógica compartilhada: login/redirecionamento por perfil, curtidas, FAQ, gráfico de ganhos, navegação ativa etc. -->
-<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-<script src="js/roteiro.js"></script>
+    <!-- Modal Esqueci Minha Senha -->
+    <div id="forgot-modal" class="modal-overlay" onclick="closeForgotModalOnOverlay(event)">
+        <div class="modal-content">
+            <button type="button" class="modal-close" onclick="closeForgotModal()">&times;</button>
+            
+            <h3 style="font-size: 22px; margin-bottom: 8px;">Recuperar Senha</h3>
+            <p style="color: var(--gray-light, #666); font-size: 14px; margin-bottom: 20px;">
+                Digite o seu e-mail para receber o link de redefinição de senha.
+            </p>
+
+            <form id="forgot-password-form" onsubmit="handleForgotPassword(event)">
+                <div class="form-group" style="margin-bottom: 16px;">
+                    <label for="forgot-email" style="display: block; margin-bottom: 6px; font-size: 14px;">E-mail</label>
+                    <input type="email" id="forgot-email" placeholder="seu@email.com" required style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #ccc; box-sizing: border-box;">
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width: 100%;">ENVIAR LINK</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Scripts da aplicação -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="js/roteiro.js"></script>
 </body>
-</html>
+</html>x
