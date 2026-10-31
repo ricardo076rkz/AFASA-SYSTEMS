@@ -5,36 +5,45 @@
     O que esta página faz: Painel do Profissional: conteúdos publicados, métricas de monetização e gráfico de ganhos.
 -->
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Painel Profissional - AFASA SYSTEMS</title>
-        <!-- Carrega o CSS consolidado (main.css), que por sua vez importa base/ + components/ + o CSS específico deste perfil -->
-<link rel="stylesheet" href="../css/principal.css">
+    <!-- Carrega o CSS consolidado (main.css), que por sua vez importa base/ + components/ + o CSS específico deste perfil -->
+    <link rel="stylesheet" href="../css/principal.css">
 </head>
+
 <body>
     <!-- Header -->
-        <!-- Cabeçalho do painel: título da tela + botão "Sair" -->
-<div class="dashboard-header">
+    <!-- Cabeçalho do painel: título da tela + botão "Sair" -->
+    <div class="dashboard-header">
         <div class="dashboard-header-content">
             <div class="dashboard-logo-section">
-                <img src="../imagens/logo.png" alt="AFASA SYSTEMS" style="width: 40px; height: 40px; border-radius: 8px; object-fit: contain;">
+                <img src="../imagens/logo.png" alt="AFASA SYSTEMS"
+                    style="width: 40px; height: 40px; border-radius: 8px; object-fit: contain;">
                 <div class="dashboard-title-group">
                     <h1>Painel Profissional</h1>
                     <p>Crie e monetize conteúdo</p>
                 </div>
             </div>
-            <button class="logout-btn" onclick="handleLogout()">Sair</button>
+            <div style="display: flex; align-items: center; gap: 16px;">
+                <a href="../consumidor/home.html" class="logout-btn" style="text-decoration: none;"
+                    title="Ir para a área do consumidor">Consumidor</a>
+                <button class="logout-btn" onclick="handleLogout()">Sair</button>
+            </div>
         </div>
     </div>
 
     <!-- Tabs -->
     <div class="tabs-container">
         <div class="tabs" id="professional-tabs">
-            <button class="tab-btn active-green" data-tab="content" data-color="green" onclick="switchTab('content', 'professional-tabs')">
+            <button class="tab-btn active-green" data-tab="content" data-color="green"
+                onclick="switchTab('content', 'professional-tabs')">
                 Meu Conteúdo
             </button>
-            <button class="tab-btn" data-tab="earnings" data-color="green" onclick="switchTab('earnings', 'professional-tabs')">
+            <button class="tab-btn" data-tab="earnings" data-color="green"
+                onclick="switchTab('earnings', 'professional-tabs')">
                 Ganhos
             </button>
         </div>
@@ -57,7 +66,9 @@
             <a href="criar-receita.html" class="create-action-card orange">
                 <div class="create-icon-circle orange">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M6 13.87A4 4 0 0 1 7.41 6a5.11 5.11 0 0 1 1.05-1.54 5 5 0 0 1 7.08 0A5.11 5.11 0 0 1 16.59 6 4 4 0 0 1 18 13.87V21H6Z"></path>
+                        <path
+                            d="M6 13.87A4 4 0 0 1 7.41 6a5.11 5.11 0 0 1 1.05-1.54 5 5 0 0 1 7.08 0A5.11 5.11 0 0 1 16.59 6 4 4 0 0 1 18 13.87V21H6Z">
+                        </path>
                         <line x1="6" y1="17" x2="18" y2="17"></line>
                     </svg>
                 </div>
@@ -69,14 +80,16 @@
         <!-- Monetization Info -->
         <div class="alert-box info">
             <div class="alert-content">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--green);">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    style="color: var(--green);">
                     <line x1="12" y1="1" x2="12" y2="23"></line>
                     <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
                 </svg>
                 <div>
                     <h4 class="alert-title" style="color: var(--white);">Como funciona a monetização?</h4>
                     <p style="font-size: 12px; color: var(--gray-light); margin: 0;">
-                        Você recebe <strong style="color: var(--green);">R$ 0,10</strong> por visualização após aprovação do curador. 
+                        Você recebe <strong style="color: var(--green);">R$ 0,10</strong> por visualização após
+                        aprovação do curador.
                         Conteúdo de qualidade = mais visualizações = mais receitas! 🚀
                     </p>
                 </div>
@@ -85,17 +98,22 @@
 
         <!-- Content List -->
         <h3 class="section-title">Meus Conteúdos</h3>
-        
+
         <!-- Conteúdo Aprovado 1 -->
         <div class="content-card">
             <div class="content-card-body">
                 <div style="display: flex; gap: 16px; margin-bottom: 12px;">
-                    <img src="https://images.unsplash.com/photo-1530836369250-ef72a3f5cda8?w=400&h=300&fit=crop" alt="Horta Orgânica" style="width: 112px; height: 112px; object-fit: cover; border-radius: 12px; flex-shrink: 0;">
+                    <img src="https://images.unsplash.com/photo-1530836369250-ef72a3f5cda8?w=400&h=300&fit=crop"
+                        alt="Horta Orgânica"
+                        style="width: 112px; height: 112px; object-fit: cover; border-radius: 12px; flex-shrink: 0;">
                     <div style="flex: 1;">
-                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+                        <div
+                            style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
                             <div>
                                 <h4 class="content-title" style="margin-bottom: 4px;">Horta Orgânica em Casa</h4>
-                                <span style="font-size: 12px; padding: 2px 8px; border-radius: 999px; background-color: rgba(59, 130, 246, 0.2); color: #3B82F6;">📚 Curso</span>
+                                <span
+                                    style="font-size: 12px; padding: 2px 8px; border-radius: 999px; background-color: rgba(59, 130, 246, 0.2); color: #3B82F6;">📚
+                                    Curso</span>
                             </div>
                             <span class="status-badge approved">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -122,12 +140,17 @@
         <div class="content-card">
             <div class="content-card-body">
                 <div style="display: flex; gap: 16px; margin-bottom: 12px;">
-                    <img src="https://images.unsplash.com/photo-1473093295043-cdd812d0e601?w=400&h=300&fit=crop" alt="Pesto" style="width: 112px; height: 112px; object-fit: cover; border-radius: 12px; flex-shrink: 0;">
+                    <img src="https://images.unsplash.com/photo-1473093295043-cdd812d0e601?w=400&h=300&fit=crop"
+                        alt="Pesto"
+                        style="width: 112px; height: 112px; object-fit: cover; border-radius: 12px; flex-shrink: 0;">
                     <div style="flex: 1;">
-                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+                        <div
+                            style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
                             <div>
                                 <h4 class="content-title" style="margin-bottom: 4px;">Pesto Caseiro de Manjericão</h4>
-                                <span style="font-size: 12px; padding: 2px 8px; border-radius: 999px; background-color: rgba(255, 140, 0, 0.2); color: var(--orange);">🍳 Receita</span>
+                                <span
+                                    style="font-size: 12px; padding: 2px 8px; border-radius: 999px; background-color: rgba(255, 140, 0, 0.2); color: var(--orange);">🍳
+                                    Receita</span>
                             </div>
                             <span class="status-badge approved">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -154,12 +177,17 @@
         <div class="content-card">
             <div class="content-card-body">
                 <div style="display: flex; gap: 16px; margin-bottom: 12px;">
-                    <img src="https://images.unsplash.com/photo-1625246333195-78d9c38ad649?w=400&h=300&fit=crop" alt="Compostagem" style="width: 112px; height: 112px; object-fit: cover; border-radius: 12px; flex-shrink: 0;">
+                    <img src="https://images.unsplash.com/photo-1625246333195-78d9c38ad649?w=400&h=300&fit=crop"
+                        alt="Compostagem"
+                        style="width: 112px; height: 112px; object-fit: cover; border-radius: 12px; flex-shrink: 0;">
                     <div style="flex: 1;">
-                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+                        <div
+                            style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
                             <div>
                                 <h4 class="content-title" style="margin-bottom: 4px;">Compostagem para Iniciantes</h4>
-                                <span style="font-size: 12px; padding: 2px 8px; border-radius: 999px; background-color: rgba(59, 130, 246, 0.2); color: #3B82F6;">📚 Curso</span>
+                                <span
+                                    style="font-size: 12px; padding: 2px 8px; border-radius: 999px; background-color: rgba(59, 130, 246, 0.2); color: #3B82F6;">📚
+                                    Curso</span>
                             </div>
                             <span class="status-badge pending">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -184,12 +212,17 @@
         <div class="content-card">
             <div class="content-card-body">
                 <div style="display: flex; gap: 16px; margin-bottom: 12px;">
-                    <img src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400&h=300&fit=crop" alt="Salada" style="width: 112px; height: 112px; object-fit: cover; border-radius: 12px; flex-shrink: 0;">
+                    <img src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400&h=300&fit=crop"
+                        alt="Salada"
+                        style="width: 112px; height: 112px; object-fit: cover; border-radius: 12px; flex-shrink: 0;">
                     <div style="flex: 1;">
-                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+                        <div
+                            style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
                             <div>
                                 <h4 class="content-title" style="margin-bottom: 4px;">Salada Verde Especial</h4>
-                                <span style="font-size: 12px; padding: 2px 8px; border-radius: 999px; background-color: rgba(255, 140, 0, 0.2); color: var(--orange);">🍳 Receita</span>
+                                <span
+                                    style="font-size: 12px; padding: 2px 8px; border-radius: 999px; background-color: rgba(255, 140, 0, 0.2); color: var(--orange);">🍳
+                                    Receita</span>
                             </div>
                             <span class="status-badge rejected">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -205,7 +238,8 @@
                                 <strong>Motivo da rejeição:</strong><br>
                                 Faltam fotos dos passos 3 e 5. Por favor, adicione imagens claras.
                             </p>
-                            <button class="btn" style="margin-top: 8px; padding: 8px 16px; background-color: var(--green); color: var(--white); font-size: 12px;">
+                            <button class="btn"
+                                style="margin-top: 8px; padding: 8px 16px; background-color: var(--green); color: var(--white); font-size: 12px;">
                                 → Editar e reenviar
                             </button>
                         </div>
@@ -234,7 +268,8 @@
             </div>
             <div class="stat-card">
                 <div class="stat-card-content">
-                    <svg class="stat-icon orange" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <svg class="stat-icon orange" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2">
                         <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
                         <circle cx="12" cy="12" r="3"></circle>
                     </svg>
@@ -258,7 +293,8 @@
             </div>
             <div class="stat-card">
                 <div class="stat-card-content">
-                    <svg class="stat-icon yellow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <svg class="stat-icon yellow" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2">
                         <circle cx="12" cy="12" r="10"></circle>
                         <polyline points="12 6 12 12 16 14"></polyline>
                     </svg>
@@ -322,7 +358,8 @@
             <h3 class="section-title">Melhor Desempenho</h3>
             <div class="performance-card">
                 <div class="performance-layout">
-                    <img src="https://images.unsplash.com/photo-1530836369250-ef72a3f5cda8?w=400&h=300&fit=crop" alt="Horta Orgânica" class="performance-thumbnail">
+                    <img src="https://images.unsplash.com/photo-1530836369250-ef72a3f5cda8?w=400&h=300&fit=crop"
+                        alt="Horta Orgânica" class="performance-thumbnail">
                     <div class="performance-info">
                         <h4 class="performance-title">Horta Orgânica em Casa</h4>
                         <p class="performance-stats">2.341 views • R$ 234,10</p>
@@ -338,8 +375,9 @@
         </div>
     </div>
 
-        <!-- Lógica compartilhada: login/redirecionamento por perfil, curtidas, FAQ, gráfico de ganhos, navegação ativa etc. -->
-<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-<script src="../js/roteiro.js"></script>
+    <!-- Lógica compartilhada: login/redirecionamento por perfil, curtidas, FAQ, gráfico de ganhos, navegação ativa etc. -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="../js/roteiro.js"></script>
 </body>
+
 </html>

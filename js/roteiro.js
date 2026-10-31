@@ -743,6 +743,16 @@ function carregarDadosPerfil() {
 
 document.addEventListener('DOMContentLoaded', carregarDadosPerfil);
 
+// Mostra o atalho "Voltar ao Painel" no perfil, só para quem logou como profissional
+function mostrarAtalhoPainel() {
+    const atalho = document.getElementById('atalho-painel');
+    if (atalho && localStorage.getItem('userProfile') === 'professional') {
+        atalho.style.display = 'block';
+    }
+}
+
+document.addEventListener('DOMContentLoaded', mostrarAtalhoPainel);
+
 document.addEventListener('DOMContentLoaded', () => {
     const nomeUsuario = localStorage.getItem('userNome');
     const elementoNome = document.getElementById('user-name-display');
