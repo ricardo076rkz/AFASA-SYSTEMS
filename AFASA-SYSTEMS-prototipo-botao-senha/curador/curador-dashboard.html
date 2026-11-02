@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<!--
+    [AFASA SYSTEMS] curador/curador-dashboard.html
+    Perfil: Curador
+    O que esta página faz: Painel do Curador: fila de conteúdos pendentes de revisão, com ações de Aprovar/Rejeitar.
+-->
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel do Curador - AFASA SYSTEMS</title>
+        <!-- Carrega o CSS consolidado (main.css), que por sua vez importa base/ + components/ + o CSS específico deste perfil -->
+<link rel="stylesheet" href="../css/principal.css">
+</head>
+<body>
+    <!-- Header -->
+        <!-- Cabeçalho do painel: título da tela + botão "Sair" -->
+<div class="dashboard-header">
+        <div class="dashboard-header-content">
+            <div class="dashboard-logo-section">
+                <img src="../imagens/logo.png" alt="AFASA SYSTEMS" style="width: 40px; height: 40px; border-radius: 8px; object-fit: contain;">
+                <div class="dashboard-title-group">
+                    <h1>Painel do Curador</h1>
+                    <p>Moderação de Conteúdo</p>
+                </div>
+            </div>
+            <button class="logout-btn" onclick="handleLogout()">Sair</button>
+        </div>
+    </div>
+
+    <!-- Stats Grid -->
+    <!-- Grade de indicadores/estatísticas rápidas no topo da tela -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-card-content">
+                <svg class="stat-icon orange" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+                <div>
+                    <div class="stat-value">12</div>
+                    <div class="stat-label">Aguardando Revisão</div>
+                </div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-card-content">
+                <svg class="stat-icon green" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                </svg>
+                <div>
+                    <div class="stat-value">8</div>
+                    <div class="stat-label">Aprovados Hoje</div>
+                </div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-card-content">
+                <svg class="stat-icon blue" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+                <div>
+                    <div class="stat-value">87%</div>
+                    <div class="stat-label">Taxa de Aprovação</div>
+                </div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-card-content">
+                <svg class="stat-icon red" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                </svg>
+                <div>
+                    <div class="stat-value">3</div>
+                    <div class="stat-label">Com Problemas</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs-container">
+        <div class="tabs" id="curator-tabs">
+            <button class="tab-btn active" data-tab="pending" onclick="switchTab('pending', 'curator-tabs')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+                Pendentes (3)
+            </button>
+            <button class="tab-btn" data-tab="reviewed" onclick="switchTab('reviewed', 'curator-tabs')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+                Revisados
+            </button>
+        </div>
+    </div>
+
+    <!-- Tab Content: Pendentes -->
+    <div class="content-section" data-tab-content="pending">
+        <!-- Conteúdo 1 -->
+        <div class="content-card">
+            <div class="content-card-header">
+                <div class="author-info">
+                    <img src="https://i.pravatar.cc/150?img=1" alt="Maria Silva" class="author-photo">
+                    <div class="author-details" style="flex: 1;">
+                        <h4>Maria Silva</h4>
+                        <p>Há 2 horas</p>
+                    </div>
+                    <span class="content-badge course">Curso</span>
+                </div>
+            </div>
+            <div class="content-card-body">
+                <img src="https://images.unsplash.com/photo-1592841200221-a6898f307baa?w=400&h=300&fit=crop" alt="Cultivo de Tomates" class="content-thumbnail">
+                <h3 class="content-title">Cultivo de Tomates em Vasos</h3>
+                <p class="content-description">Curso completo sobre como cultivar tomates em espaços pequenos usando vasos.</p>
+                <div class="content-meta">
+                    <span>📚 8 aulas</span>
+                    <span>⏱️ 2h 15min</span>
+                </div>
+                <!-- Botões de decisão do Curador: Aprovar libera o conteúdo publicamente,
+             Rejeitar deve vir acompanhado de um motivo (ver RN-004/RF-007 no DRS) -->
+                <div class="action-buttons">
+                    <button class="btn btn-reject" onclick="rejectContent(1)">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="15" y1="9" x2="9" y2="15"></line>
+                            <line x1="9" y1="9" x2="15" y2="15"></line>
+                        </svg>
+                        Rejeitar
+                    </button>
+                    <button class="btn btn-approve" onclick="approveContent(1)">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                            <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                        </svg>
+                        Aprovar
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Conteúdo 2 -->
+        <div class="content-card">
+            <div class="content-card-header">
+                <div class="author-info">
+                    <img src="https://i.pravatar.cc/150?img=12" alt="João Santos" class="author-photo">
+                    <div class="author-details" style="flex: 1;">
+                        <h4>João Santos</h4>
+                        <p>Há 5 horas</p>
+                    </div>
+                    <span class="content-badge recipe">Receita</span>
+                </div>
+            </div>
+            <div class="content-card-body">
+                <img src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400&h=300&fit=crop" alt="Salada" class="content-thumbnail">
+                <h3 class="content-title">Salada de Folhas da Horta</h3>
+                <p class="content-description">Receita saudável usando verduras frescas da horta caseira.</p>
+                <div class="content-meta">
+                    <span>📝 6 passos</span>
+                    <span>⏱️ 15 min</span>
+                </div>
+                <div class="alert-box error">
+                    <div class="alert-content">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="12" y1="8" x2="12" y2="12"></line>
+                            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                        </svg>
+                        <div>
+                            <p class="alert-title">Problemas Detectados:</p>
+                            <ul>
+                                <li>Falta foto do passo 3</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="action-buttons">
+                    <button class="btn btn-reject" onclick="rejectContent(2)">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="15" y1="9" x2="9" y2="15"></line>
+                            <line x1="9" y1="9" x2="15" y2="15"></line>
+                        </svg>
+                        Rejeitar
+                    </button>
+                    <button class="btn btn-approve" onclick="approveContent(2)">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                            <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                        </svg>
+                        Aprovar
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Conteúdo 3 -->
+        <div class="content-card">
+            <div class="content-card-header">
+                <div class="author-info">
+                    <img src="https://i.pravatar.cc/150?img=5" alt="Ana Costa" class="author-photo">
+                    <div class="author-details" style="flex: 1;">
+                        <h4>Ana Costa</h4>
+                        <p>Há 1 dia</p>
+                    </div>
+                    <span class="content-badge course">Curso</span>
+                </div>
+            </div>
+            <div class="content-card-body">
+                <img src="https://images.unsplash.com/photo-1625246333195-78d9c38ad649?w=400&h=300&fit=crop" alt="Composteira" class="content-thumbnail">
+                <h3 class="content-title">Composteira de Apartamento</h3>
+                <p class="content-description">Aprenda a fazer compostagem em apartamento sem cheiro.</p>
+                <div class="content-meta">
+                    <span>📚 5 aulas</span>
+                    <span>⏱️ 1h 30min</span>
+                </div>
+                <div class="alert-box warning">
+                    <div class="alert-content">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                            <line x1="12" y1="9" x2="12" y2="13"></line>
+                            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                        </svg>
+                        <div>
+                            <p style="margin: 0; font-size: 12px;">Vídeo da aula 2 com qualidade baixa</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="action-buttons">
+                    <button class="btn btn-reject" onclick="rejectContent(3)">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="15" y1="9" x2="9" y2="15"></line>
+                            <line x1="9" y1="9" x2="15" y2="15"></line>
+                        </svg>
+                        Rejeitar
+                    </button>
+                    <button class="btn btn-approve" onclick="approveContent(3)">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                            <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                        </svg>
+                        Aprovar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tab Content: Revisados -->
+    <div class="content-section" data-tab-content="reviewed" style="display: none;">
+        <div class="compact-content-card">
+            <div class="compact-content-layout">
+                <img src="https://images.unsplash.com/photo-1530836369250-ef72a3f5cda8?w=400&h=300&fit=crop" alt="Horta Vertical" class="compact-thumbnail">
+                <div class="compact-info">
+                    <div class="compact-header">
+                        <div>
+                            <h4 class="compact-title">Horta Vertical DIY</h4>
+                            <p class="compact-author">por Carlos Mendes</p>
+                        </div>
+                        <span class="status-badge approved">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                            Aprovado
+                        </span>
+                    </div>
+                    <p class="compact-date">Há 2 dias</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="compact-content-card">
+            <div class="compact-content-layout">
+                <img src="https://images.unsplash.com/photo-1473093295043-cdd812d0e601?w=400&h=300&fit=crop" alt="Pesto" class="compact-thumbnail">
+                <div class="compact-info">
+                    <div class="compact-header">
+                        <div>
+                            <h4 class="compact-title">Pesto de Manjericão Fresco</h4>
+                            <p class="compact-author">por Maria Silva</p>
+                        </div>
+                        <span class="status-badge approved">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                            Aprovado
+                        </span>
+                    </div>
+                    <p class="compact-date">Há 3 dias</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="compact-content-card">
+            <div class="compact-content-layout">
+                <img src="https://images.unsplash.com/photo-1466781783364-36c955e42a7f?w=400&h=300&fit=crop" alt="Plantas" class="compact-thumbnail">
+                <div class="compact-info">
+                    <div class="compact-header">
+                        <div>
+                            <h4 class="compact-title">Plantas Tóxicas para Pets</h4>
+                            <p class="compact-author">por João Santos</p>
+                        </div>
+                        <span class="status-badge rejected">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="18" y1="6" x2="6" y2="18"></line>
+                                <line x1="6" y1="6" x2="18" y2="18"></line>
+                            </svg>
+                            Rejeitado
+                        </span>
+                    </div>
+                    <p class="compact-date">Há 4 dias</p>
+                    <div class="alert-box error" style="margin-top: 8px;">
+                        <p style="margin: 0; font-size: 12px; color: #EF4444;">
+                            <strong>Motivo:</strong> Informações imprecisas sobre toxicidade. Necessita consulta com veterinário.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+        <!-- Lógica compartilhada: login/redirecionamento por perfil, curtidas, FAQ, gráfico de ganhos, navegação ativa etc. -->
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="../js/roteiro.js"></script>
+</body>
+</html>

@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<!--
+    [AFASA SYSTEMS] consumidor/plant-guide.html
+    Perfil: Consumidor
+    O que esta página faz: Catálogo/guia técnico de plantas e cultivos.
+-->
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guia de Plantas - AFASA SYSTEMS</title>
+        <!-- Carrega o CSS consolidado (main.css), que por sua vez importa base/ + components/ + o CSS específico deste perfil -->
+<link rel="stylesheet" href="../css/principal.css">
+</head>
+<body>
+        <!-- Cabeçalho da página: botão voltar (quando existe) + logo -->
+<div class="header">
+        <div class="header-content container">
+            <a href="home.html" class="back-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+                </svg>
+                Voltar
+            </a>
+            <a href="home.html" class="header-logo">
+                <img class="logo" src="../imagens/logo.png" alt="Logo">
+            </a>
+        </div>
+    </div>
+
+    <div class="container">
+        <div style="padding: 24px 20px 100px;">
+            <div style="text-align: center; margin-bottom: 32px;">
+                <div style="font-size: 64px; margin-bottom: 16px;">🌿</div>
+                <h1 style="font-size: 32px; margin-bottom: 12px;">Guia de Plantas</h1>
+                <p style="color: var(--gray-light); font-size: 16px;">Biblioteca completa com informações de cultivo</p>
+            </div>
+
+            <div class="course-grid" id="plantas-container">
+                <!-- Tomate -->
+                <div class="stat-card" style="text-align: left; padding: 20px; cursor: pointer;" onclick="showPlantDetails('tomate')">
+                    <div style="display: flex; justify-content: space-between; align-items: start;">
+                        <div>
+                            <div style="font-size: 32px; margin-bottom: 8px;">🍅</div>
+                            <div style="font-weight: 600; font-size: 18px; margin-bottom: 4px;">Tomate</div>
+                            <div class="stat-label" style="margin-bottom: 8px;">Solanum lycopersicum</div>
+                            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                                <span style="background: var(--orange); color: white; padding: 2px 8px; border-radius: 4px; font-size: 11px;">Médio</span>
+                                <span style="background: var(--green); color: white; padding: 2px 8px; border-radius: 4px; font-size: 11px;">60-80 dias</span>
+                            </div>
+                        </div>
+                        <div style="color: var(--gray);">→</div>
+                    </div>
+                </div>
+
+                <!-- Alface -->
+                <div class="stat-card" style="text-align: left; padding: 20px; cursor: pointer;" onclick="showPlantDetails('alface')">
+                    <div style="display: flex; justify-content: space-between; align-items: start;">
+                        <div>
+                            <div style="font-size: 32px; margin-bottom: 8px;">🥬</div>
+                            <div style="font-weight: 600; font-size: 18px; margin-bottom: 4px;">Alface</div>
+                            <div class="stat-label" style="margin-bottom: 8px;">Lactuca sativa</div>
+                            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                                <span style="background: var(--green); color: white; padding: 2px 8px; border-radius: 4px; font-size: 11px;">Fácil</span>
+                                <span style="background: var(--green); color: white; padding: 2px 8px; border-radius: 4px; font-size: 11px;">40-50 dias</span>
+                            </div>
+                        </div>
+                        <div style="color: var(--gray);">→</div>
+                    </div>
+                </div>
+
+                <!-- Manjericão -->
+                <div class="stat-card" style="text-align: left; padding: 20px; cursor: pointer;" onclick="showPlantDetails('manjericao')">
+                    <div style="display: flex; justify-content: space-between; align-items: start;">
+                        <div>
+                            <div style="font-size: 32px; margin-bottom: 8px;">🌿</div>
+                            <div style="font-weight: 600; font-size: 18px; margin-bottom: 4px;">Manjericão</div>
+                            <div class="stat-label" style="margin-bottom: 8px;">Ocimum basilicum</div>
+                            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                                <span style="background: var(--green); color: white; padding: 2px 8px; border-radius: 4px; font-size: 11px;">Fácil</span>
+                                <span style="background: var(--green); color: white; padding: 2px 8px; border-radius: 4px; font-size: 11px;">30-40 dias</span>
+                            </div>
+                        </div>
+                        <div style="color: var(--gray);">→</div>
+                    </div>
+                </div>
+
+                <!-- Cebolinha -->
+                <div class="stat-card" style="text-align: left; padding: 20px; cursor: pointer;" onclick="showPlantDetails('cebolinha')">
+                    <div style="display: flex; justify-content: space-between; align-items: start;">
+                        <div>
+                            <div style="font-size: 32px; margin-bottom: 8px;">🌾</div>
+                            <div style="font-weight: 600; font-size: 18px; margin-bottom: 4px;">Cebolinha</div>
+                            <div class="stat-label" style="margin-bottom: 8px;">Allium schoenoprasum</div>
+                            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                                <span style="background: var(--green); color: white; padding: 2px 8px; border-radius: 4px; font-size: 11px;">Fácil</span>
+                                <span style="background: var(--green); color: white; padding: 2px 8px; border-radius: 4px; font-size: 11px;">60-70 dias</span>
+                            </div>
+                        </div>
+                        <div style="color: var(--gray);">→</div>
+                    </div>
+                </div>
+
+                <!-- Pimentão -->
+                <div class="stat-card" style="text-align: left; padding: 20px; cursor: pointer;" onclick="showPlantDetails('pimentao')">
+                    <div style="display: flex; justify-content: space-between; align-items: start;">
+                        <div>
+                            <div style="font-size: 32px; margin-bottom: 8px;">🫑</div>
+                            <div style="font-weight: 600; font-size: 18px; margin-bottom: 4px;">Pimentão</div>
+                            <div class="stat-label" style="margin-bottom: 8px;">Capsicum annuum</div>
+                            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                                <span style="background: var(--orange); color: white; padding: 2px 8px; border-radius: 4px; font-size: 11px;">Médio</span>
+                                <span style="background: var(--green); color: white; padding: 2px 8px; border-radius: 4px; font-size: 11px;">70-90 dias</span>
+                            </div>
+                        </div>
+                        <div style="color: var(--gray);">→</div>
+                    </div>
+                </div>
+
+                <!-- Coentro -->
+                <div class="stat-card" style="text-align: left; padding: 20px; cursor: pointer;" onclick="showPlantDetails('coentro')">
+                    <div style="display: flex; justify-content: space-between; align-items: start;">
+                        <div>
+                            <div style="font-size: 32px; margin-bottom: 8px;">🌱</div>
+                            <div style="font-weight: 600; font-size: 18px; margin-bottom: 4px;">Coentro</div>
+                            <div class="stat-label" style="margin-bottom: 8px;">Coriandrum sativum</div>
+                            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                                <span style="background: var(--green); color: white; padding: 2px 8px; border-radius: 4px; font-size: 11px;">Fácil</span>
+                                <span style="background: var(--green); color: white; padding: 2px 8px; border-radius: 4px; font-size: 11px;">40-50 dias</span>
+                            </div>
+                        </div>
+                        <div style="color: var(--gray);">→</div>
+                    </div>
+                </div>
+
+                <!-- Rúcula -->
+                <div class="stat-card" style="text-align: left; padding: 20px; cursor: pointer;" onclick="showPlantDetails('rucula')">
+                    <div style="display: flex; justify-content: space-between; align-items: start;">
+                        <div>
+                            <div style="font-size: 32px; margin-bottom: 8px;">🥗</div>
+                            <div style="font-weight: 600; font-size: 18px; margin-bottom: 4px;">Rúcula</div>
+                            <div class="stat-label" style="margin-bottom: 8px;">Eruca sativa</div>
+                            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                                <span style="background: var(--green); color: white; padding: 2px 8px; border-radius: 4px; font-size: 11px;">Fácil</span>
+                                <span style="background: var(--green); color: white; padding: 2px 8px; border-radius: 4px; font-size: 11px;">30-40 dias</span>
+                            </div>
+                        </div>
+                        <div style="color: var(--gray);">→</div>
+                    </div>
+                </div>
+
+                <!-- Hortelã -->
+                <div class="stat-card" style="text-align: left; padding: 20px; cursor: pointer;" onclick="showPlantDetails('hortela')">
+                    <div style="display: flex; justify-content: space-between; align-items: start;">
+                        <div>
+                            <div style="font-size: 32px; margin-bottom: 8px;">🍃</div>
+                            <div style="font-weight: 600; font-size: 18px; margin-bottom: 4px;">Hortelã</div>
+                            <div class="stat-label" style="margin-bottom: 8px;">Mentha</div>
+                            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                                <span style="background: var(--green); color: white; padding: 2px 8px; border-radius: 4px; font-size: 11px;">Fácil</span>
+                                <span style="background: var(--green); color: white; padding: 2px 8px; border-radius: 4px; font-size: 11px;">60-90 dias</span>
+                            </div>
+                        </div>
+                        <div style="color: var(--gray);">→</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Plant Details Modal -->
+    <div id="plant-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="plant-name">Planta</h2>
+                <button class="close-btn" onclick="closeModal('plant-modal')">×</button>
+            </div>
+            <div id="plant-details" style="max-height: 60vh; overflow-y: auto;">
+                <!-- Details will be inserted here -->
+            </div>
+        </div>
+    </div>
+
+        <!-- Barra de navegação inferior fixa, presente em todas as telas do perfil Consumidor -->
+<div class="bottom-nav">
+        <a href="home.html" class="nav-item">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
+            </svg>
+            <span>Home</span>
+        </a>
+        <a href="course.html" class="nav-item">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
+            </svg>
+            <span>Cursos</span>
+        </a>
+        <a href="community.html" class="nav-item">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" />
+            </svg>
+            <span>Comunidade</span>
+        </a>
+        <a href="about.html" class="nav-item">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
+            </svg>
+            <span>Informações</span>
+        </a>
+        <a href="profile.html" class="nav-item">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+            </svg>
+            <span>Perfil</span>
+        </a>
+    </div>
+
+        <!-- Lógica compartilhada: login/redirecionamento por perfil, curtidas, FAQ, gráfico de ganhos, navegação ativa etc. -->
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="../js/roteiro.js"></script>
+    <script>
+        const plantsData = {
+            tomate: {
+                emoji: '🍅',
+                name: 'Tomate',
+                scientific: 'Solanum lycopersicum',
+                difficulty: 'Médio',
+                harvest: '60-80 dias',
+                light: 'Sol pleno (6-8h/dia)',
+                water: 'Regular, solo úmido mas não encharcado',
+                soil: 'Rico em matéria orgânica, bem drenado',
+                tips: 'Use estacas para suporte. Retire brotos laterais. Adube a cada 15 dias.',
+                benefits: 'Rico em licopeno, vitaminas A e C. Antioxidante natural.'
+            },
+            alface: {
+                emoji: '🥬',
+                name: 'Alface',
+                scientific: 'Lactuca sativa',
+                difficulty: 'Fácil',
+                harvest: '40-50 dias',
+                light: 'Meia-sombra (4-6h/dia)',
+                water: 'Diária, evite molhar folhas',
+                soil: 'Leve, rico em húmus',
+                tips: 'Plante em clima ameno. Colha pela manhã. Faça plantios sucessivos.',
+                benefits: 'Baixa caloria, rica em fibras e vitaminas A, K.'
+            },
+            manjericao: {
+                emoji: '🌿',
+                name: 'Manjericão',
+                scientific: 'Ocimum basilicum',
+                difficulty: 'Fácil',
+                harvest: '30-40 dias',
+                light: 'Sol pleno ou meia-sombra',
+                water: 'Moderada, solo levemente úmido',
+                soil: 'Fértil e bem drenado',
+                tips: 'Pode as flores para crescer mais folhas. Colha sempre as pontas.',
+                benefits: 'Propriedades anti-inflamatórias, rico em vitamina K.'
+            },
+            cebolinha: {
+                emoji: '🌾',
+                name: 'Cebolinha',
+                scientific: 'Allium schoenoprasum',
+                difficulty: 'Fácil',
+                harvest: '60-70 dias',
+                light: 'Sol pleno',
+                water: 'Regular, solo úmido',
+                soil: 'Fértil com boa drenagem',
+                tips: 'Corte sempre pela base. Replante touceiras divididas.',
+                benefits: 'Rica em vitaminas A, C e minerais. Digestiva.'
+            },
+            pimentao: {
+                emoji: '🫑',
+                name: 'Pimentão',
+                scientific: 'Capsicum annuum',
+                difficulty: 'Médio',
+                harvest: '70-90 dias',
+                light: 'Sol pleno (6-8h/dia)',
+                water: 'Regular, evite excesso',
+                soil: 'Rico em matéria orgânica',
+                tips: 'Requer tutor. Adube quinzenalmente. Prefere clima quente.',
+                benefits: 'Alto teor de vitamina C, antioxidantes.'
+            },
+            coentro: {
+                emoji: '🌱',
+                name: 'Coentro',
+                scientific: 'Coriandrum sativum',
+                difficulty: 'Fácil',
+                harvest: '40-50 dias',
+                light: 'Sol pleno ou meia-sombra',
+                water: 'Regular, solo úmido',
+                soil: 'Leve e bem drenado',
+                tips: 'Plante direto no local. Colha antes da floração.',
+                benefits: 'Digestivo, rico em vitaminas A e K.'
+            },
+            rucula: {
+                emoji: '🥗',
+                name: 'Rúcula',
+                scientific: 'Eruca sativa',
+                difficulty: 'Fácil',
+                harvest: '30-40 dias',
+                light: 'Meia-sombra',
+                water: 'Frequente, solo úmido',
+                soil: 'Fértil e bem drenado',
+                tips: 'Cresce rápido. Colha folhas externas primeiro.',
+                benefits: 'Rica em cálcio, ferro e vitamina C.'
+            },
+            hortela: {
+                emoji: '🍃',
+                name: 'Hortelã',
+                scientific: 'Mentha',
+                difficulty: 'Fácil',
+                harvest: '60-90 dias',
+                light: 'Meia-sombra',
+                water: 'Abundante, solo úmido',
+                soil: 'Rico em matéria orgânica',
+                tips: 'Cresce muito! Use vasos para controlar. Pode regularmente.',
+                benefits: 'Digestiva, refrescante, rica em antioxidantes.'
+            }
+        };
+
+        function showPlantDetails(plantId) {
+            const plant = plantsData[plantId];
+            if (!plant) return;
+
+            document.getElementById('plant-name').textContent = `${plant.emoji} ${plant.name}`;
+            
+            const details = `
+                <div style="text-align: center; margin-bottom: 20px;">
+                    <div style="font-size: 80px; margin-bottom: 12px;">${plant.emoji}</div>
+                    <div style="color: var(--gray); font-style: italic;">${plant.scientific}</div>
+                </div>
+
+                <div style="background: var(--bg-dark); border-radius: 8px; padding: 16px; margin-bottom: 16px;">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                        <div>
+                            <div style="color: var(--gray); font-size: 13px;">Dificuldade</div>
+                            <div style="color: var(--green); font-weight: 600;">${plant.difficulty}</div>
+                        </div>
+                        <div>
+                            <div style="color: var(--gray); font-size: 13px;">Colheita</div>
+                            <div style="font-weight: 600;">${plant.harvest}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 16px;">
+                    <h3 style="font-size: 16px; margin-bottom: 8px; color: var(--orange);">☀️ Luz</h3>
+                    <p style="color: var(--gray-light);">${plant.light}</p>
+                </div>
+
+                <div style="margin-bottom: 16px;">
+                    <h3 style="font-size: 16px; margin-bottom: 8px; color: var(--orange);">💧 Água</h3>
+                    <p style="color: var(--gray-light);">${plant.water}</p>
+                </div>
+
+                <div style="margin-bottom: 16px;">
+                    <h3 style="font-size: 16px; margin-bottom: 8px; color: var(--orange);">🌱 Solo</h3>
+                    <p style="color: var(--gray-light);">${plant.soil}</p>
+                </div>
+
+                <div style="margin-bottom: 16px;">
+                    <h3 style="font-size: 16px; margin-bottom: 8px; color: var(--green);">💡 Dicas</h3>
+                    <p style="color: var(--gray-light);">${plant.tips}</p>
+                </div>
+
+                <div style="background: linear-gradient(135deg, var(--green) 0%, var(--green-hover) 100%); border-radius: 8px; padding: 16px;">
+                    <h3 style="font-size: 16px; margin-bottom: 8px;">🎯 Benefícios</h3>
+                    <p style="opacity: 0.9;">${plant.benefits}</p>
+                </div>
+            `;
+
+            document.getElementById('plant-details').innerHTML = details;
+            showModal('plant-modal');
+        }
+    </script>
+</body>
+</html>

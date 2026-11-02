@@ -1,0 +1,271 @@
+/* [PÁGINA: PROFISSIONAL] Estilos exclusivos do painel do Profissional
+   (profissional/profissional-dashboard.html): cards de criação de conteúdo,
+   gráfico de ganhos e cards de pagamento/performance. */
+
+/* Create Action Cards */
+.create-actions {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+
+.create-action-card {
+    background-color: var(--zinc-900);
+    border: 2px dashed var(--zinc-700);
+    border-radius: 12px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+
+.create-action-card:hover {
+    border-color: var(--green);
+}
+
+
+.create-icon-circle {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+.create-icon-circle svg {
+    width: 28px;
+    height: 28px;
+}
+
+
+.create-action-title {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--white);
+    margin: 0;
+    text-align: center;
+}
+
+
+.create-action-subtitle {
+    font-size: 12px;
+    color: var(--gray);
+    margin: 0;
+    text-align: center;
+}
+
+
+/* Payment Card */
+.payment-card {
+    background: linear-gradient(135deg, rgba(46, 204, 113, 0.2), rgba(46, 204, 113, 0.05));
+    border: 1px solid rgba(46, 204, 113, 0.3);
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 24px;
+}
+
+
+.payment-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+
+.payment-header h3 {
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--white);
+    margin: 0;
+}
+
+
+.payment-date {
+    font-size: 12px;
+    color: var(--gray-light);
+}
+
+
+.payment-amount {
+    font-size: 36px;
+    font-weight: 700;
+    color: var(--green);
+    margin-bottom: 8px;
+}
+
+
+.payment-description {
+    font-size: 14px;
+    color: var(--gray-light);
+    margin: 0;
+}
+
+
+/* Chart Container */
+.chart-container {
+    background-color: var(--zinc-900);
+    border: 1px solid var(--zinc-800);
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 24px;
+}
+
+
+.chart-container h3 {
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--white);
+    margin: 0 0 16px 0;
+}
+
+
+.chart {
+    height: 192px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-around;
+    gap: 8px;
+}
+
+
+.chart-bar-wrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+
+.chart-bar {
+    width: 100%;
+    background: linear-gradient(to top, var(--green), rgba(46, 204, 113, 0.6));
+    border-radius: 4px 4px 0 0;
+    transition: all 0.3s;
+    position: relative;
+}
+
+
+.chart-bar:hover {
+    background: linear-gradient(to top, var(--orange), rgba(255, 140, 0, 0.6));
+}
+
+
+.chart-label {
+    font-size: 12px;
+    color: var(--gray);
+}
+
+
+/* Performance Card */
+.performance-card {
+    background-color: var(--zinc-900);
+    border: 1px solid var(--zinc-800);
+    border-radius: 12px;
+    padding: 16px;
+}
+
+
+.performance-layout {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+
+.performance-thumbnail {
+    width: 80px;
+    height: 80px;
+    border-radius: 12px;
+    object-fit: cover;
+}
+
+
+.performance-info {
+    flex: 1;
+}
+
+
+.performance-title {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--white);
+    margin: 0 0 4px 0;
+}
+
+
+.performance-stats {
+    font-size: 12px;
+    color: var(--gray-light);
+    margin: 0 0 8px 0;
+}
+
+
+.performance-progress {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+
+.progress-percentage {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--green);
+}
+
+
+.stat-icon.yellow { color: #F59E0B; }
+
+
+.tab-btn.active-green {
+    background-color: var(--green);
+    color: var(--white);
+}
+
+
+.alert-box.info {
+    background: linear-gradient(to right, rgba(46, 204, 113, 0.1), rgba(255, 140, 0, 0.1));
+    border: 1px solid rgba(46, 204, 113, 0.3);
+}
+
+
+.status-badge.pending {
+    background-color: rgba(245, 158, 11, 0.2);
+    color: #F59E0B;
+}
+
+
+.create-action-card.orange:hover {
+    border-color: var(--orange);
+}
+
+
+.create-icon-circle.green {
+    background-color: rgba(46, 204, 113, 0.1);
+}
+
+
+.create-icon-circle.orange {
+    background-color: rgba(255, 140, 0, 0.1);
+}
+
+
+.create-icon-circle.green svg {
+    color: var(--green);
+}
+
+
+.create-icon-circle.orange svg {
+    color: var(--orange);
+}
+

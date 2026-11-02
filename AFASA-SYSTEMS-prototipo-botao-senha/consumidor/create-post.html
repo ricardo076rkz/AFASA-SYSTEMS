@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<!--
+    [AFASA SYSTEMS] consumidor/create-post.html
+    Perfil: Consumidor
+    O que esta página faz: Formulário para o Consumidor criar um novo post na comunidade.
+-->
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Criar Post - AFASA SYSTEMS</title>
+        <!-- Carrega o CSS consolidado (main.css), que por sua vez importa base/ + components/ + o CSS específico deste perfil -->
+<link rel="stylesheet" href="../css/principal.css">
+</head>
+<body>
+        <!-- Cabeçalho da página: botão voltar (quando existe) + logo -->
+<div class="header">
+        <div class="header-content container">
+            <a href="home.html" class="back-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+                </svg>
+                Voltar
+            </a>
+            <a href="home.html" class="header-logo">
+                <img class="logo" src="../imagens/logo.png" alt="Logo">
+            </a>
+        </div>
+    </div>
+
+    <div class="container">
+        <div style="padding: 24px 20px 100px;">
+            <h1 style="font-size: 28px; margin-bottom: 8px;">➕ Criar Post</h1>
+            <p style="color: var(--gray-light); margin-bottom: 32px;">Compartilhe sua conquista com a comunidade</p>
+
+                        <!-- Formulário desta tela. A submissão é tratada via JavaScript (ver atributo onsubmit) em js/roteiro.js -->
+<form onsubmit="createPost(event)">
+                <div class="form-group">
+                    <label>Categoria</label>
+                    <select required>
+                        <option value="">Selecione...</option>
+                        <option value="prato">🍽️ Prato</option>
+                        <option value="horta">🌱 Horta</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Imagem</label>
+                    <div style="width: 100%; height: 200px; border: 2px dashed var(--zinc-800); border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; color: var(--gray); background: var(--bg-card);">
+                        <span style="font-size: 48px; margin-bottom: 8px;">📷</span>
+                        <span>Clique para adicionar imagem</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Descrição</label>
+                    <textarea id="post-descricao" placeholder="Conte sobre sua conquista..." rows="4" required></textarea>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 24px;">
+                    <a href="community.html" class="btn" style="background: var(--zinc-900); color: var(--white); text-align: center; text-decoration: none; display: flex; align-items: center; justify-content: center;">CANCELAR</a>
+                    <button type="submit" class="btn btn-primary">📤 PUBLICAR</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+        <!-- Lógica compartilhada: login/redirecionamento por perfil, curtidas, FAQ, gráfico de ganhos, navegação ativa etc. -->
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="../js/roteiro.js"></script>
+</body>
+</html>

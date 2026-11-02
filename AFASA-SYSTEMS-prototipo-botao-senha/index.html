@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<!--
+    [AFASA SYSTEMS] index.html
+    Perfil: Auth (compartilhada)
+    O que esta página faz: Tela de redirecionamento automático: manda o usuário direto para login.html. Não tem UI própria de fato, é só uma "porta de entrada".
+-->
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="refresh" content="0; url=login.html">
+    <title>AFASA SYSTEMS - Redirecionando...</title>
+        <!-- Carrega o CSS consolidado (main.css), que por sua vez importa base/ + components/ + o CSS específico deste perfil -->
+<link rel="stylesheet" href="css/principal.css">
+</head>
+<body>
+    <div style="min-height: 100vh; display: flex; align-items: center; justify-content: center; text-align: center; padding: 24px;">
+        <div>
+            <div style="width: 100px; height: 100px; background: linear-gradient(135deg, #2ECC71 0%, #FF8C00 100%); border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 48px; font-weight: 700; margin: 0 auto 24px;">AF</div>
+            <h1 style="font-size: 32px; margin-bottom: 16px;">AFASA SYSTEMS</h1>
+            <p style="color: var(--gray-light); margin-bottom: 24px;">Redirecionando para o login...</p>
+            <div class="spinner"></div>
+        </div>
+    </div>
+    
+    <script>
+        // Redirect after 1 second if meta refresh doesn't work
+        setTimeout(() => {
+            window.location.href = 'login.html';
+        }, 1000);
+    </script>
+</body>
+</html>

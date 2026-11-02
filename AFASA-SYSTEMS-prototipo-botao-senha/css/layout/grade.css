@@ -1,0 +1,13 @@
+/* [LAYOUT] Container principal da aplicação (largura máxima e centralização) e seu
+   comportamento responsivo. Usado como wrapper em praticamente todas as páginas. */
+
+.container { max-width: 480px; margin: 0 auto; }
+
+
+/* Responsive */
+@media (max-width: 768px) {
+    .container {
+        padding: 0;
+    }
+}
+

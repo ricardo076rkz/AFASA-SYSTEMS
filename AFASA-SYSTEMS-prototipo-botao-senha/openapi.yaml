@@ -1,0 +1,370 @@
+openapi: 3.0.3
+info:
+  title: AFASA SYSTEMS API
+  description: API REST do projeto integrador AFASA SYSTEMS (Node.js + Express + PostgreSQL)
+  version: 1.0.0
+servers:
+  - url: http://localhost:3000
+    description: Servidor local de desenvolvimento
+paths:
+  /api/teste:
+    get:
+      summary: Verifica se a API está conectada
+      responses:
+        '200':
+          description: API funcionando corretamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatusConexao'
+        '500':
+          description: Erro ao consultar o banco de dados
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErroPadrao'
+
+  /api/posts:
+    get:
+      summary: Lista todos os posts
+      responses:
+        '200':
+          description: Lista de posts retornada com sucesso
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Post'
+        '500':
+          description: Erro ao buscar os posts
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErroPadrao'
+    post:
+      summary: Cria um novo post
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostInput'
+      responses:
+        '201':
+          description: Post criado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostSucesso'
+        '400':
+          description: Conteúdo ou perfil não informado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErroPadrao'
+        '500':
+          description: Erro interno ao criar o post
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErroPadrao'
+
+  /api/cursos:
+    get:
+      summary: Lista todos os cursos
+      responses:
+        '200':
+          description: Lista de cursos retornada com sucesso
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Curso'
+        '500':
+          description: Erro ao buscar os cursos
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErroPadrao'
+
+  /api/cursos/{id}/aulas:
+    get:
+      summary: Lista as aulas de um curso específico
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID do curso
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Lista de aulas do curso retornada com sucesso
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Aula'
+        '500':
+          description: Erro ao buscar as aulas
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErroPadrao'
+
+  /api/plantas:
+    get:
+      summary: Lista todas as plantas
+      responses:
+        '200':
+          description: Lista de plantas retornada com sucesso
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Planta'
+        '500':
+          description: Erro ao buscar as plantas
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErroPadrao'
+
+  /api/cadastro:
+    post:
+      summary: Cadastra um novo usuário (cria registros em usuario, perfil e consumidor)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CadastroInput'
+      responses:
+        '201':
+          description: Cadastro realizado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CadastroSucesso'
+        '400':
+          description: Algum campo obrigatório (nome, email, senha ou cpf) não foi informado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErroPadrao'
+        '409':
+          description: CPF ou e-mail já cadastrado (violação de restrição UNIQUE no banco)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErroPadrao'
+        '500':
+          description: Erro interno ao criar a conta
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErroPadrao'
+
+  /api/login:
+    post:
+      summary: Autentica um usuário e identifica seu papel (consumer, professional ou curator)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginInput'
+      responses:
+        '200':
+          description: Login realizado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginSucesso'
+        '400':
+          description: E-mail ou senha não informados
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErroPadrao'
+        '401':
+          description: E-mail não encontrado ou senha incorreta
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErroPadrao'
+        '500':
+          description: Erro interno ao processar o login
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErroPadrao'
+
+components:
+  schemas:
+    ErroPadrao:
+      type: object
+      properties:
+        status:
+          type: string
+          example: erro
+        mensagem:
+          type: string
+
+    StatusConexao:
+      type: object
+      properties:
+        status:
+          type: string
+          example: conectado
+        hora:
+          type: string
+          format: date-time
+
+    Duracao:
+      type: object
+      description: >
+        Representa uma coluna INTERVAL do PostgreSQL. O driver 'pg' serializa
+        esse tipo como um objeto contendo apenas os campos com valor
+        diferente de zero (ex.: "1 hora e 30 minutos" vira { "hours": 1, "minutes": 30 }).
+      properties:
+        years:
+          type: integer
+        months:
+          type: integer
+        days:
+          type: integer
+        hours:
+          type: integer
+        minutes:
+          type: integer
+        seconds:
+          type: integer
+        milliseconds:
+          type: integer
+
+    Post:
+      type: object
+      properties:
+        id_post:
+          type: integer
+        conteudo:
+          type: string
+        data:
+          type: string
+          format: date
+        informacao:
+          type: string
+        id_usuario:
+          type: integer
+        autor:
+          type: string
+        email:
+          type: string
+
+    PostInput:
+      type: object
+      properties:
+        conteudo:
+          type: string
+        id_perfil:
+          type: integer
+
+    PostSucesso:
+      type: object
+      properties:
+        status:
+          type: string
+          example: sucesso
+        id_post:
+          type: integer
+
+    Curso:
+      type: object
+      properties:
+        id_curso:
+          type: integer
+        nome:
+          type: string
+        descricao:
+          type: string
+        tempo:
+          $ref: '#/components/schemas/Duracao'
+        categoria:
+          type: string
+
+    Aula:
+      type: object
+      properties:
+        id_aula:
+          type: integer
+        nome:
+          type: string
+        duracao:
+          $ref: '#/components/schemas/Duracao'
+
+    Planta:
+      type: object
+      properties:
+        id_planta:
+          type: integer
+        nome:
+          type: string
+        descricao:
+          type: string
+        categoria:
+          type: string
+
+    CadastroInput:
+      type: object
+      properties:
+        nome:
+          type: string
+        email:
+          type: string
+        senha:
+          type: string
+        cpf:
+          type: string
+
+    CadastroSucesso:
+      type: object
+      properties:
+        status:
+          type: string
+          example: sucesso
+        mensagem:
+          type: string
+
+    LoginInput:
+      type: object
+      properties:
+        email:
+          type: string
+        senha:
+          type: string
+
+    LoginSucesso:
+      type: object
+      properties:
+        status:
+          type: string
+          example: sucesso
+        usuario:
+          type: object
+          properties:
+            id:
+              type: integer
+            nome:
+              type: string
+            email:
+              type: string
+            idPerfil:
+              type: integer
+        role:
+          type: string
+          enum: [consumer, professional, curator]

@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<!--
+    [AFASA SYSTEMS] login.html
+    Perfil: Auth (compartilhada)
+    O que esta página faz: Tela de login com seletor de tipo de conta (Consumidor / Profissional / Curador).
+-->
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - AFASA SYSTEMS</title>
+    <!-- Carrega o CSS consolidado da aplicação -->
+    <link rel="stylesheet" href="css/principal.css">
+</head>
+<body>
+    <div style="min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 32px 24px;">
+        <div style="width: 100%; max-width: 400px;">
+            <div class="logo-container">
+                <div class="logo-box">
+                    <img class="logo-img" src="imagens/logo.png" alt="AFASA SYSTEMS Logo" style="width: 100%; height: 100%; object-fit: contain; border-radius: 12px;">
+                </div>
+                <div class="brand-name">AFASA SYSTEMS</div>
+            </div>
+
+            <div style="text-align: center; margin: 32px 0;">
+                <h2 style="font-size: 32px; margin-bottom: 8px;">Bem-vindo</h2>
+                <p style="color: var(--gray-light); font-size: 16px;">
+                    Selecione seu perfil e entre na plataforma
+                </p>
+            </div>
+
+            <!-- Seletor de Perfil -->
+            <div class="profile-selector-container">
+                <label style="font-size: 14px; margin-bottom: 12px; display: block;">Tipo de Conta</label>
+                <div class="profile-selector">
+                    <button type="button" class="profile-option active" data-profile="consumer" onclick="selectProfile('consumer')">
+                        <svg class="profile-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                        <span class="profile-label">Consumidor</span>
+                    </button>
+                    <button type="button" class="profile-option" data-profile="professional" onclick="selectProfile('professional')">
+                        <svg class="profile-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+                            <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+                        </svg>
+                        <span class="profile-label">Profissional</span>
+                    </button>
+                    <button type="button" class="profile-option" data-profile="curator" onclick="selectProfile('curator')">
+                        <svg class="profile-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
+                            <path d="M6 12v5c3 3 9 3 12 0v-5"></path>
+                        </svg>
+                        <span class="profile-label">Curador</span>
+                    </button>
+                </div>
+                <p id="profile-description" class="profile-description">Acesse cursos e aprenda</p>
+            </div>
+
+            <!-- Formulário de Login -->
+            <form id="login-form" onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label for="login-email">E-mail</label>
+                    <input type="email" id="login-email" placeholder="seu@email.com" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="login-password">Senha</label>
+                    <input type="password" id="login-password" placeholder="••••••••" required>
+                    <button type="button" class="password-toggle" onclick="togglePassword('login-password')">👁️</button>
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="margin-top: 24px;">ENTRAR</button>
+
+                <div style="text-align: center; margin-top: 20px;">
+                    <a href="signup.html" class="link-btn">Criar Conta</a>
+                </div>
+            </form>
+
+            <!-- Link acionador do Modal -->
+            <div style="text-align: center; margin-top: 16px;">
+                <a href="javascript:void(0)" onclick="openForgotModal()" class="link-btn">Esqueci minha senha</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Esqueci Minha Senha -->
+    <div id="forgot-modal" class="modal-overlay" onclick="closeForgotModalOnOverlay(event)">
+        <div class="modal-content">
+            <button type="button" class="modal-close" onclick="closeForgotModal()">&times;</button>
+            
+            <h3 style="font-size: 22px; margin-bottom: 8px;">Recuperar Senha</h3>
+            <p style="color: var(--gray-light, #666); font-size: 14px; margin-bottom: 20px;">
+                Digite o seu e-mail para receber o link de redefinição de senha.
+            </p>
+
+            <form id="forgot-password-form" onsubmit="handleForgotPassword(event)">
+                <div class="form-group" style="margin-bottom: 16px;">
+                    <label for="forgot-email" style="display: block; margin-bottom: 6px; font-size: 14px;">E-mail</label>
+                    <input type="email" id="forgot-email" placeholder="seu@email.com" required style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #ccc; box-sizing: border-box;">
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width: 100%;">ENVIAR LINK</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Scripts da aplicação -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="js/roteiro.js"></script>
+</body>
+</html>x

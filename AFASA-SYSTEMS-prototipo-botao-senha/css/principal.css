@@ -1,0 +1,12 @@
+/* Arquivo mestre de estilos do AFASA SYSTEMS.
+   Apenas agrega (via @import) os arquivos divididos por camada/perfil.
+   Nenhuma regra própria fica aqui. */
+
+@import url('base/variaveis.css');
+@import url('base/reset.css');
+@import url('base/tipografia.css');
+@import url('layout/grade.css');
+@import url('componentes/componentes.css');
+@import url('paginas/curador.css');
+@import url('paginas/profissional.css');
+@import url('paginas/consumidor.css');

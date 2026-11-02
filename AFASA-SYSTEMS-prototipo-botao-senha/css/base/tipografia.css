@@ -1,0 +1,5 @@
+/* [BASE] Reservado para regras de tipografia isoladas (tamanhos/pesos de fonte por
+   escala). Nenhum bloco desse tipo existia separado no style.css original — a fonte
+   base já está definida em base/reset.css (seletor body). Arquivo mantido vazio de
+   propósito para futuras regras de tipografia, conforme a estrutura combinada. */
+

@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<!--
+    [AFASA SYSTEMS] profissional/profissional-dashboard.html
+    Perfil: Profissional
+    O que esta página faz: Painel do Profissional: conteúdos publicados, métricas de monetização e gráfico de ganhos.
+-->
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Profissional - AFASA SYSTEMS</title>
+        <!-- Carrega o CSS consolidado (main.css), que por sua vez importa base/ + components/ + o CSS específico deste perfil -->
+<link rel="stylesheet" href="../css/principal.css">
+</head>
+<body>
+    <!-- Header -->
+        <!-- Cabeçalho do painel: título da tela + botão "Sair" -->
+<div class="dashboard-header">
+        <div class="dashboard-header-content">
+            <div class="dashboard-logo-section">
+                <img src="../imagens/logo.png" alt="AFASA SYSTEMS" style="width: 40px; height: 40px; border-radius: 8px; object-fit: contain;">
+                <div class="dashboard-title-group">
+                    <h1>Painel Profissional</h1>
+                    <p>Crie e monetize conteúdo</p>
+                </div>
+            </div>
+            <button class="logout-btn" onclick="handleLogout()">Sair</button>
+        </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs-container">
+        <div class="tabs" id="professional-tabs">
+            <button class="tab-btn active-green" data-tab="content" data-color="green" onclick="switchTab('content', 'professional-tabs')">
+                Meu Conteúdo
+            </button>
+            <button class="tab-btn" data-tab="earnings" data-color="green" onclick="switchTab('earnings', 'professional-tabs')">
+                Ganhos
+            </button>
+        </div>
+    </div>
+
+    <!-- Tab Content: Meu Conteúdo -->
+    <div class="content-section" data-tab-content="content">
+        <!-- Create Actions -->
+        <div class="create-actions">
+            <div class="create-action-card">
+                <div class="create-icon-circle green">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polygon points="23 7 16 12 23 17 23 7"></polygon>
+                        <rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect>
+                    </svg>
+                </div>
+                <p class="create-action-title">Criar Curso</p>
+                <p class="create-action-subtitle">Vídeo-aulas educativas</p>
+            </div>
+            <div class="create-action-card orange">
+                <div class="create-icon-circle orange">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M6 13.87A4 4 0 0 1 7.41 6a5.11 5.11 0 0 1 1.05-1.54 5 5 0 0 1 7.08 0A5.11 5.11 0 0 1 16.59 6 4 4 0 0 1 18 13.87V21H6Z"></path>
+                        <line x1="6" y1="17" x2="18" y2="17"></line>
+                    </svg>
+                </div>
+                <p class="create-action-title">Criar Receita</p>
+                <p class="create-action-subtitle">Receitas da horta</p>
+            </div>
+        </div>
+
+        <!-- Monetization Info -->
+        <div class="alert-box info">
+            <div class="alert-content">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--green);">
+                    <line x1="12" y1="1" x2="12" y2="23"></line>
+                    <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                </svg>
+                <div>
+                    <h4 class="alert-title" style="color: var(--white);">Como funciona a monetização?</h4>
+                    <p style="font-size: 12px; color: var(--gray-light); margin: 0;">
+                        Você recebe <strong style="color: var(--green);">R$ 0,10</strong> por visualização após aprovação do curador. 
+                        Conteúdo de qualidade = mais visualizações = mais receitas! 🚀
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Content List -->
+        <h3 class="section-title">Meus Conteúdos</h3>
+        
+        <!-- Conteúdo Aprovado 1 -->
+        <div class="content-card">
+            <div class="content-card-body">
+                <div style="display: flex; gap: 16px; margin-bottom: 12px;">
+                    <img src="https://images.unsplash.com/photo-1530836369250-ef72a3f5cda8?w=400&h=300&fit=crop" alt="Horta Orgânica" style="width: 112px; height: 112px; object-fit: cover; border-radius: 12px; flex-shrink: 0;">
+                    <div style="flex: 1;">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+                            <div>
+                                <h4 class="content-title" style="margin-bottom: 4px;">Horta Orgânica em Casa</h4>
+                                <span style="font-size: 12px; padding: 2px 8px; border-radius: 999px; background-color: rgba(59, 130, 246, 0.2); color: #3B82F6;">📚 Curso</span>
+                            </div>
+                            <span class="status-badge approved">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="20 6 9 17 4 12"></polyline>
+                                </svg>
+                                Aprovado
+                            </span>
+                        </div>
+                        <p style="font-size: 12px; color: var(--gray); margin-bottom: 8px;">Enviado há 5 dias</p>
+                        <div style="display: flex; gap: 16px; font-size: 14px; margin-bottom: 8px;">
+                            <span style="color: var(--gray-light);">👁️ 2.341 views</span>
+                            <span style="color: var(--green); font-weight: 600;">💰 R$ 234,10</span>
+                        </div>
+                        <div style="display: flex; gap: 12px; font-size: 12px; color: var(--gray);">
+                            <span>❤️ 156</span>
+                            <span>💬 42</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Conteúdo Aprovado 2 -->
+        <div class="content-card">
+            <div class="content-card-body">
+                <div style="display: flex; gap: 16px; margin-bottom: 12px;">
+                    <img src="https://images.unsplash.com/photo-1473093295043-cdd812d0e601?w=400&h=300&fit=crop" alt="Pesto" style="width: 112px; height: 112px; object-fit: cover; border-radius: 12px; flex-shrink: 0;">
+                    <div style="flex: 1;">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+                            <div>
+                                <h4 class="content-title" style="margin-bottom: 4px;">Pesto Caseiro de Manjericão</h4>
+                                <span style="font-size: 12px; padding: 2px 8px; border-radius: 999px; background-color: rgba(255, 140, 0, 0.2); color: var(--orange);">🍳 Receita</span>
+                            </div>
+                            <span class="status-badge approved">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="20 6 9 17 4 12"></polyline>
+                                </svg>
+                                Aprovado
+                            </span>
+                        </div>
+                        <p style="font-size: 12px; color: var(--gray); margin-bottom: 8px;">Enviado há 1 semana</p>
+                        <div style="display: flex; gap: 16px; font-size: 14px; margin-bottom: 8px;">
+                            <span style="color: var(--gray-light);">👁️ 1.834 views</span>
+                            <span style="color: var(--green); font-weight: 600;">💰 R$ 91,70</span>
+                        </div>
+                        <div style="display: flex; gap: 12px; font-size: 12px; color: var(--gray);">
+                            <span>❤️ 124</span>
+                            <span>💬 28</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Conteúdo Em Revisão -->
+        <div class="content-card">
+            <div class="content-card-body">
+                <div style="display: flex; gap: 16px; margin-bottom: 12px;">
+                    <img src="https://images.unsplash.com/photo-1625246333195-78d9c38ad649?w=400&h=300&fit=crop" alt="Compostagem" style="width: 112px; height: 112px; object-fit: cover; border-radius: 12px; flex-shrink: 0;">
+                    <div style="flex: 1;">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+                            <div>
+                                <h4 class="content-title" style="margin-bottom: 4px;">Compostagem para Iniciantes</h4>
+                                <span style="font-size: 12px; padding: 2px 8px; border-radius: 999px; background-color: rgba(59, 130, 246, 0.2); color: #3B82F6;">📚 Curso</span>
+                            </div>
+                            <span class="status-badge pending">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <polyline points="12 6 12 12 16 14"></polyline>
+                                </svg>
+                                Em Revisão
+                            </span>
+                        </div>
+                        <p style="font-size: 12px; color: var(--gray); margin-bottom: 8px;">Enviado há 2 horas</p>
+                        <div class="alert-box warning">
+                            <p style="margin: 0; font-size: 12px;">
+                                ⏳ Seu conteúdo está na fila de revisão. Aguarde a aprovação do curador.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Conteúdo Rejeitado -->
+        <div class="content-card">
+            <div class="content-card-body">
+                <div style="display: flex; gap: 16px; margin-bottom: 12px;">
+                    <img src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400&h=300&fit=crop" alt="Salada" style="width: 112px; height: 112px; object-fit: cover; border-radius: 12px; flex-shrink: 0;">
+                    <div style="flex: 1;">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+                            <div>
+                                <h4 class="content-title" style="margin-bottom: 4px;">Salada Verde Especial</h4>
+                                <span style="font-size: 12px; padding: 2px 8px; border-radius: 999px; background-color: rgba(255, 140, 0, 0.2); color: var(--orange);">🍳 Receita</span>
+                            </div>
+                            <span class="status-badge rejected">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                                </svg>
+                                Rejeitado
+                            </span>
+                        </div>
+                        <p style="font-size: 12px; color: var(--gray); margin-bottom: 8px;">Enviado há 4 dias</p>
+                        <div class="alert-box error">
+                            <p style="margin: 0; font-size: 12px; color: #EF4444;">
+                                <strong>Motivo da rejeição:</strong><br>
+                                Faltam fotos dos passos 3 e 5. Por favor, adicione imagens claras.
+                            </p>
+                            <button class="btn" style="margin-top: 8px; padding: 8px 16px; background-color: var(--green); color: var(--white); font-size: 12px;">
+                                → Editar e reenviar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tab Content: Ganhos -->
+    <div class="content-section" data-tab-content="earnings" style="display: none;">
+        <!-- Stats Grid -->
+        <!-- Grade de indicadores/estatísticas rápidas no topo da tela -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-card-content">
+                    <svg class="stat-icon green" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="12" y1="1" x2="12" y2="23"></line>
+                        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                    </svg>
+                    <div>
+                        <div class="stat-value">R$ 1.2K</div>
+                        <div class="stat-label">Receita Total</div>
+                    </div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-card-content">
+                    <svg class="stat-icon orange" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                    <div>
+                        <div class="stat-value">8.4K</div>
+                        <div class="stat-label">Visualizações</div>
+                    </div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-card-content">
+                    <svg class="stat-icon blue" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                        <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                    </svg>
+                    <div>
+                        <div class="stat-value">12</div>
+                        <div class="stat-label">Conteúdos Ativos</div>
+                    </div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-card-content">
+                    <svg class="stat-icon yellow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polyline points="12 6 12 12 16 14"></polyline>
+                    </svg>
+                    <div>
+                        <div class="stat-value">2</div>
+                        <div class="stat-label">Em Revisão</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Payment Card -->
+        <div class="payment-card">
+            <div class="payment-header">
+                <h3>Próximo Pagamento</h3>
+                <span class="payment-date">Liberado dia 5 de cada mês</span>
+            </div>
+            <div class="payment-amount">R$ 1.247,30</div>
+            <p class="payment-description">Baseado em 12.473 visualizações aprovadas</p>
+        </div>
+
+        <!-- Chart -->
+        <!-- Gráfico de evolução de ganhos (30 dias). As barras (.chart-bar) são renderizadas
+             de forma estática neste protótipo; em produção viriam de dados reais da API -->
+        <div class="chart-container">
+            <h3>Evolução de Ganhos (30 dias)</h3>
+            <div class="chart">
+                <div class="chart-bar-wrapper">
+                    <div class="chart-bar" style="height: 37%;"></div>
+                    <span class="chart-label">S1</span>
+                </div>
+                <div class="chart-bar-wrapper">
+                    <div class="chart-bar" style="height: 55%;"></div>
+                    <span class="chart-label">S2</span>
+                </div>
+                <div class="chart-bar-wrapper">
+                    <div class="chart-bar" style="height: 45%;"></div>
+                    <span class="chart-label">S3</span>
+                </div>
+                <div class="chart-bar-wrapper">
+                    <div class="chart-bar" style="height: 68%;"></div>
+                    <span class="chart-label">S4</span>
+                </div>
+                <div class="chart-bar-wrapper">
+                    <div class="chart-bar" style="height: 58%;"></div>
+                    <span class="chart-label">S5</span>
+                </div>
+                <div class="chart-bar-wrapper">
+                    <div class="chart-bar" style="height: 86%;"></div>
+                    <span class="chart-label">S6</span>
+                </div>
+                <div class="chart-bar-wrapper">
+                    <div class="chart-bar" style="height: 100%;"></div>
+                    <span class="chart-label">S7</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Performance Card -->
+        <div>
+            <h3 class="section-title">Melhor Desempenho</h3>
+            <div class="performance-card">
+                <div class="performance-layout">
+                    <img src="https://images.unsplash.com/photo-1530836369250-ef72a3f5cda8?w=400&h=300&fit=crop" alt="Horta Orgânica" class="performance-thumbnail">
+                    <div class="performance-info">
+                        <h4 class="performance-title">Horta Orgânica em Casa</h4>
+                        <p class="performance-stats">2.341 views • R$ 234,10</p>
+                        <div class="performance-progress">
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 78%;"></div>
+                            </div>
+                            <span class="progress-percentage">+78%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+        <!-- Lógica compartilhada: login/redirecionamento por perfil, curtidas, FAQ, gráfico de ganhos, navegação ativa etc. -->
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="../js/roteiro.js"></script>
+</body>
+</html>
