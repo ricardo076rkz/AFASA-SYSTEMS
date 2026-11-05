@@ -87,6 +87,20 @@
                 </div>
             </div>
 
+            <!-- MEU ESPAÇO: dados reais da conta e favoritos são carregados pela API. -->
+            <section class="favoritos-secao" aria-label="Dados da conta e favoritos">
+                <div class="meu-espaco-card">
+                    <h2>👤 Dados da Conta</h2>
+                    <div id="meu-espaco-dados" class="dados-conta" aria-live="polite">Carregando informações...</div>
+                </div>
+                <div class="meu-espaco-card">
+                    <h2>⭐ Meus Favoritos</h2>
+                    <h3>📚 Cursos favoritos</h3>
+                    <div id="favoritos-cursos" class="favoritos-lista" aria-live="polite"></div>
+                    <h3>▶ Aulas favoritas</h3>
+                    <div id="favoritos-aulas" class="favoritos-lista" aria-live="polite"></div>
+                </div>
+            </section>
             <h2 style="font-size: 20px; margin: 32px 0 16px;">⚙️ Configurações</h2>
             <div class="course-grid">
                 <div class="stat-card" style="text-align: left; padding: 16px; cursor: pointer;">
@@ -169,9 +183,34 @@
         </a>
     </div>
 
+<div id="editar-perfil-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="titulo-editar-perfil">
+  <div class="modal-content modal-meu-espaco">
+    <div class="modal-header">
+      <h2 id="titulo-editar-perfil" class="modal-title">✏️ Editar Meu Espaço</h2>
+      <button type="button" class="close-btn" onclick="closeModal('editar-perfil-modal')" aria-label="Fechar">×</button>
+    </div>
+    <form id="form-editar-perfil" class="form-meu-espaco">
+      <div class="preview-foto" id="preview-foto-perfil">U</div>
+      <label for="foto-perfil-input">Foto de perfil (JPG, PNG ou WebP, até 2 MB)</label>
+      <input id="foto-perfil-input" type="file" accept="image/png,image/jpeg,image/webp">
+      <button id="btn-restaurar-foto" type="button" class="btn-secundario">Restaurar foto padrão</button>
+      <label for="editar-nome">Nome</label>
+      <input id="editar-nome" name="nome" type="text" maxlength="100" minlength="2" required autocomplete="name">
+      <label for="editar-email">E-mail</label>
+      <input id="editar-email" name="email" type="email" maxlength="150" required autocomplete="email">
+      <p id="mensagem-editar-perfil" class="mensagem-perfil" role="status" aria-live="polite"></p>
+      <button type="submit" class="btn-salvar-perfil">Salvar alterações</button>
+    </form>
+  </div>
+</div>
+
+
+
+
     <!-- Lógica compartilhada: login/redirecionamento por perfil, curtidas, FAQ, gráfico de ganhos, navegação ativa etc. -->
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="../js/roteiro.js"></script>
+    <script src="../js/meu-espaco.js"></script>
 </body>
 
 </html>

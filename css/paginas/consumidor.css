@@ -329,3 +329,155 @@
     border-color: var(--green);
 }
 
+.modal-meu-espaco { max-width: 500px; max-height: 88vh; overflow-y: auto; }
+.form-meu-espaco { display: flex; flex-direction: column; gap: 12px; }
+.form-meu-espaco label { font-weight: 600; }
+.form-meu-espaco input:not([type=file]) { width: 100%; padding: 12px; border-radius: 9px; border: 1px solid #555; background: #191919; color: #fff; box-sizing: border-box; }
+.form-meu-espaco input[type=file] { max-width: 100%; }
+.preview-foto, #user-profile-avatar { overflow: hidden; }
+.preview-foto { width: 96px; height: 96px; border-radius: 50%; background: #2ecc71; color: #111; font-size: 36px; display: flex; align-items: center; justify-content: center; margin: 0 auto; }
+.preview-foto img, #user-profile-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+.btn-salvar-perfil { background: #2ecc71; color: #111; border: none; border-radius: 9px; padding: 13px; font-weight: 700; cursor: pointer; }
+.btn-secundario { background: transparent; border: 1px solid #ff8c00; color: #ff8c00; border-radius: 9px; padding: 10px; cursor: pointer; }
+.mensagem-perfil { min-height: 20px; margin: 0; }
+.mensagem-perfil.erro { color: #ff7777; }
+.mensagem-perfil.sucesso { color: #2ecc71; }
+.favorito-botao { border: 1px solid #2ecc71; background: #191919; color: #2ecc71; border-radius: 8px; padding: 7px 11px; cursor: pointer; }
+.favorito-botao.ativo { color: #111; background: #2ecc71; }
+.favoritos-secao { margin: 25px 0; }
+.favoritos-lista { display: flex; flex-direction: column; gap: 10px; }
+.favorito-item { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 12px; border: 1px solid #333; border-radius: 9px; }
+.favorito-item a { color: #2ecc71; }
+
+/* MEU ESPAÇO: apresentação dos dados e favoritos; sem alterar os cards antigos. */
+.favoritos-secao { display: grid; gap: 18px; }
+.meu-espaco-card {
+    background: var(--bg-card); border: 1px solid var(--zinc-800);
+    border-radius: 14px; padding: 20px;
+}
+.meu-espaco-card h2 { font-size: 20px; margin: 0 0 18px; }
+.meu-espaco-card h3 { font-size: 16px; margin: 18px 0 10px; }
+.meu-espaco-card h3:first-of-type { margin-top: 0; }
+.dados-conta { display: grid; gap: 12px; }
+.dados-conta-linha {
+    display: flex; flex-direction: column; gap: 5px;
+    padding: 12px; background: var(--bg-dark); border-radius: 9px;
+    overflow-wrap: anywhere;
+}
+.dados-conta-rotulo { font-size: 13px; color: var(--gray-light); }
+.dados-conta-linha strong { font-size: 15px; color: var(--white); }
+.erro-carregamento { color: #ff8585; }
+.favoritos-lista:empty::after {
+    content: 'Carregando favoritos...'; color: var(--gray-light); font-size: 14px;
+}
+.favoritos-lista:not(:has(.favorito-item)) {
+    color: var(--gray-light); font-size: 14px;
+}
+.favorito-item { background: var(--bg-dark); }
+.favorito-item a { flex: 1; overflow-wrap: anywhere; }
+.favorito-botao:disabled, .btn-salvar-perfil:disabled { opacity: .55; cursor: wait; }
+@media (max-width: 480px) {
+    .meu-espaco-card { padding: 15px; }
+    .favorito-item { flex-wrap: wrap; }
+}
+/* Correção visual do modal Meu Espaço */
+
+#modal-editar-perfil,
+.modal-editar-perfil {
+    color: #f5f5f5;
+}
+
+#modal-editar-perfil .modal-content,
+.modal-editar-perfil .modal-content {
+    background-color: #181818 !important;
+    color: #f5f5f5 !important;
+    border: 1px solid #333;
+    border-radius: 16px;
+}
+
+#modal-editar-perfil h2,
+#modal-editar-perfil h3,
+#modal-editar-perfil label,
+#modal-editar-perfil p,
+.modal-editar-perfil h2,
+.modal-editar-perfil h3,
+.modal-editar-perfil label,
+.modal-editar-perfil p {
+    color: #f5f5f5 !important;
+}
+
+#modal-editar-perfil input,
+.modal-editar-perfil input {
+    background-color: #252525 !important;
+    color: #ffffff !important;
+    border: 1px solid #444 !important;
+    border-radius: 8px;
+    padding: 10px 12px;
+}
+
+#modal-editar-perfil input::placeholder,
+.modal-editar-perfil input::placeholder {
+    color: #aaaaaa !important;
+}
+
+#modal-editar-perfil input:focus,
+.modal-editar-perfil input:focus {
+    border-color: #2ecc71 !important;
+    outline: none;
+}
+
+#modal-editar-perfil button,
+.modal-editar-perfil button {
+    cursor: pointer;
+}
+
+/* Modal Editar Meu Espaço */
+
+#editar-perfil-modal .modal-content {
+    background: #181818 !important;
+    color: #ffffff !important;
+    border: 1px solid #333333;
+    border-radius: 16px;
+    padding: 24px;
+}
+
+#editar-perfil-modal .modal-title,
+#editar-perfil-modal label,
+#editar-perfil-modal p {
+    color: #ffffff !important;
+}
+
+#editar-perfil-modal input[type="text"],
+#editar-perfil-modal input[type="email"] {
+    background: #252525 !important;
+    color: #ffffff !important;
+    border: 1px solid #555555 !important;
+    border-radius: 8px;
+    padding: 12px;
+}
+
+#editar-perfil-modal input[type="file"] {
+    color: #ffffff !important;
+}
+
+#editar-perfil-modal .close-btn {
+    color: #ffffff !important;
+}
+
+#editar-perfil-modal .btn-salvar-perfil {
+    background: #2ecc71;
+    color: #111111;
+    border: none;
+    border-radius: 8px;
+    padding: 12px;
+    font-weight: bold;
+}
+
+#editar-perfil-modal .btn-restaurar-foto,
+#editar-perfil-modal .btn-secundario {
+    background: #303030;
+    color: #ffffff;
+    border: 1px solid #555555;
+    border-radius: 8px;
+    padding: 10px;
+}

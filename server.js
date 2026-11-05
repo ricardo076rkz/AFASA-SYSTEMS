@@ -17,7 +17,7 @@ const JWT_EXPIRA = '2h';
 
 const app = express();
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: '5mb' })); // MEU ESPAÇO: margem para foto de até 2 MB codificada em Base64.
 
 // Middleware: roda ANTES da rota e decide se a requisição pode seguir.
 async function verificarToken(req, res, next) {
@@ -50,6 +50,96 @@ async function verificarToken(req, res, next) {
         return res.status(401).json({ status: 'erro', mensagem: 'Token inválido ou expirado.' });
     }
 }
+
+// MEU ESPAÇO — endpoints autenticados; o id do perfil vem exclusivamente do JWT.
+app.get('/api/perfil', verificarToken, async (req, res) => {
+    try {
+        const r = await pool.query(`SELECT u.nome, u.email, (p.foto_perfil IS NOT NULL) AS tem_foto
+            FROM perfil p JOIN usuario u ON u.id_usuario = p.id_usuario WHERE p.id_perfil = $1`, [req.usuario.idPerfil]);
+        if (!r.rowCount) return res.status(404).json({ mensagem: 'Perfil não encontrado.' });
+        res.json(r.rows[0]);
+    } catch (erro) { console.error('Consultar perfil:', erro); res.status(500).json({ mensagem: 'Erro ao consultar perfil.' }); }
+});
+
+app.put('/api/perfil', verificarToken, async (req, res) => {
+    const nome = typeof req.body.nome === 'string' ? req.body.nome.trim() : '';
+    const email = typeof req.body.email === 'string' ? req.body.email.trim().toLowerCase() : '';
+    if (nome.length < 2 || nome.length > 100 || email.length > 150 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
+        return res.status(400).json({ mensagem: 'Informe nome e e-mail válidos.' });
+    try {
+        const r = await pool.query('UPDATE usuario SET nome = $1, email = $2 WHERE id_usuario = $3 RETURNING nome, email', [nome,email,req.usuario.id]);
+        if (!r.rowCount) return res.status(404).json({ mensagem: 'Usuário não encontrado.' });
+        res.json({ status: 'sucesso', ...r.rows[0] });
+    } catch (erro) {
+        if (erro.code === '23505') return res.status(409).json({ mensagem: 'Este e-mail já está cadastrado.' });
+        console.error('Editar perfil:', erro); res.status(500).json({ mensagem: 'Erro ao atualizar perfil.' });
+    }
+});
+
+app.get('/api/perfil/foto', verificarToken, async (req, res) => {
+    try {
+        const r = await pool.query('SELECT foto_perfil, foto_tipo FROM perfil WHERE id_perfil = $1', [req.usuario.idPerfil]);
+        if (!r.rowCount || !r.rows[0].foto_perfil) return res.sendStatus(404);
+        res.set('Content-Type', r.rows[0].foto_tipo || 'image/jpeg');
+        res.set('Cache-Control', 'private, no-store');
+        res.send(r.rows[0].foto_perfil);
+    } catch (erro) { console.error('Foto de perfil:', erro); res.status(500).json({ mensagem: 'Erro ao buscar foto.' }); }
+});
+
+app.put('/api/perfil/foto', verificarToken, express.json({limit:'5mb'}), async (req, res) => {
+    const match = typeof req.body.foto === 'string' && /^data:(image\/(?:jpeg|png|webp));base64,([A-Za-z0-9+/]+={0,2})$/.exec(req.body.foto);
+    if (!match) return res.status(400).json({ mensagem: 'Envie uma imagem JPG, PNG ou WebP válida.' });
+    const buffer = Buffer.from(match[2], 'base64');
+    if (!buffer.length || buffer.length > 2 * 1024 * 1024) return res.status(400).json({ mensagem: 'A imagem deve ter até 2 MB.' });
+    const tipo = match[1];
+    const assinaturaValida = (tipo === 'image/jpeg' && buffer[0] === 0xff && buffer[1] === 0xd8 && buffer[2] === 0xff)
+        || (tipo === 'image/png' && buffer.subarray(0,8).equals(Buffer.from([137,80,78,71,13,10,26,10])))
+        || (tipo === 'image/webp' && buffer.toString('ascii',0,4) === 'RIFF' && buffer.toString('ascii',8,12) === 'WEBP');
+    if (!assinaturaValida) return res.status(400).json({ mensagem: 'O conteúdo não corresponde ao tipo da imagem.' });
+    try {
+        await pool.query('UPDATE perfil SET foto_perfil = $1, foto_tipo = $2 WHERE id_perfil = $3', [buffer,tipo,req.usuario.idPerfil]);
+        res.json({ status:'sucesso', mensagem:'Foto atualizada.' });
+    } catch (erro) { console.error('Salvar foto:',erro); res.status(500).json({ mensagem:'Erro ao salvar foto.' }); }
+});
+
+app.delete('/api/perfil/foto', verificarToken, async (req, res) => {
+    try {
+        await pool.query('UPDATE perfil SET foto_perfil = NULL, foto_tipo = NULL WHERE id_perfil = $1', [req.usuario.idPerfil]);
+        res.json({ status:'sucesso', mensagem:'Foto padrão restaurada.' });
+    } catch (erro) { console.error('Restaurar foto:',erro); res.status(500).json({ mensagem:'Erro ao restaurar foto.' }); }
+});
+
+const TABELAS_FAVORITOS = {
+    cursos: { tabela:'curso_favorito', coluna:'id_curso', origem:'curso' },
+    aulas: { tabela:'aula_favorita', coluna:'id_aula', origem:'aula' }
+};
+app.get('/api/favoritos', verificarToken, async (req,res) => {
+    try {
+        const [cursos,aulas] = await Promise.all([
+            pool.query(`SELECT c.id_curso, c.nome FROM curso_favorito f JOIN curso c ON c.id_curso=f.id_curso WHERE f.id_perfil=$1 ORDER BY c.nome`,[req.usuario.idPerfil]),
+            pool.query(`SELECT a.id_aula, a.id_curso, a.nome, c.nome AS curso_nome FROM aula_favorita f JOIN aula a ON a.id_aula=f.id_aula JOIN curso c ON c.id_curso=a.id_curso WHERE f.id_perfil=$1 ORDER BY a.nome`,[req.usuario.idPerfil])
+        ]);
+        res.json({ cursos:cursos.rows, aulas:aulas.rows });
+    } catch (erro) { console.error('Listar favoritos:',erro); res.status(500).json({ mensagem:'Erro ao listar favoritos.' }); }
+});
+app.post('/api/favoritos/:tipo/:id', verificarToken, async (req,res) => {
+    const config = TABELAS_FAVORITOS[req.params.tipo], id = Number(req.params.id);
+    if (!config || !Number.isSafeInteger(id) || id <= 0) return res.status(400).json({ mensagem:'Favorito inválido.' });
+    try {
+        const existe = await pool.query(`SELECT 1 FROM ${config.origem} WHERE ${config.coluna}=$1`,[id]);
+        if (!existe.rowCount) return res.status(404).json({ mensagem:'Curso ou aula não encontrado.' });
+        await pool.query(`INSERT INTO ${config.tabela} (id_perfil,${config.coluna}) VALUES ($1,$2) ON CONFLICT DO NOTHING`,[req.usuario.idPerfil,id]);
+        res.status(201).json({status:'sucesso'});
+    } catch (erro) { console.error('Adicionar favorito:',erro); res.status(500).json({ mensagem:'Erro ao favoritar.' }); }
+});
+app.delete('/api/favoritos/:tipo/:id', verificarToken, async (req,res) => {
+    const config = TABELAS_FAVORITOS[req.params.tipo], id = Number(req.params.id);
+    if (!config || !Number.isSafeInteger(id) || id <= 0) return res.status(400).json({ mensagem:'Favorito inválido.' });
+    try {
+        await pool.query(`DELETE FROM ${config.tabela} WHERE id_perfil=$1 AND ${config.coluna}=$2`,[req.usuario.idPerfil,id]);
+        res.json({status:'sucesso'});
+    } catch (erro) { console.error('Remover favorito:',erro); res.status(500).json({ mensagem:'Erro ao remover favorito.' }); }
+});
 
 app.get('/api/teste', async (req, res) => {
     try {

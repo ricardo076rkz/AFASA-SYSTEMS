@@ -195,3 +195,17 @@ CREATE TABLE IF NOT EXISTS curador_curso (
         REFERENCES curso(id_curso)
         ON DELETE CASCADE
 );
+
+ALTER TABLE perfil ADD COLUMN IF NOT EXISTS foto_perfil BYTEA;
+ALTER TABLE perfil ADD COLUMN IF NOT EXISTS foto_tipo VARCHAR(20);
+
+CREATE TABLE IF NOT EXISTS curso_favorito (
+ id_perfil INTEGER NOT NULL REFERENCES perfil(id_perfil) ON DELETE CASCADE,
+ id_curso INTEGER NOT NULL REFERENCES curso(id_curso) ON DELETE CASCADE,
+ PRIMARY KEY (id_perfil, id_curso)
+);
+CREATE TABLE IF NOT EXISTS aula_favorita (
+ id_perfil INTEGER NOT NULL REFERENCES perfil(id_perfil) ON DELETE CASCADE,
+ id_aula INTEGER NOT NULL REFERENCES aula(id_aula) ON DELETE CASCADE,
+ PRIMARY KEY (id_perfil, id_aula)
+);

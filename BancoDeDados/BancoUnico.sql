@@ -4,16 +4,6 @@
 -- É seguro rodar mais de uma vez: as tabelas só são criadas se não
 -- existirem e os dados de teste só entram se a tabela usuario estiver vazia.
 -- ============================================================
-INSERT INTO profissional (id_perfil)
-SELECT p.id_perfil FROM perfil p
-JOIN usuario u ON u.id_usuario = p.id_usuario
-WHERE u.email = 'poco@poco.com';
-
--- Tornar outra conta CURADORA
-INSERT INTO curador (id_perfil)
-SELECT p.id_perfil FROM perfil p
-JOIN usuario u ON u.id_usuario = p.id_usuario
-WHERE u.email = 'teste@teste.com';
 -- ******************** TABELAS
 CREATE TABLE IF NOT EXISTS usuario (
     id_usuario INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
@@ -427,3 +417,17 @@ SELECT LEFT(senha, 4) FROM usuario LIMIT 3;
 -- SELECT s.jti, u.email, s.criado_em, s.expira_em, s.revogado
 -- FROM sessao s JOIN usuario u ON u.id_usuario = s.id_usuario
 -- ORDER BY s.criado_em DESC;
+
+-- MEU ESPAÇO: foto e favoritos (migração idempotente; não remove dados).
+ALTER TABLE perfil ADD COLUMN IF NOT EXISTS foto_perfil BYTEA;
+ALTER TABLE perfil ADD COLUMN IF NOT EXISTS foto_tipo VARCHAR(20);
+CREATE TABLE IF NOT EXISTS curso_favorito (
+    id_perfil INT NOT NULL REFERENCES perfil(id_perfil) ON DELETE CASCADE,
+    id_curso INT NOT NULL REFERENCES curso(id_curso) ON DELETE CASCADE,
+    PRIMARY KEY (id_perfil, id_curso)
+);
+CREATE TABLE IF NOT EXISTS aula_favorita (
+    id_perfil INT NOT NULL REFERENCES perfil(id_perfil) ON DELETE CASCADE,
+    id_aula INT NOT NULL REFERENCES aula(id_aula) ON DELETE CASCADE,
+    PRIMARY KEY (id_perfil, id_aula)
+);

@@ -540,12 +540,17 @@ console.log('Script.js loaded successfully');
 // ====================================================
 
 // 1) Instância do Axios já configurada com o endereço base da API.
+// MEU ESPAÇO: Live Server (localhost:5500) usa a API Node local na porta 3000.
+// No Render, use a mesma origem; evite apontar uma versão nova para uma API antiga.
 const ESTA_LOCAL = ['localhost', '127.0.0.1'].includes(window.location.hostname);
+const API_BASE_URL = ESTA_LOCAL
+    ? `${window.location.protocol}//${window.location.hostname}:3000/api`
+    : (window.location.hostname === 'afasa-systems.onrender.com'
+        ? '/api'
+        : 'https://afasa-systems.onrender.com/api');
 
 const api = axios.create({
-    baseURL: ESTA_LOCAL
-        ? 'http://localhost:3000/api'
-        : 'https://afasa-systems.onrender.com/api'
+    baseURL: 'http://localhost:3000/api'
 });
 
 // Interceptor: antes de CADA requisição, anexa o token (se existir) no cabeçalho Authorization.
@@ -677,6 +682,7 @@ async function carregarAulas() {
         aulas.forEach((aula, index) => {
             const card = document.createElement('div');
             card.className = 'course-card';
+            card.dataset.idAula = aula.id_aula; // MEU ESPAÇO: identifica a aula para favoritar.
             card.innerHTML = `
                 <div class="course-info">
                     <div class="course-title">${index + 1}. ${aula.nome}</div>
