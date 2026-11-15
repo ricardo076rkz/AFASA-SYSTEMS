@@ -442,6 +442,183 @@ app.post('/api/cursos', verificarToken, async (req, res) => {
     }
 });
 
+// ============================================================
+// MATERIAIS DE ESTUDO (vídeo, PDF e link externo) de um curso/aula
+// ============================================================
+const TIPOS_MATERIAL = ['video', 'pdf', 'link'];
+const HOSTS_VIDEO = ['youtube.com', 'www.youtube.com', 'm.youtube.com', 'youtu.be', 'vimeo.com', 'www.vimeo.com', 'player.vimeo.com'];
+
+// Confere título, tipo e URL do material. Devolve { erro } ou os dados já limpos.
+function validarMaterial(corpo) {
+    const titulo = typeof corpo.titulo === 'string' ? corpo.titulo.trim() : '';
+    const tipo = corpo.tipo;
+    const url = typeof corpo.url === 'string' ? corpo.url.trim() : '';
+
+    if (!titulo || titulo.length > 100) return { erro: 'Informe um título de até 100 caracteres.' };
+    if (!TIPOS_MATERIAL.includes(tipo)) return { erro: 'Tipo inválido. Use: video, pdf ou link.' };
+    if (!url || url.length > 500) return { erro: 'Informe uma URL de até 500 caracteres.' };
+
+    let endereco;
+    try { endereco = new URL(url); } catch { return { erro: 'URL inválida.' }; }
+    // Só http/https: bloqueia "javascript:" e similares, que virariam script ao clicar no link.
+    if (!['http:', 'https:'].includes(endereco.protocol)) return { erro: 'A URL deve começar com http:// ou https://.' };
+
+    if (tipo === 'pdf' && !endereco.pathname.toLowerCase().endsWith('.pdf')) {
+        return { erro: 'Para PDF, a URL deve apontar para um arquivo .pdf.' };
+    }
+    if (tipo === 'video' && !HOSTS_VIDEO.includes(endereco.hostname.toLowerCase()) && !/\.(mp4|webm|ogg)$/i.test(endereco.pathname)) {
+        return { erro: 'Para vídeo, use um link do YouTube/Vimeo ou um arquivo .mp4, .webm ou .ogg.' };
+    }
+    return { titulo, tipo, url };
+}
+
+// Só o profissional que criou o curso gerencia os materiais dele (papel e perfil vêm do TOKEN).
+// Devolve { status, mensagem } se não puder; null se puder.
+async function conferirDonoDoCurso(req, idCurso) {
+    if (req.usuario.role !== 'professional') {
+        return { status: 403, mensagem: 'Apenas profissionais podem gerenciar materiais.' };
+    }
+    const curso = await pool.query('SELECT id_perfil FROM curso WHERE id_curso = $1', [idCurso]);
+    if (curso.rowCount === 0) return { status: 404, mensagem: 'Curso não encontrado.' };
+    if (curso.rows[0].id_perfil !== req.usuario.idPerfil) {
+        return { status: 403, mensagem: 'Você só pode gerenciar materiais dos seus próprios cursos.' };
+    }
+    return null;
+}
+
+// A aula (opcional) precisa existir E pertencer ao mesmo curso do material.
+async function aulaPertenceAoCurso(idAula, idCurso) {
+    if (!/^\d+$/.test(String(idAula))) return false;
+    const aula = await pool.query('SELECT 1 FROM aula WHERE id_aula = $1 AND id_curso = $2', [idAula, idCurso]);
+    return aula.rowCount > 0;
+}
+
+// Cursos do profissional logado (para a tela de gerenciar materiais).
+app.get('/api/meus-cursos', verificarToken, async (req, res) => {
+    if (req.usuario.role !== 'professional') {
+        return res.status(403).json({ status: 'erro', mensagem: 'Apenas profissionais possuem cursos próprios.' });
+    }
+    try {
+        const resultado = await pool.query(
+            'SELECT id_curso, nome FROM curso WHERE id_perfil = $1 ORDER BY nome',
+            [req.usuario.idPerfil]
+        );
+        res.status(200).json(resultado.rows);
+    } catch (erro) {
+        console.error('Erro ao buscar meus cursos:', erro);
+        res.status(500).json({ status: 'erro', mensagem: 'Não foi possível buscar seus cursos.' });
+    }
+});
+
+// Consultar: público, como a lista de aulas. Materiais do curso todo vêm primeiro, depois os de cada aula.
+app.get('/api/cursos/:id/materiais', async (req, res) => {
+    const { id } = req.params;
+    if (!/^\d+$/.test(id)) {
+        return res.status(400).json({ status: 'erro', mensagem: 'Id de curso inválido.' });
+    }
+    try {
+        const resultado = await pool.query(
+            `SELECT m.id_material, m.titulo, m.tipo, m.url, m.id_aula, a.nome AS aula_nome
+             FROM material m
+             LEFT JOIN aula a ON a.id_aula = m.id_aula
+             WHERE m.id_curso = $1
+             ORDER BY m.id_aula NULLS FIRST, m.id_material`,
+            [id]
+        );
+        res.status(200).json(resultado.rows);
+    } catch (erro) {
+        console.error('Erro ao buscar materiais:', erro);
+        res.status(500).json({ status: 'erro', mensagem: 'Não foi possível buscar os materiais.' });
+    }
+});
+
+// Cadastrar
+app.post('/api/cursos/:id/materiais', verificarToken, async (req, res) => {
+    const { id } = req.params;
+    if (!/^\d+$/.test(id)) {
+        return res.status(400).json({ status: 'erro', mensagem: 'Id de curso inválido.' });
+    }
+    try {
+        const negado = await conferirDonoDoCurso(req, id);
+        if (negado) return res.status(negado.status).json({ status: 'erro', mensagem: negado.mensagem });
+
+        const dados = validarMaterial(req.body);
+        if (dados.erro) return res.status(400).json({ status: 'erro', mensagem: dados.erro });
+
+        const idAula = req.body.id_aula || null;
+        if (idAula && !(await aulaPertenceAoCurso(idAula, id))) {
+            return res.status(400).json({ status: 'erro', mensagem: 'A aula informada não pertence a este curso.' });
+        }
+
+        const resultado = await pool.query(
+            'INSERT INTO material (titulo, tipo, url, id_curso, id_aula) VALUES ($1, $2, $3, $4, $5) RETURNING id_material',
+            [dados.titulo, dados.tipo, dados.url, id, idAula]
+        );
+        res.status(201).json({ status: 'sucesso', id_material: resultado.rows[0].id_material });
+    } catch (erro) {
+        console.error('Erro ao criar material:', erro);
+        res.status(500).json({ status: 'erro', mensagem: 'Não foi possível salvar o material.' });
+    }
+});
+
+// Atualizar (troca título, tipo, URL e aula; o curso do material não muda)
+app.put('/api/materiais/:id', verificarToken, async (req, res) => {
+    const { id } = req.params;
+    if (!/^\d+$/.test(id)) {
+        return res.status(400).json({ status: 'erro', mensagem: 'Id de material inválido.' });
+    }
+    try {
+        const material = await pool.query('SELECT id_curso FROM material WHERE id_material = $1', [id]);
+        if (material.rowCount === 0) {
+            return res.status(404).json({ status: 'erro', mensagem: 'Material não encontrado.' });
+        }
+        const idCurso = material.rows[0].id_curso;
+
+        const negado = await conferirDonoDoCurso(req, idCurso);
+        if (negado) return res.status(negado.status).json({ status: 'erro', mensagem: negado.mensagem });
+
+        const dados = validarMaterial(req.body);
+        if (dados.erro) return res.status(400).json({ status: 'erro', mensagem: dados.erro });
+
+        const idAula = req.body.id_aula || null;
+        if (idAula && !(await aulaPertenceAoCurso(idAula, idCurso))) {
+            return res.status(400).json({ status: 'erro', mensagem: 'A aula informada não pertence a este curso.' });
+        }
+
+        await pool.query(
+            'UPDATE material SET titulo = $1, tipo = $2, url = $3, id_aula = $4 WHERE id_material = $5',
+            [dados.titulo, dados.tipo, dados.url, idAula, id]
+        );
+        res.status(200).json({ status: 'sucesso' });
+    } catch (erro) {
+        console.error('Erro ao atualizar material:', erro);
+        res.status(500).json({ status: 'erro', mensagem: 'Não foi possível atualizar o material.' });
+    }
+});
+
+// Excluir
+app.delete('/api/materiais/:id', verificarToken, async (req, res) => {
+    const { id } = req.params;
+    if (!/^\d+$/.test(id)) {
+        return res.status(400).json({ status: 'erro', mensagem: 'Id de material inválido.' });
+    }
+    try {
+        const material = await pool.query('SELECT id_curso FROM material WHERE id_material = $1', [id]);
+        if (material.rowCount === 0) {
+            return res.status(404).json({ status: 'erro', mensagem: 'Material não encontrado.' });
+        }
+
+        const negado = await conferirDonoDoCurso(req, material.rows[0].id_curso);
+        if (negado) return res.status(negado.status).json({ status: 'erro', mensagem: negado.mensagem });
+
+        await pool.query('DELETE FROM material WHERE id_material = $1', [id]);
+        res.status(200).json({ status: 'sucesso' });
+    } catch (erro) {
+        console.error('Erro ao excluir material:', erro);
+        res.status(500).json({ status: 'erro', mensagem: 'Não foi possível excluir o material.' });
+    }
+});
+
 
 
 

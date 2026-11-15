@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+
+<!-- Essa página faz: o Profissional cadastra, edita e exclui materiais de estudo (vídeo, PDF, link) dos seus cursos (/api/cursos/:id/materiais). -->
+
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Materiais do Curso - AFASA SYSTEMS</title>
+    <link rel="stylesheet" href="../css/principal.css">
+</head>
+
+<body>
+    <div class="header">
+        <div class="header-content container">
+            <a href="profissional-dashboard.html" class="back-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+                </svg>
+                Voltar
+            </a>
+            <a href="profissional-dashboard.html" class="header-logo">
+                <img class="logo" src="../imagens/logo.png" alt="Logo">
+            </a>
+        </div>
+    </div>
+
+    <div class="container">
+        <div style="padding: 24px 20px 100px;">
+            <h1 style="font-size: 28px; margin-bottom: 8px;">📎 Materiais de Estudo</h1>
+            <p style="color: var(--gray-light); margin-bottom: 8px;">Adicione vídeos, PDFs e links aos seus cursos</p>
+            <p id="mat-aviso" style="color: var(--orange); margin-bottom: 16px;"></p>
+
+            <form id="form-material" onsubmit="salvarMaterial(event)">
+                <div class="form-group">
+                    <label>Curso</label>
+                    <select id="mat-curso" onchange="aoMudarCursoMaterial()" required>
+                        <option value="">Selecione...</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Aula (opcional)</label>
+                    <select id="mat-aula">
+                        <option value="">Curso todo</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Tipo do material</label>
+                    <select id="mat-tipo" required>
+                        <option value="video">🎬 Vídeo (YouTube, Vimeo ou arquivo .mp4/.webm)</option>
+                        <option value="pdf">📄 PDF (link para um arquivo .pdf)</option>
+                        <option value="link">🔗 Link externo</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Título (máx. 100 caracteres)</label>
+                    <input type="text" id="mat-titulo" placeholder="Ex.: Apostila de adubação" maxlength="100" required>
+                </div>
+
+                <div class="form-group">
+                    <label>URL do material</label>
+                    <input type="url" id="mat-url" placeholder="https://..." maxlength="500" required>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 24px;">
+                    <button type="button" id="btn-cancelar-edicao" class="btn" onclick="cancelarEdicaoMaterial()"
+                        style="display: none;">CANCELAR EDIÇÃO</button>
+                    <button type="submit" id="btn-salvar-material" class="btn btn-primary">✅ ADICIONAR MATERIAL</button>
+                </div>
+            </form>
+
+            <h3 style="font-size: 20px; margin: 40px 0 16px;">Materiais cadastrados</h3>
+            <div id="mat-lista"></div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="../js/roteiro.js"></script>
+</body>
+
+</html>
