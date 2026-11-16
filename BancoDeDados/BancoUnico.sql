@@ -432,16 +432,31 @@ CREATE TABLE IF NOT EXISTS aula_favorita (
     PRIMARY KEY (id_perfil, id_aula)
 );
 
--- MATERIAIS DE ESTUDO: vídeo, PDF e link externo de um curso (migração idempotente; não remove dados).
--- Cada material pertence a um curso e, opcionalmente, a uma aula desse curso (id_aula NULL = material do curso todo).
--- Guardamos a URL do material (YouTube/Vimeo, PDF hospedado, página externa); nenhum arquivo é gravado no servidor.
-CREATE TABLE IF NOT EXISTS material (
-    id_material INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    titulo VARCHAR(100) NOT NULL,
-    tipo VARCHAR(10) NOT NULL,
-    url VARCHAR(500) NOT NULL,
-    id_curso INT NOT NULL REFERENCES curso(id_curso) ON DELETE CASCADE,
-    id_aula INT REFERENCES aula(id_aula) ON DELETE CASCADE,
-    CONSTRAINT ck_material_tipo CHECK (tipo IN ('video', 'pdf', 'link'))
-);
-CREATE INDEX IF NOT EXISTS idx_material_curso ON material(id_curso);
+-- alterar primeiro
+ALTER TABLE perfil 
+ADD COLUMN IF NOT EXISTS foto_perfil BYTEA,
+ADD COLUMN IF NOT EXISTS foto_tipo VARCHAR(50);
+-- 1°
+ALTER TABLE sessao 
+DROP CONSTRAINT sessao_id_usuario_fkey,
+ADD CONSTRAINT sessao_id_usuario_fkey 
+    FOREIGN KEY (id_usuario) 
+    REFERENCES usuario(id_usuario) 
+    ON DELETE CASCADE;
+
+-- 2°
+SELECT 
+    conrelid::regclass AS tabela, 
+    conname AS restricao, 
+    pg_get_constraintdef(oid) AS definicao 
+FROM pg_constraint 
+WHERE contype = 'f' 
+  AND connamespace = 'public'::regnamespace 
+ORDER BY conrelid::regclass::text, conname;
+
+
+SELECT column_name, data_type 
+FROM information_schema.columns 
+WHERE table_schema = 'public' 
+  AND table_name = 'perfil' 
+  AND column_name IN ('foto_perfil', 'foto_tipo');
