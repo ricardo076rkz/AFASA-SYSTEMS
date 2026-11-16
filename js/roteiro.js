@@ -550,7 +550,7 @@ const API_BASE_URL = ESTA_LOCAL
         : 'https://afasa-systems.onrender.com/api');
 
 const api = axios.create({
-    baseURL: 'http://localhost:3000/api'
+    baseURL: 'API_BASE_URL',
 });
 
 // Interceptor: antes de CADA requisição, anexa o token (se existir) no cabeçalho Authorization.
