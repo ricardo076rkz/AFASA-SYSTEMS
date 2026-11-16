@@ -5,22 +5,25 @@
     O que esta página faz: Tela de cadastro de novo usuário. Ao concluir, leva para login.html.
 -->
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Criar Conta - AFASA SYSTEMS</title>
-        <!-- Carrega o CSS consolidado (main.css), que por sua vez importa base/ + components/ + o CSS específico deste perfil -->
-<link rel="stylesheet" href="css/principal.css">
+    <!-- Carrega o CSS consolidado (main.css), que por sua vez importa base/ + components/ + o CSS específico deste perfil -->
+    <link rel="stylesheet" href="css/principal.css">
 </head>
+
 <body>
-    <div style="min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 32px 24px;">
+    <div
+        style="min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 32px 24px;">
         <div style="width: 100%; max-width: 400px;">
             <div class="logo-container">
                 <div class="logo-box">
-                <!-- [CORRIGIDO] Antes apontava para "imagens/logo.jpg", que não existe (só existe
+                    <!-- [CORRIGIDO] Antes apontava para "imagens/logo.jpg", que não existe (só existe
                      imagens/logo.png). Caminho ajustado para o arquivo real da logo. -->
-                <img class="logo" src="imagens/logo.png" alt="Logo">
-            </a>
+                    <img class="logo" src="imagens/logo.png" alt="Logo">
+                    </a>
                 </div>
                 <div class="brand-name">AFASA SYSTEMS</div>
             </div>
@@ -32,8 +35,8 @@
                 </p>
             </div>
 
-                        <!-- Formulário desta tela. A submissão é tratada via JavaScript (ver atributo onsubmit) em js/roteiro.js -->
-<form id="signup-form" onsubmit="handleSignup(event)">
+            <!-- Formulário desta tela. A submissão é tratada via JavaScript (ver atributo onsubmit) em js/roteiro.js -->
+            <form id="signup-form" onsubmit="handleSignup(event)">
                 <div class="form-group">
                     <label for="signup-name">Nome Completo</label>
                     <input type="text" id="signup-name" placeholder="Seu nome" required>
@@ -43,7 +46,7 @@
                     <label for="signup-cpf">CPF</label>
                     <input type="text" id="signup-cpf" placeholder="Somente números" maxlength="11" required>
                 </div>
-                
+
                 <div class="form-group">
                     <label for="signup-email">E-mail</label>
                     <input type="email" id="signup-email" placeholder="seu@email.com" required>
@@ -51,8 +54,9 @@
 
                 <div class="form-group">
                     <label for="signup-password">Senha</label>
-                    <input type="password" id="signup-password" placeholder="••••••••" required>
-                    <button type="button" class="password-toggle" onclick="togglePassword('signup-password')">👁️</button>
+                    <input type="password" id="signup-password" placeholder="••••••••" minlength="6" required>
+                    <button type="button" class="password-toggle"
+                        onclick="togglePassword('signup-password')">👁️</button>
                 </div>
 
                 <button type="submit" class="btn btn-primary" style="margin-top: 24px;">CRIAR CONTA</button>
@@ -64,8 +68,9 @@
         </div>
     </div>
 
-        <!-- Lógica compartilhada: login/redirecionamento por perfil, curtidas, FAQ, gráfico de ganhos, navegação ativa etc. -->
-<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-<script src="js/roteiro.js"></script>
+    <!-- Lógica compartilhada: login/redirecionamento por perfil, curtidas, FAQ, gráfico de ganhos, navegação ativa etc. -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="js/roteiro.js"></script>
 </body>
+
 </html>
