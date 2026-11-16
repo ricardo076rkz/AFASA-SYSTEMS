@@ -6,10 +6,10 @@
 - 👥 Participantes  Ricardo, Rafael, Marcos, Jõao e Leticia
 
 ## Tecnologias ultilizadas
-- 👨‍💻 Html Css JS Json Node Sql
-- 💻 Web Front-end Html Css
-- 💻 Web Back-end JS Json Sql
-- 📝 Jira Miro Gemini Claude ChatGpt Github Git
+- 👨‍💻 Html, Css, Node.JS, Json, PostegreSql
+- 💻 Web Front-end: Html, Css
+- 💻 Web Back-end: JS, Sql
+- 📝 Jira, Miro, Gemini, Claude, ChatGpt, Github, Git
 - 🐘 PostgreSQL
   
 
@@ -39,16 +39,8 @@
 
 ## Protótipo
  - Siga esse link para o nosso protótipo
- - Plataforma que usamos para hospedar o site (https://vercel.com)
- - [Clique aqui para ver o protótipo rodando](https://afasa-systems.vercel.app/signup.html)
-
-## 📚 Tecnologias Utilizadas
-- HTML5
-- CSS3
-- JavaScript
-- Json
-- Sql
-- Node
+ - Plataforma que usamos para hospedar o site (RENDER)
+ - [Clique aqui para ver o protótipo rodando]([https://afasa-systems.vercel.app/signup.html](https://ricardo076rkz.github.io/AFASA-SYSTEMS/login.html))
 
 🚀 Funcionalidades Principais
 
