@@ -5,7 +5,7 @@
     let perfilAtual = null;
     let favoritos = { cursos: [], aulas: [] };
     let fotoObjectURL = null;
-    const esc = texto => String(texto ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    const esc = texto => String(texto ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
     const aviso = (mensagem, erro = false) => {
         const el = $('mensagem-editar-perfil');
         if (el) { el.textContent = mensagem; el.className = 'mensagem-perfil ' + (erro ? 'erro' : 'sucesso'); }
@@ -112,11 +112,11 @@
         $('foto-perfil-input').addEventListener('change', async e => {
             const arquivo = e.target.files[0];
             if (!arquivo) return;
-            if (!['image/jpeg','image/png','image/webp'].includes(arquivo.type) || arquivo.size > 2 * 1024 * 1024) {
+            if (!['image/jpeg', 'image/png', 'image/webp'].includes(arquivo.type) || arquivo.size > 2 * 1024 * 1024) {
                 aviso('Selecione JPG, PNG ou WebP com até 2 MB.', true); e.target.value = ''; return;
             }
             try {
-                const dataUrl = await new Promise((resolve,reject) => {
+                const dataUrl = await new Promise((resolve, reject) => {
                     const leitor = new FileReader();
                     leitor.onload = () => resolve(leitor.result);
                     leitor.onerror = reject;
@@ -133,6 +133,51 @@
             catch (erro) { aviso(mensagemErro(erro), true); }
         });
         atualizarPerfil();
+    }
+
+    const btnExcluir = $('btn-excluir-conta');
+
+    if (btnExcluir) {
+        btnExcluir.addEventListener('click', async () => {
+            const confirmou = window.confirm(
+                'Excluir sua conta permanentemente?\n\n' +
+                'Suas publicações e favoritos serão excluídos.\n' +
+                'Esta ação não pode ser desfeita.'
+            );
+
+            if (!confirmou) return;
+
+            btnExcluir.disabled = true;
+            aviso('Excluindo conta...');
+
+            try {
+                // O interceptor do Axios já envia o token.
+                await api.delete('/perfil');
+
+                const chaves = [
+                    'token',
+                    'isLoggedIn',
+                    'userProfile',
+                    'userNome',
+                    'userIdPerfil'
+                ];
+
+                chaves.forEach(chave => localStorage.removeItem(chave));
+
+                if (fotoObjectURL) {
+                    URL.revokeObjectURL(fotoObjectURL);
+                    fotoObjectURL = null;
+                }
+
+                window.location.replace('../login.html');
+            } catch (erro) {
+                const mensagem = erro.response?.data?.mensagem
+                    || mensagemErro(erro);
+
+                aviso(mensagem, true);
+                btnExcluir.disabled = false;
+            }
+        });
     }
     async function buscarFavoritos() {
         if (!temToken()) return;
@@ -159,7 +204,7 @@
         if (!temToken()) { alert('Faça login para favoritar.'); return; }
         botao.disabled = true;
         try {
-            if (ehFavorito(tipo,id)) await api.delete(`/favoritos/${tipo}/${id}`);
+            if (ehFavorito(tipo, id)) await api.delete(`/favoritos/${tipo}/${id}`);
             else await api.post(`/favoritos/${tipo}/${id}`);
             await buscarFavoritos();
             desenharBotoes();
@@ -173,19 +218,19 @@
         botao.className = 'favorito-botao';
         botao.dataset.tipoFavorito = tipo;
         botao.dataset.idFavorito = id;
-        botao.addEventListener('click', e => { e.preventDefault(); e.stopPropagation(); alternarFavorito(tipo,id,botao); });
+        botao.addEventListener('click', e => { e.preventDefault(); e.stopPropagation(); alternarFavorito(tipo, id, botao); });
         return botao;
     }
     function desenharBotoes() {
         document.querySelectorAll('[data-tipo-favorito]').forEach(botao => {
-            const ativo = ehFavorito(botao.dataset.tipoFavorito,botao.dataset.idFavorito);
-            botao.classList.toggle('ativo',ativo);
+            const ativo = ehFavorito(botao.dataset.tipoFavorito, botao.dataset.idFavorito);
+            botao.classList.toggle('ativo', ativo);
             botao.textContent = ativo ? '★ Favoritado' : '☆ Favoritar';
-            botao.setAttribute('aria-pressed',String(ativo));
+            botao.setAttribute('aria-pressed', String(ativo));
         });
     }
     function desenharLista() {
-        for (const tipo of ['cursos','aulas']) {
+        for (const tipo of ['cursos', 'aulas']) {
             const container = $(`favoritos-${tipo}`);
             if (!container) continue;
             if (container.dataset.erro === 'true') continue;
@@ -199,7 +244,7 @@
                 const link = document.createElement('a');
                 link.href = `course.html?id=${tipo === 'cursos' ? id : item.id_curso}`;
                 link.textContent = tipo === 'cursos' ? item.nome : `${item.nome} (${item.curso_nome})`;
-                linha.append(link, criarBotao(tipo,id));
+                linha.append(link, criarBotao(tipo, id));
                 container.append(linha);
             });
             desenharBotoes();
@@ -210,8 +255,8 @@
         // Cursos são criados dinamicamente pelo carregarCursos() existente.
         document.querySelectorAll('.cursos-dinamicos .course-card[href*="id="]').forEach(card => {
             if (card.nextElementSibling?.matches('[data-tipo-favorito]')) return;
-            const id = new URL(card.href,location.href).searchParams.get('id');
-            if (id && /^\d+$/.test(id)) { const botao = criarBotao('cursos',id); card.after(botao); }
+            const id = new URL(card.href, location.href).searchParams.get('id');
+            if (id && /^\d+$/.test(id)) { const botao = criarBotao('cursos', id); card.after(botao); }
         });
         const idCurso = new URLSearchParams(location.search).get('id');
         if (idCurso && /^\d+$/.test(idCurso)) {
@@ -221,11 +266,11 @@
                     if (card.querySelector('[data-tipo-favorito]')) return;
                     // O id da aula vem da API, sem depender da ordem dos cards.
                     const id = card.dataset.idAula;
-                    if (id) card.append(criarBotao('aulas',id));
+                    if (id) card.append(criarBotao('aulas', id));
                 });
                 const alvo = $('botao-favoritar-curso');
                 if (!alvo) {
-                    const botao = criarBotao('cursos',idCurso);
+                    const botao = criarBotao('cursos', idCurso);
                     botao.id = 'botao-favoritar-curso';
                     aulas.before(botao);
                 }
@@ -240,6 +285,6 @@
         instalarBotoes();
         // O roteiro.js desenha cards após carregar a API; acompanhar a inserção.
         const observer = new MutationObserver(() => instalarBotoes());
-        document.querySelectorAll('.cursos-dinamicos, #aulas-container').forEach(container => observer.observe(container,{childList:true}));
+        document.querySelectorAll('.cursos-dinamicos, #aulas-container').forEach(container => observer.observe(container, { childList: true }));
     });
 })();

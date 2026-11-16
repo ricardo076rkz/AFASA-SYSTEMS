@@ -183,26 +183,40 @@
         </a>
     </div>
 
-<div id="editar-perfil-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="titulo-editar-perfil">
-  <div class="modal-content modal-meu-espaco">
-    <div class="modal-header">
-      <h2 id="titulo-editar-perfil" class="modal-title">✏️ Editar Meu Espaço</h2>
-      <button type="button" class="close-btn" onclick="closeModal('editar-perfil-modal')" aria-label="Fechar">×</button>
+    <div id="editar-perfil-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="titulo-editar-perfil">
+        <div class="modal-content modal-meu-espaco">
+            <div class="modal-header">
+                <h2 id="titulo-editar-perfil" class="modal-title">✏️ Editar Meu Espaço</h2>
+                <button type="button" class="close-btn" onclick="closeModal('editar-perfil-modal')"
+                    aria-label="Fechar">×</button>
+            </div>
+            <form id="form-editar-perfil" class="form-meu-espaco">
+                <div class="preview-foto" id="preview-foto-perfil">U</div>
+                <label for="foto-perfil-input">Foto de perfil (JPG, PNG ou WebP, até 2 MB)</label>
+                <input id="foto-perfil-input" type="file" accept="image/png,image/jpeg,image/webp">
+                <button id="btn-restaurar-foto" type="button" class="btn-secundario">Restaurar foto padrão</button>
+                <label for="editar-nome">Nome</label>
+                <input id="editar-nome" name="nome" type="text" maxlength="100" minlength="2" required
+                    autocomplete="name">
+                <label for="editar-email">E-mail</label>
+                <input id="editar-email" name="email" type="email" maxlength="150" required autocomplete="email">
+                <p id="mensagem-editar-perfil" class="mensagem-perfil" role="status" aria-live="polite"></p>
+                <button type="submit" class="btn-salvar-perfil">Salvar alterações</button>
+                <hr>
+
+                <p id="aviso-excluir-conta">
+                    ATENÇÃO:
+                    Excluir sua conta remove permanentemente suas publicações e favoritos.
+                    Esta ação não pode ser desfeita.
+                </p>
+
+                <button id="btn-excluir-conta" type="button" class="btn-secundario"
+                    aria-describedby="aviso-excluir-conta">
+                    Excluir minha conta
+                </button>
+            </form>
+        </div>
     </div>
-    <form id="form-editar-perfil" class="form-meu-espaco">
-      <div class="preview-foto" id="preview-foto-perfil">U</div>
-      <label for="foto-perfil-input">Foto de perfil (JPG, PNG ou WebP, até 2 MB)</label>
-      <input id="foto-perfil-input" type="file" accept="image/png,image/jpeg,image/webp">
-      <button id="btn-restaurar-foto" type="button" class="btn-secundario">Restaurar foto padrão</button>
-      <label for="editar-nome">Nome</label>
-      <input id="editar-nome" name="nome" type="text" maxlength="100" minlength="2" required autocomplete="name">
-      <label for="editar-email">E-mail</label>
-      <input id="editar-email" name="email" type="email" maxlength="150" required autocomplete="email">
-      <p id="mensagem-editar-perfil" class="mensagem-perfil" role="status" aria-live="polite"></p>
-      <button type="submit" class="btn-salvar-perfil">Salvar alterações</button>
-    </form>
-  </div>
-</div>
 
 
 
