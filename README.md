@@ -42,7 +42,6 @@
  - Plataforma que usamos para hospedar o site (RENDER)
  - [Clique aqui para ver o protótipo rodando]([https://afasa-systems.vercel.app/signup.html](https://ricardo076rkz.github.io/AFASA-SYSTEMS/login.html))
 
-🚀 Funcionalidades Principais
 
 🌱 Trilhas de Aprendizado Segmentadas
 
