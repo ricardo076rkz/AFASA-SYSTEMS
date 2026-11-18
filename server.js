@@ -188,25 +188,131 @@ const QUERY_LISTAR_POSTS = `
         post.conteudo,
         post.data,
         post.informacao,
+        post.id_perfil,
         usuario.id_usuario,
-        usuario.nome as autor,
+        usuario.nome AS autor,
         usuario.email
     FROM post
     JOIN perfil ON post.id_perfil = perfil.id_perfil
     JOIN usuario ON perfil.id_usuario = usuario.id_usuario
-    ORDER BY post.data DESC
 `;
+
+function idPostValido(id) {
+    const numero = Number(id);
+    return !/\D/.test(id) && Number.isInteger(numero)
+        && numero > 0 && numero <= 2147483647;
+}
 
 app.get('/api/posts', async (req, res) => {
     try {
-        const resultado = await pool.query(QUERY_LISTAR_POSTS);
+        const resultado = await pool.query(
+            QUERY_LISTAR_POSTS + ' ORDER BY post.data DESC, post.id_post DESC'
+        );
         res.status(200).json(resultado.rows);
     } catch (erro) {
-        console.error('Erro ao buscar post:', erro);
-        res.status(500).json({
-            status: 'erro',
-            mensagem: 'Não foi possivel buscar os posts.'
-        });
+        console.error('Erro ao listar posts:', erro);
+        res.status(500).json({ status: 'erro', mensagem: 'Não foi possível listar os posts.' });
+    }
+});
+
+app.get('/api/posts/:id', async (req, res) => {
+    const { id } = req.params;
+    if (!idPostValido(id)) {
+        return res.status(400).json({ status: 'erro', mensagem: 'ID de post inválido.' });
+    }
+
+    try {
+        const resultado = await pool.query(
+            QUERY_LISTAR_POSTS + ' WHERE post.id_post = $1',
+            [id]
+        );
+        if (resultado.rowCount === 0) {
+            return res.status(404).json({ status: 'erro', mensagem: 'Post não encontrado.' });
+        }
+        res.status(200).json(resultado.rows[0]);
+    } catch (erro) {
+        console.error('Erro ao consultar post:', erro);
+        res.status(500).json({ status: 'erro', mensagem: 'Não foi possível consultar o post.' });
+    }
+});
+
+app.post('/api/posts', verificarToken, async (req, res) => {
+    const conteudo = typeof req.body?.conteudo === 'string'
+        ? req.body.conteudo.trim()
+        : '';
+
+    if (!conteudo) {
+        return res.status(400).json({ status: 'erro', mensagem: 'O conteúdo é obrigatório.' });
+    }
+
+    try {
+        const resultado = await pool.query(
+            'INSERT INTO post (conteudo, id_perfil) VALUES ($1, $2) RETURNING id_post',
+            [conteudo, req.usuario.idPerfil]
+        );
+        res.status(201).json({ status: 'sucesso', id_post: resultado.rows[0].id_post });
+    } catch (erro) {
+        console.error('Erro ao criar post:', erro);
+        res.status(500).json({ status: 'erro', mensagem: 'Não foi possível criar o post.' });
+    }
+});
+
+app.put('/api/posts/:id', verificarToken, async (req, res) => {
+    const { id } = req.params;
+    if (!idPostValido(id)) {
+        return res.status(400).json({ status: 'erro', mensagem: 'ID de post inválido.' });
+    }
+
+    const conteudo = typeof req.body?.conteudo === 'string'
+        ? req.body.conteudo.trim()
+        : '';
+    if (!conteudo) {
+        return res.status(400).json({ status: 'erro', mensagem: 'O conteúdo é obrigatório.' });
+    }
+
+    try {
+        const resultado = await pool.query(
+            `UPDATE post SET conteudo = $1
+             WHERE id_post = $2 AND id_perfil = $3
+             RETURNING id_post, conteudo, id_perfil`,
+            [conteudo, id, req.usuario.idPerfil]
+        );
+        if (resultado.rowCount === 0) {
+            return res.status(404).json({
+                status: 'erro',
+                mensagem: 'Post não encontrado ou sem permissão.'
+            });
+        }
+        res.status(200).json({ status: 'sucesso', post: resultado.rows[0] });
+    } catch (erro) {
+        console.error('Erro ao editar post:', erro);
+        res.status(500).json({ status: 'erro', mensagem: 'Não foi possível editar o post.' });
+    }
+});
+
+app.delete('/api/posts/:id', verificarToken, async (req, res) => {
+    const { id } = req.params;
+    if (!idPostValido(id)) {
+        return res.status(400).json({ status: 'erro', mensagem: 'ID de post inválido.' });
+    }
+
+    try {
+        const resultado = await pool.query(
+            `DELETE FROM post
+             WHERE id_post = $1 AND id_perfil = $2
+             RETURNING id_post`,
+            [id, req.usuario.idPerfil]
+        );
+        if (resultado.rowCount === 0) {
+            return res.status(404).json({
+                status: 'erro',
+                mensagem: 'Post não encontrado ou sem permissão.'
+            });
+        }
+        res.status(200).json({ status: 'sucesso', mensagem: 'Post excluído com sucesso.' });
+    } catch (erro) {
+        console.error('Erro ao excluir post:', erro);
+        res.status(500).json({ status: 'erro', mensagem: 'Não foi possível excluir o post.' });
     }
 });
 
@@ -485,29 +591,6 @@ app.get('/api/cursos/:id/aulas', async (req, res) => {
     } catch (erro) {
         console.error('Erro ao buscar aulas:', erro);
         res.status(500).json({ status: 'erro', mensagem: 'Não foi possível buscar as aulas.' });
-    }
-});
-
-
-
-app.post('/api/posts', verificarToken, async (req, res) => {
-    const { conteudo } = req.body;
-    // O perfil vem do TOKEN (confiável), não do corpo da requisição (o cliente pode mentir).
-    const id_perfil = req.usuario.idPerfil;
-
-    if (!conteudo) {
-        return res.status(400).json({ status: 'erro', mensagem: 'O conteúdo é obrigatório.' });
-    }
-
-    try {
-        const resultado = await pool.query(
-            'INSERT INTO post (conteudo, id_perfil) VALUES ($1, $2) RETURNING id_post',
-            [conteudo, id_perfil]
-        );
-        res.status(201).json({ status: 'sucesso', id_post: resultado.rows[0].id_post });
-    } catch (erro) {
-        console.error('Erro ao criar post:', erro);
-        res.status(500).json({ status: 'erro', mensagem: 'Não foi possível criar o post.' });
     }
 });
 

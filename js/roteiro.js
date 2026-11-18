@@ -199,16 +199,26 @@ function toggleLike(button) {
 // Create Post
 async function createPost(e) {
     e.preventDefault();
-    const conteudo = document.getElementById('post-descricao').value;
-    // (o servidor agora descobre o perfil pelo token; não precisamos mais mandar o id)
+    const botao = e.currentTarget.querySelector('button[type="submit"]');
+    if (botao.disabled) return;
 
+    const conteudo = document.getElementById('post-descricao').value.trim();
+    if (!conteudo) {
+        alert('Escreva o conteúdo do post.');
+        return;
+    }
+
+    botao.disabled = true;
     try {
         await api.post('/posts', { conteudo });
-        alert('Post publicado com sucesso! 🎉');
+        alert('Post publicado com sucesso!');
         window.location.href = 'community.html';
-    } catch (error) {
-        console.error('Erro ao criar post:', error);
-        alert('Não foi possível publicar o post.');
+    } catch (erro) {
+        if (!tratarSessaoExpirada(erro)) {
+            alert(mensagemErroApi(erro, 'Não foi possível publicar o post.'));
+        }
+    } finally {
+        botao.disabled = false;
     }
 }
 
@@ -567,42 +577,142 @@ async function carregarPosts() {
     const container = document.getElementById('posts-container');
     if (!container) return;
 
+    container.textContent = 'Carregando posts...';
+
     try {
         const response = await api.get('/posts');
         const posts = response.data;
-
-        container.innerHTML = '';
+        const idPerfil = Number(localStorage.getItem('userIdPerfil'));
+        const autenticado = Boolean(localStorage.getItem('token'));
+        container.replaceChildren();
 
         if (posts.length === 0) {
-            container.innerHTML = '<p>Nenhum post encontrado ainda.</p>';
+            container.textContent = 'Nenhum post publicado ainda.';
             return;
         }
 
         posts.forEach(post => {
-            const inicialNome = post.autor ? post.autor.charAt(0).toUpperCase() : '?';
-            const dataFormatada = new Date(post.data).toLocaleDateString('pt-BR');
-
             const card = document.createElement('div');
             card.className = 'post-card';
+            card.dataset.idPost = post.id_post;
             card.innerHTML = `
                 <div class="post-header">
-                    <div class="user-avatar">${inicialNome}</div>
+                    <div class="user-avatar"></div>
                     <div class="user-info">
-                        <div class="user-name">${post.autor}</div>
-                        <div class="post-time">${dataFormatada}</div>
+                        <div class="user-name"></div>
+                        <div class="post-time"></div>
                     </div>
                 </div>
-                <div class="post-description">
-                    ${post.conteudo}
-                </div>
+                <div class="post-description"></div>
+                <form class="post-controles hidden">
+                    <fieldset class="post-campos">
+                        <div class="post-actions">
+                            <button type="button" class="action-btn" data-acao="editar">Editar</button>
+                            <button type="button" class="action-btn" data-acao="excluir">Excluir</button>
+                        </div>
+                        <div class="post-editor hidden">
+                            <label>Conteúdo do post
+                                <textarea rows="5" required></textarea>
+                            </label>
+                            <div class="post-actions">
+                                <button type="submit" class="action-btn">Salvar</button>
+                                <button type="button" class="action-btn" data-acao="cancelar">Cancelar</button>
+                            </div>
+                        </div>
+                    </fieldset>
+                </form>
             `;
+
+            const autor = post.autor || 'Usuário';
+            card.querySelector('.user-avatar').textContent = autor.charAt(0).toUpperCase();
+            card.querySelector('.user-name').textContent = autor;
+            card.querySelector('.post-time').textContent =
+                post.data.slice(0, 10).split('-').reverse().join('/');
+
+            const descricao = card.querySelector('.post-description');
+            descricao.textContent = post.conteudo;
             container.appendChild(card);
+
+            const formulario = card.querySelector('form');
+            if (!autenticado || idPerfil !== Number(post.id_perfil)) {
+                formulario.remove();
+                return;
+            }
+            formulario.classList.remove('hidden');
+
+            const campos = formulario.querySelector('fieldset');
+            const acoes = formulario.querySelector('.post-actions');
+            const editor = formulario.querySelector('.post-editor');
+            const texto = formulario.querySelector('textarea');
+
+            function mostrarEdicao(ativa) {
+                editor.classList.toggle('hidden', !ativa);
+                acoes.classList.toggle('hidden', ativa);
+                descricao.classList.toggle('hidden', ativa);
+            }
+
+            formulario.querySelector('[data-acao="editar"]').addEventListener('click', async () => {
+                campos.disabled = true;
+                try {
+                    const resposta = await api.get('/posts/' + post.id_post);
+                    texto.value = resposta.data.conteudo;
+                    mostrarEdicao(true);
+                } catch (erro) {
+                    if (!tratarSessaoExpirada(erro)) {
+                        alert(mensagemErroApi(erro, 'Não foi possível abrir o post.'));
+                    }
+                } finally {
+                    campos.disabled = false;
+                }
+                if (!editor.classList.contains('hidden')) texto.focus();
+            });
+
+            formulario.querySelector('[data-acao="cancelar"]').addEventListener('click', () => {
+                mostrarEdicao(false);
+                formulario.querySelector('[data-acao="editar"]').focus();
+            });
+
+            formulario.addEventListener('submit', async evento => {
+                evento.preventDefault();
+                if (campos.disabled) return;
+                const conteudo = texto.value.trim();
+                if (!conteudo) {
+                    alert('Escreva o conteúdo do post.');
+                    texto.focus();
+                    return;
+                }
+
+                campos.disabled = true;
+                try {
+                    await api.put('/posts/' + post.id_post, { conteudo });
+                    await carregarPosts();
+                } catch (erro) {
+                    if (!tratarSessaoExpirada(erro)) {
+                        alert(mensagemErroApi(erro, 'Não foi possível editar o post.'));
+                    }
+                } finally {
+                    campos.disabled = false;
+                }
+            });
+
+            formulario.querySelector('[data-acao="excluir"]').addEventListener('click', async () => {
+                if (!confirm('Excluir este post? Esta ação é definitiva.')) return;
+                campos.disabled = true;
+                try {
+                    await api.delete('/posts/' + post.id_post);
+                    await carregarPosts();
+                } catch (erro) {
+                    if (!tratarSessaoExpirada(erro)) {
+                        alert(mensagemErroApi(erro, 'Não foi possível excluir o post.'));
+                    }
+                } finally {
+                    campos.disabled = false;
+                }
+            });
         });
-
-
-    } catch (error) {
-        console.error('Erro ao carregar posts:', error);
-        container.innerHTML = '<p>Não foi possível carregar os posts. Tente novamente mais tarde.</p>';
+    } catch (erro) {
+        console.error('Erro ao carregar posts:', erro);
+        container.textContent = 'Não foi possível carregar os posts. Recarregue a página para tentar novamente.';
     }
 }
 
