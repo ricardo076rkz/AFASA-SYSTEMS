@@ -5,6 +5,7 @@ const cors = require('cors');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
+const multer = require('multer');
 
 // O segredo assina os tokens. Quem souber esse valor consegue fabricar tokens falsos,
 // por isso ele fica no .env (que NÃO vai pro GitHub) e nunca no código.
@@ -18,6 +19,18 @@ const JWT_EXPIRA = '2h';
 const app = express();
 app.use(cors());
 app.use(express.json({ limit: '5mb' })); // MEU ESPAÇO: margem para foto de até 2 MB codificada em Base64.
+
+// Configuração para receber arquivos de materiais em memória.
+// Configuração para receber arquivos de materiais em memória.
+
+const uploadMaterial = multer({
+    storage: multer.memoryStorage(),
+    limits: {
+        fileSize: 50 * 1024 * 1024,
+        files: 1
+    }
+});
+
 
 // Middleware: roda ANTES da rota e decide se a requisição pode seguir.
 async function verificarToken(req, res, next) {
@@ -640,28 +653,85 @@ const TIPOS_MATERIAL = ['video', 'pdf', 'link'];
 const HOSTS_VIDEO = ['youtube.com', 'www.youtube.com', 'm.youtube.com', 'youtu.be', 'vimeo.com', 'www.vimeo.com', 'player.vimeo.com'];
 
 // Confere título, tipo e URL do material. Devolve { erro } ou os dados já limpos.
-function validarMaterial(corpo) {
+
+
+function validarMaterial(corpo, arquivo = null) {
     const titulo = typeof corpo.titulo === 'string' ? corpo.titulo.trim() : '';
     const tipo = corpo.tipo;
     const url = typeof corpo.url === 'string' ? corpo.url.trim() : '';
 
-    if (!titulo || titulo.length > 100) return { erro: 'Informe um título de até 100 caracteres.' };
-    if (!TIPOS_MATERIAL.includes(tipo)) return { erro: 'Tipo inválido. Use: video, pdf ou link.' };
-    if (!url || url.length > 500) return { erro: 'Informe uma URL de até 500 caracteres.' };
+    if (!titulo || titulo.length > 100) {
+        return { erro: 'Informe um título de até 100 caracteres.' };
+    }
+
+    if (!TIPOS_MATERIAL.includes(tipo)) {
+        return { erro: 'Tipo inválido. Use: video, pdf ou link.' };
+    }
+
+    if (tipo === 'link' && arquivo) {
+        return { erro: 'Materiais do tipo link devem utilizar somente uma URL.' };
+    }
+
+    if (arquivo && url) {
+        return { erro: 'Envie um arquivo ou informe uma URL, não os dois.' };
+    }
+
+    if (!arquivo && (!url || url.length > 500)) {
+        return { erro: 'Informe uma URL de até 500 caracteres ou envie um arquivo.' };
+    }
+
+    if (arquivo) {
+        const tiposPermitidos = {
+            pdf: ['application/pdf'],
+            video: ['video/mp4', 'video/webm', 'video/ogg']
+        };
+
+        if (!tiposPermitidos[tipo]?.includes(arquivo.mimetype)) {
+            return { erro: 'Formato de arquivo incompatível com o tipo de material.' };
+        }
+
+        return {
+            titulo,
+            tipo,
+            url: null,
+            arquivo
+        };
+    }
 
     let endereco;
-    try { endereco = new URL(url); } catch { return { erro: 'URL inválida.' }; }
-    // Só http/https: bloqueia "javascript:" e similares, que virariam script ao clicar no link.
-    if (!['http:', 'https:'].includes(endereco.protocol)) return { erro: 'A URL deve começar com http:// ou https://.' };
+
+    try {
+        endereco = new URL(url);
+    } catch {
+        return { erro: 'URL inválida.' };
+    }
+
+    if (!['http:', 'https:'].includes(endereco.protocol)) {
+        return { erro: 'A URL deve começar com http:// ou https://.' };
+    }
 
     if (tipo === 'pdf' && !endereco.pathname.toLowerCase().endsWith('.pdf')) {
         return { erro: 'Para PDF, a URL deve apontar para um arquivo .pdf.' };
     }
-    if (tipo === 'video' && !HOSTS_VIDEO.includes(endereco.hostname.toLowerCase()) && !/\.(mp4|webm|ogg)$/i.test(endereco.pathname)) {
-        return { erro: 'Para vídeo, use um link do YouTube/Vimeo ou um arquivo .mp4, .webm ou .ogg.' };
+
+    if (
+        tipo === 'video' &&
+        !HOSTS_VIDEO.includes(endereco.hostname.toLowerCase()) &&
+        !/\.(mp4|webm|ogg)$/i.test(endereco.pathname)
+    ) {
+        return {
+            erro: 'Para vídeo, use um link do YouTube/Vimeo ou um arquivo .mp4, .webm ou .ogg.'
+        };
     }
-    return { titulo, tipo, url };
+
+    return {
+        titulo,
+        tipo,
+        url,
+        arquivo: null
+    };
 }
+
 
 // Só o profissional que criou o curso gerencia os materiais dele (papel e perfil vêm do TOKEN).
 // Devolve { status, mensagem } se não puder; null se puder.
@@ -702,90 +772,375 @@ app.get('/api/meus-cursos', verificarToken, async (req, res) => {
 });
 
 // Consultar: público, como a lista de aulas. Materiais do curso todo vêm primeiro, depois os de cada aula.
-app.get('/api/cursos/:id/materiais', async (req, res) => {
+
+// Consultar arquivo de um material
+app.get('/api/materiais/:id/arquivo', async (req, res) => {
     const { id } = req.params;
+
     if (!/^\d+$/.test(id)) {
-        return res.status(400).json({ status: 'erro', mensagem: 'Id de curso inválido.' });
+        return res.status(400).json({
+            status: 'erro',
+            mensagem: 'Id de material inválido.'
+        });
     }
+
     try {
         const resultado = await pool.query(
-            `SELECT m.id_material, m.titulo, m.tipo, m.url, m.id_aula, a.nome AS aula_nome
+            `SELECT arquivo, arquivo_nome, arquivo_tipo
+             FROM material
+             WHERE id_material = $1`,
+            [id]
+        );
+
+        if (resultado.rows.length === 0 || !resultado.rows[0].arquivo) {
+            return res.status(404).json({
+                status: 'erro',
+                mensagem: 'Arquivo não encontrado.'
+            });
+        }
+
+        const material = resultado.rows[0];
+
+        const tiposPermitidos = [
+            'application/pdf',
+            'video/mp4',
+            'video/webm',
+            'video/ogg'
+        ];
+
+        if (!tiposPermitidos.includes(material.arquivo_tipo)) {
+            return res.status(415).json({
+                status: 'erro',
+                mensagem: 'Formato de arquivo não permitido.'
+            });
+        }
+
+        const nomeArquivo = (material.arquivo_nome || 'material')
+            .replace(/[\\/]/g, '_')
+            .replace(/[\r\n"]/g, '_');
+
+        res.setHeader('Content-Type', material.arquivo_tipo);
+
+        res.setHeader(
+            'Content-Disposition',
+            `inline; filename*=UTF-8''${encodeURIComponent(nomeArquivo)}`
+        );
+
+        res.setHeader('X-Content-Type-Options', 'nosniff');
+
+        return res.send(material.arquivo);
+
+    } catch (erro) {
+        console.error('Erro ao buscar arquivo:', erro);
+
+        return res.status(500).json({
+            status: 'erro',
+            mensagem: 'Não foi possível abrir o arquivo.'
+        });
+    }
+});
+
+
+// Consultar materiais de um curso
+app.get('/api/cursos/:id/materiais', async (req, res) => {
+    const { id } = req.params;
+
+    if (!/^\d+$/.test(id)) {
+        return res.status(400).json({
+            status: 'erro',
+            mensagem: 'Id de curso inválido.'
+        });
+    }
+
+    try {
+        const resultado = await pool.query(
+            `SELECT
+                m.id_material,
+                m.titulo,
+                m.tipo,
+                m.url,
+                m.id_aula,
+                a.nome AS aula_nome,
+                CASE
+                    WHEN m.arquivo IS NOT NULL THEN
+                        '/api/materiais/' || m.id_material || '/arquivo'
+                    ELSE NULL
+                END AS arquivo_url
              FROM material m
              LEFT JOIN aula a ON a.id_aula = m.id_aula
              WHERE m.id_curso = $1
              ORDER BY m.id_aula NULLS FIRST, m.id_material`,
             [id]
         );
-        res.status(200).json(resultado.rows);
+
+        return res.status(200).json(resultado.rows);
+
     } catch (erro) {
         console.error('Erro ao buscar materiais:', erro);
-        res.status(500).json({ status: 'erro', mensagem: 'Não foi possível buscar os materiais.' });
+
+        return res.status(500).json({
+            status: 'erro',
+            mensagem: 'Não foi possível buscar os materiais.'
+        });
     }
 });
 
 // Cadastrar
-app.post('/api/cursos/:id/materiais', verificarToken, async (req, res) => {
-    const { id } = req.params;
-    if (!/^\d+$/.test(id)) {
-        return res.status(400).json({ status: 'erro', mensagem: 'Id de curso inválido.' });
-    }
-    try {
-        const negado = await conferirDonoDoCurso(req, id);
-        if (negado) return res.status(negado.status).json({ status: 'erro', mensagem: negado.mensagem });
+app.post(
+    '/api/cursos/:id/materiais',
+    verificarToken,
+    uploadMaterial.single('arquivo'),
+    async (req, res) => {
+        const { id } = req.params;
 
-        const dados = validarMaterial(req.body);
-        if (dados.erro) return res.status(400).json({ status: 'erro', mensagem: dados.erro });
-
-        const idAula = req.body.id_aula || null;
-        if (idAula && !(await aulaPertenceAoCurso(idAula, id))) {
-            return res.status(400).json({ status: 'erro', mensagem: 'A aula informada não pertence a este curso.' });
+        if (!/^\d+$/.test(id)) {
+            return res.status(400).json({
+                status: 'erro',
+                mensagem: 'Id de curso inválido.'
+            });
         }
 
-        const resultado = await pool.query(
-            'INSERT INTO material (titulo, tipo, url, id_curso, id_aula) VALUES ($1, $2, $3, $4, $5) RETURNING id_material',
-            [dados.titulo, dados.tipo, dados.url, id, idAula]
-        );
-        res.status(201).json({ status: 'sucesso', id_material: resultado.rows[0].id_material });
-    } catch (erro) {
-        console.error('Erro ao criar material:', erro);
-        res.status(500).json({ status: 'erro', mensagem: 'Não foi possível salvar o material.' });
-    }
-});
+        try {
+            const negado = await conferirDonoDoCurso(req, id);
 
+            if (negado) {
+                return res.status(negado.status).json({
+                    status: 'erro',
+                    mensagem: negado.mensagem
+                });
+            }
+
+            const arquivo = req.file || null;
+
+            const dados = validarMaterial(req.body, arquivo);
+
+            if (dados.erro) {
+                return res.status(400).json({
+                    status: 'erro',
+                    mensagem: dados.erro
+                });
+            }
+
+            const idAula = req.body.id_aula || null;
+
+            if (idAula && !(await aulaPertenceAoCurso(idAula, id))) {
+                return res.status(400).json({
+                    status: 'erro',
+                    mensagem: 'A aula informada não pertence a este curso.'
+                });
+            }
+
+            const arquivoBuffer = arquivo ? arquivo.buffer : null;
+
+            const arquivoNome = arquivo
+                ? arquivo.originalname.replace(/[\\/]/g, '_').slice(0, 255)
+                : null;
+
+            const arquivoTipo = arquivo ? arquivo.mimetype : null;
+
+            const resultado = await pool.query(
+                `INSERT INTO material
+                (titulo, tipo, url, id_curso, id_aula, arquivo, arquivo_nome, arquivo_tipo)
+                VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+                RETURNING id_material`,
+                [
+                    dados.titulo,
+                    dados.tipo,
+                    dados.url,
+                    id,
+                    idAula,
+                    arquivoBuffer,
+                    arquivoNome,
+                    arquivoTipo
+                ]
+            );
+
+            res.status(201).json({
+                status: 'sucesso',
+                id_material: resultado.rows[0].id_material
+            });
+
+        } catch (erro) {
+            console.error('Erro ao criar material:', erro);
+
+            res.status(500).json({
+                status: 'erro',
+                mensagem: 'Não foi possível salvar o material.'
+            });
+        }
+    }
+);
 // Atualizar (troca título, tipo, URL e aula; o curso do material não muda)
-app.put('/api/materiais/:id', verificarToken, async (req, res) => {
-    const { id } = req.params;
-    if (!/^\d+$/.test(id)) {
-        return res.status(400).json({ status: 'erro', mensagem: 'Id de material inválido.' });
-    }
-    try {
-        const material = await pool.query('SELECT id_curso FROM material WHERE id_material = $1', [id]);
-        if (material.rowCount === 0) {
-            return res.status(404).json({ status: 'erro', mensagem: 'Material não encontrado.' });
-        }
-        const idCurso = material.rows[0].id_curso;
+// Atualizar material
+app.put(
+    '/api/materiais/:id',
+    verificarToken,
+    uploadMaterial.single('arquivo'),
+    async (req, res) => {
+        const { id } = req.params;
 
-        const negado = await conferirDonoDoCurso(req, idCurso);
-        if (negado) return res.status(negado.status).json({ status: 'erro', mensagem: negado.mensagem });
-
-        const dados = validarMaterial(req.body);
-        if (dados.erro) return res.status(400).json({ status: 'erro', mensagem: dados.erro });
-
-        const idAula = req.body.id_aula || null;
-        if (idAula && !(await aulaPertenceAoCurso(idAula, idCurso))) {
-            return res.status(400).json({ status: 'erro', mensagem: 'A aula informada não pertence a este curso.' });
+        if (!/^\d+$/.test(id)) {
+            return res.status(400).json({
+                status: 'erro',
+                mensagem: 'Id de material inválido.'
+            });
         }
 
-        await pool.query(
-            'UPDATE material SET titulo = $1, tipo = $2, url = $3, id_aula = $4 WHERE id_material = $5',
-            [dados.titulo, dados.tipo, dados.url, idAula, id]
-        );
-        res.status(200).json({ status: 'sucesso' });
-    } catch (erro) {
-        console.error('Erro ao atualizar material:', erro);
-        res.status(500).json({ status: 'erro', mensagem: 'Não foi possível atualizar o material.' });
+        try {
+            const resultado = await pool.query(
+                `SELECT *
+                 FROM material
+                 WHERE id_material = $1`,
+                [id]
+            );
+
+            if (resultado.rowCount === 0) {
+                return res.status(404).json({
+                    status: 'erro',
+                    mensagem: 'Material não encontrado.'
+                });
+            }
+
+            const materialAtual = resultado.rows[0];
+            const idCurso = materialAtual.id_curso;
+
+            // Verifica se o profissional é dono do curso
+            const negado = await conferirDonoDoCurso(req, idCurso);
+
+            if (negado) {
+                return res.status(negado.status).json({
+                    status: 'erro',
+                    mensagem: negado.mensagem
+                });
+            }
+
+            const idAula = req.body.id_aula || null;
+
+            if (
+                idAula &&
+                !(await aulaPertenceAoCurso(idAula, idCurso))
+            ) {
+                return res.status(400).json({
+                    status: 'erro',
+                    mensagem: 'A aula informada não pertence a este curso.'
+                });
+            }
+
+            const arquivoNovo = req.file || null;
+            const urlEnviada =
+                typeof req.body.url === 'string' &&
+                req.body.url.trim() !== '';
+
+            // Se não enviar um novo conteúdo, mantém o conteúdo atual
+            const arquivoParaValidar = arquivoNovo || (
+                !urlEnviada && materialAtual.arquivo
+                    ? { mimetype: materialAtual.arquivo_tipo }
+                    : null
+            );
+
+            const urlParaValidar = arquivoNovo
+                ? ''
+                : urlEnviada
+                    ? req.body.url.trim()
+                    : materialAtual.url || '';
+
+            const dados = validarMaterial(
+                {
+                    ...req.body,
+                    url: urlParaValidar
+                },
+                arquivoParaValidar
+            );
+
+            if (dados.erro) {
+                return res.status(400).json({
+                    status: 'erro',
+                    mensagem: dados.erro
+                });
+            }
+
+            // Caso seja enviado um novo arquivo
+            if (arquivoNovo) {
+                const arquivoNome = arquivoNovo.originalname
+                    .replace(/[\\/]/g, '_')
+                    .slice(0, 255);
+
+                await pool.query(
+                    `UPDATE material
+                     SET titulo = $1,
+                         tipo = $2,
+                         url = NULL,
+                         id_aula = $3,
+                         arquivo = $4,
+                         arquivo_nome = $5,
+                         arquivo_tipo = $6
+                     WHERE id_material = $7`,
+                    [
+                        dados.titulo,
+                        dados.tipo,
+                        idAula,
+                        arquivoNovo.buffer,
+                        arquivoNome,
+                        arquivoNovo.mimetype,
+                        id
+                    ]
+                );
+            }
+
+            // Caso seja enviada uma nova URL
+            else if (urlEnviada) {
+                await pool.query(
+                    `UPDATE material
+                     SET titulo = $1,
+                         tipo = $2,
+                         url = $3,
+                         id_aula = $4,
+                         arquivo = NULL,
+                         arquivo_nome = NULL,
+                         arquivo_tipo = NULL
+                     WHERE id_material = $5`,
+                    [
+                        dados.titulo,
+                        dados.tipo,
+                        dados.url,
+                        idAula,
+                        id
+                    ]
+                );
+            }
+
+            // Caso queira apenas editar os dados e manter o conteúdo atual
+            else {
+                await pool.query(
+                    `UPDATE material
+                     SET titulo = $1,
+                         tipo = $2,
+                         id_aula = $3
+                     WHERE id_material = $4`,
+                    [
+                        dados.titulo,
+                        dados.tipo,
+                        idAula,
+                        id
+                    ]
+                );
+            }
+
+            return res.status(200).json({
+                status: 'sucesso',
+                mensagem: 'Material atualizado com sucesso.'
+            });
+
+        } catch (erro) {
+            console.error('Erro ao atualizar material:', erro);
+
+            return res.status(500).json({
+                status: 'erro',
+                mensagem: 'Não foi possível atualizar o material.'
+            });
+        }
     }
-});
+);
 
 // Excluir
 app.delete('/api/materiais/:id', verificarToken, async (req, res) => {

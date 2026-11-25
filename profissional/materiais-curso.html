@@ -1,7 +1,5 @@
+
 <!DOCTYPE html>
-
-<!-- Essa página faz: o Profissional cadastra, edita e exclui materiais de estudo (vídeo, PDF, link) dos seus cursos (/api/cursos/:id/materiais). -->
-
 <html lang="pt-BR">
 
 <head>
@@ -17,10 +15,12 @@
             <a href="profissional-dashboard.html" class="back-btn">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
                     stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M15.75 19.5L8.25 12l7.5-7.5" />
                 </svg>
                 Voltar
             </a>
+
             <a href="profissional-dashboard.html" class="header-logo">
                 <img class="logo" src="../imagens/logo.png" alt="Logo">
             </a>
@@ -29,11 +29,19 @@
 
     <div class="container">
         <div style="padding: 24px 20px 100px;">
-            <h1 style="font-size: 28px; margin-bottom: 8px;">📎 Materiais de Estudo</h1>
-            <p style="color: var(--gray-light); margin-bottom: 8px;">Adicione vídeos, PDFs e links aos seus cursos</p>
+
+            <h1 style="font-size: 28px; margin-bottom: 8px;">
+                📎 Materiais de Estudo
+            </h1>
+
+            <p style="color: var(--gray-light); margin-bottom: 8px;">
+                Adicione vídeos, PDFs e links aos seus cursos
+            </p>
+
             <p id="mat-aviso" style="color: var(--orange); margin-bottom: 16px;"></p>
 
             <form id="form-material" onsubmit="salvarMaterial(event)">
+
                 <div class="form-group">
                     <label>Curso</label>
                     <select id="mat-curso" onchange="aoMudarCursoMaterial()" required>
@@ -50,32 +58,82 @@
 
                 <div class="form-group">
                     <label>Tipo do material</label>
-                    <select id="mat-tipo" required>
-                        <option value="video">🎬 Vídeo (YouTube, Vimeo ou arquivo .mp4/.webm)</option>
-                        <option value="pdf">📄 PDF (link para um arquivo .pdf)</option>
+                    <select id="mat-tipo" onchange="atualizarCamposMaterial()" required>
+                        <option value="video">🎬 Vídeo</option>
+                        <option value="pdf">📄 PDF</option>
                         <option value="link">🔗 Link externo</option>
                     </select>
                 </div>
 
                 <div class="form-group">
                     <label>Título (máx. 100 caracteres)</label>
-                    <input type="text" id="mat-titulo" placeholder="Ex.: Apostila de adubação" maxlength="100" required>
+                    <input
+                        type="text"
+                        id="mat-titulo"
+                        placeholder="Ex.: Apostila de adubação"
+                        maxlength="100"
+                        required
+                    >
                 </div>
 
-                <div class="form-group">
+                <div class="form-group" id="mat-url-container">
                     <label>URL do material</label>
-                    <input type="url" id="mat-url" placeholder="https://..." maxlength="500" required>
+                    <input
+                        type="url"
+                        id="mat-url"
+                        placeholder="https://..."
+                        maxlength="500"
+                    >
+                    <small id="mat-url-ajuda">
+                        Informe o endereço do vídeo ou PDF.
+                    </small>
                 </div>
+
+                <div class="form-group" id="mat-arquivo-container">
+                    <label>Enviar arquivo</label>
+                    <input
+                        type="file"
+                        id="mat-arquivo"
+                        accept=".mp4,.webm,.ogg,video/mp4,video/webm,video/ogg"
+                    >
+                    <small id="mat-arquivo-ajuda">
+                        Você pode enviar um vídeo ou informar uma URL. Tamanho máximo: 50 MB.
+                    </small>
+                </div>
+
+                <p style="color: var(--gray-light); font-size: 13px; margin-top: 8px;">
+                    Para vídeos e PDFs, escolha entre informar uma URL ou enviar um arquivo.
+                    Para links externos, utilize somente a URL.
+                </p>
 
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 24px;">
-                    <button type="button" id="btn-cancelar-edicao" class="btn" onclick="cancelarEdicaoMaterial()"
-                        style="display: none;">CANCELAR EDIÇÃO</button>
-                    <button type="submit" id="btn-salvar-material" class="btn btn-primary">✅ ADICIONAR MATERIAL</button>
+                    <button
+                        type="button"
+                        id="btn-cancelar-edicao"
+                        class="btn"
+                        onclick="cancelarEdicaoMaterial()"
+                        style="display: none;"
+                    >
+                        CANCELAR EDIÇÃO
+                    </button>
+
+                    <button
+                        type="submit"
+                        id="btn-salvar-material"
+                        class="btn btn-primary"
+                    >
+                        ✅ ADICIONAR MATERIAL
+                    </button>
                 </div>
+
             </form>
 
-            <h3 style="font-size: 20px; margin: 40px 0 16px;">Materiais cadastrados</h3>
+            <h3 style="font-size: 20px; margin: 40px 0 16px;">
+                Materiais cadastrados
+            </h3>
+
             <div id="mat-lista"></div>
+
         </div>
     </div>
 

@@ -912,8 +912,9 @@ async function handleForgotPassword(event) {
     }
 }
 
+
 // ====================================================
-// MATERIAIS DE ESTUDO (vídeo, PDF e link externo) - /api/cursos/:id/materiais
+// MATERIAIS DE ESTUDO (vídeo, PDF e link externo)
 // ====================================================
 
 const ROTULOS_MATERIAL = {
@@ -922,11 +923,60 @@ const ROTULOS_MATERIAL = {
     link: { icone: '🔗', texto: 'Link externo' }
 };
 
-// Transforma um link do YouTube/Vimeo no endereço de "embed" (player dentro da página).
-// Devolve null se não for um link reconhecido; aí o material aparece como link comum.
+let idMaterialEmEdicao = null;
+
+// Atualiza os campos de acordo com o tipo escolhido
+function atualizarCamposMaterial() {
+    const tipo = document.getElementById('mat-tipo');
+    const campoUrl = document.getElementById('mat-url');
+    const campoArquivo = document.getElementById('mat-arquivo');
+    const containerArquivo = document.getElementById('mat-arquivo-container');
+    const ajudaUrl = document.getElementById('mat-url-ajuda');
+    const ajudaArquivo = document.getElementById('mat-arquivo-ajuda');
+
+    if (!tipo || !campoUrl || !campoArquivo || !containerArquivo) return;
+
+    if (tipo.value === 'link') {
+        containerArquivo.style.display = 'none';
+        campoArquivo.value = '';
+        campoArquivo.required = false;
+
+        campoUrl.required = true;
+        campoUrl.placeholder = 'https://...';
+        ajudaUrl.textContent = 'Informe a URL do conteúdo externo.';
+
+    } else if (tipo.value === 'pdf') {
+        containerArquivo.style.display = 'block';
+        campoArquivo.accept = '.pdf,application/pdf';
+        campoArquivo.required = false;
+
+        campoUrl.required = false;
+        campoUrl.placeholder = 'https://.../arquivo.pdf';
+        ajudaUrl.textContent = 'Informe uma URL de PDF ou envie um arquivo PDF.';
+        ajudaArquivo.textContent = 'Arquivo PDF. Tamanho máximo: 50 MB.';
+
+    } else {
+        containerArquivo.style.display = 'block';
+        campoArquivo.accept = '.mp4,.webm,.ogg,video/mp4,video/webm,video/ogg';
+        campoArquivo.required = false;
+
+        campoUrl.required = false;
+        campoUrl.placeholder = 'https://youtube.com/...';
+        ajudaUrl.textContent = 'Informe uma URL do YouTube, Vimeo ou de um vídeo.';
+        ajudaArquivo.textContent = 'Vídeo MP4, WebM ou OGG. Tamanho máximo: 50 MB.';
+    }
+}
+
+// Transforma links do YouTube/Vimeo em endereços de incorporação
 function urlEmbedVideo(url) {
     let endereco;
-    try { endereco = new URL(url); } catch { return null; }
+
+    try {
+        endereco = new URL(url);
+    } catch {
+        return null;
+    }
+
     const host = endereco.hostname.toLowerCase().replace(/^(www|m)\./, '');
     let id = null;
 
@@ -934,24 +984,39 @@ function urlEmbedVideo(url) {
         id = endereco.pathname.slice(1).split('/')[0];
     } else if (host === 'youtube.com') {
         const partes = endereco.pathname.split('/').filter(Boolean);
-        if (endereco.pathname === '/watch') id = endereco.searchParams.get('v');
-        else if (['embed', 'shorts', 'live'].includes(partes[0])) id = partes[1];
-        if (id && /^[\w-]{6,20}$/.test(id)) return `https://www.youtube-nocookie.com/embed/${id}`;
+
+        if (endereco.pathname === '/watch') {
+            id = endereco.searchParams.get('v');
+        } else if (['embed', 'shorts', 'live'].includes(partes[0])) {
+            id = partes[1];
+        }
+
+        if (id && /^[\w-]{6,20}$/.test(id)) {
+            return `https://www.youtube-nocookie.com/embed/${id}`;
+        }
+
         return null;
     } else if (host === 'vimeo.com' || host === 'player.vimeo.com') {
         id = endereco.pathname.split('/').filter(Boolean).pop();
-        return /^\d+$/.test(id || '') ? `https://player.vimeo.com/video/${id}` : null;
+
+        return /^\d+$/.test(id || '')
+            ? `https://player.vimeo.com/video/${id}`
+            : null;
     }
-    return id && /^[\w-]{6,20}$/.test(id) ? `https://www.youtube-nocookie.com/embed/${id}` : null;
+
+    return id && /^[\w-]{6,20}$/.test(id)
+        ? `https://www.youtube-nocookie.com/embed/${id}`
+        : null;
 }
 
 function ehUrlWeb(url) {
-    return /^https?:\/\//i.test(url);
+    return typeof url === 'string' && /^https?:\/\//i.test(url);
 }
 
-// Monta o card de UM material. Usa textContent (não innerHTML): título e URL vêm do banco.
+// Monta o card de um material
 function criarCardMaterial(material) {
     const rotulo = ROTULOS_MATERIAL[material.tipo] || ROTULOS_MATERIAL.link;
+
     const card = document.createElement('div');
     card.className = 'course-card';
     card.style.cssText = 'display:block; padding:16px;';
@@ -963,49 +1028,88 @@ function criarCardMaterial(material) {
 
     const meta = document.createElement('div');
     meta.className = 'course-meta';
+
     const tag = document.createElement('span');
-    tag.textContent = material.aula_nome ? `${rotulo.texto} • Aula: ${material.aula_nome}` : `${rotulo.texto} • Curso todo`;
+    tag.textContent = material.aula_nome
+        ? `${rotulo.texto} • Aula: ${material.aula_nome}`
+        : `${rotulo.texto} • Curso todo`;
+
     meta.appendChild(tag);
     card.appendChild(meta);
 
-    if (!ehUrlWeb(material.url)) return card;
+    // Prioriza o arquivo enviado; caso contrário, utiliza a URL cadastrada.
+    let enderecoMaterial = material.url || '';
+
+    if (material.arquivo_url) {
+        try {
+            const baseApi = new URL(API_BASE_URL, window.location.href);
+            enderecoMaterial = new URL(
+                material.arquivo_url,
+                baseApi.origin
+            ).href;
+        } catch (erro) {
+            console.error('Erro ao montar endereço do arquivo:', erro);
+            return card;
+        }
+    }
+
+    if (!ehUrlWeb(enderecoMaterial)) return card;
 
     if (material.tipo === 'video') {
-        const embed = urlEmbedVideo(material.url);
+        const embed = material.arquivo_url
+            ? null
+            : urlEmbedVideo(enderecoMaterial);
+
         if (embed) {
             const quadro = document.createElement('iframe');
             quadro.src = embed;
             quadro.title = material.titulo;
             quadro.allowFullscreen = true;
             quadro.setAttribute('loading', 'lazy');
-            quadro.setAttribute('allow', 'accelerometer; encrypted-media; picture-in-picture; fullscreen');
-            quadro.style.cssText = 'width:100%; aspect-ratio:16/9; border:0; border-radius:8px; margin-top:12px; background:#000;';
+            quadro.setAttribute(
+                'allow',
+                'accelerometer; encrypted-media; picture-in-picture; fullscreen'
+            );
+            quadro.style.cssText =
+                'width:100%; aspect-ratio:16/9; border:0; border-radius:8px; margin-top:12px; background:#000;';
+
             card.appendChild(quadro);
             return card;
         }
-        if (/\.(mp4|webm|ogg)$/i.test(new URL(material.url).pathname)) {
+
+        if (material.arquivo_url || /\.(mp4|webm|ogg)$/i.test(new URL(enderecoMaterial).pathname)) {
             const video = document.createElement('video');
-            video.src = material.url;
+            video.src = enderecoMaterial;
             video.controls = true;
             video.preload = 'metadata';
-            video.style.cssText = 'width:100%; aspect-ratio:16/9; border-radius:8px; margin-top:12px; background:#000;';
+            video.style.cssText =
+                'width:100%; aspect-ratio:16/9; border-radius:8px; margin-top:12px; background:#000;';
+
             card.appendChild(video);
             return card;
         }
     }
 
     const botao = document.createElement('a');
-    botao.href = material.url;
+    botao.href = enderecoMaterial;
     botao.target = '_blank';
     botao.rel = 'noopener noreferrer';
     botao.className = 'btn btn-primary';
-    botao.style.cssText = 'display:inline-block; margin-top:12px; text-decoration:none; text-align:center;';
-    botao.textContent = material.tipo === 'pdf' ? '📄 Abrir PDF' : (material.tipo === 'video' ? '🎬 Assistir' : '🔗 Acessar conteúdo');
+    botao.style.cssText =
+        'display:inline-block; margin-top:12px; text-decoration:none; text-align:center;';
+
+    botao.textContent = material.tipo === 'pdf'
+        ? '📄 Abrir PDF'
+        : material.tipo === 'video'
+            ? '🎬 Assistir'
+            : '🔗 Acessar conteúdo';
+
     card.appendChild(botao);
+
     return card;
 }
 
-// Tela do curso (consumidor/course.html): lista os materiais do curso aberto.
+// Tela do curso: lista os materiais para o aluno
 async function carregarMateriais() {
     const container = document.getElementById('materiais-container');
     if (!container) return;
@@ -1015,7 +1119,9 @@ async function carregarMateriais() {
 
     try {
         const response = await api.get(`/cursos/${idCurso}/materiais`);
+
         container.innerHTML = '';
+
         if (response.data.length === 0) {
             const vazio = document.createElement('p');
             vazio.style.color = 'var(--gray-light)';
@@ -1023,7 +1129,11 @@ async function carregarMateriais() {
             container.appendChild(vazio);
             return;
         }
-        response.data.forEach(material => container.appendChild(criarCardMaterial(material)));
+
+        response.data.forEach(material => {
+            container.appendChild(criarCardMaterial(material));
+        });
+
     } catch (error) {
         console.error('Erro ao carregar materiais:', error);
         container.textContent = 'Não foi possível carregar os materiais.';
@@ -1032,81 +1142,109 @@ async function carregarMateriais() {
 
 document.addEventListener('DOMContentLoaded', carregarMateriais);
 
-// ---------- Gerenciar materiais (profissional/materiais-curso.html) ----------
-
-let idMaterialEmEdicao = null; // null = cadastrando; número = editando esse material
+// ====================================================
+// GERENCIAR MATERIAIS - PROFISSIONAL
+// ====================================================
 
 function mensagemErroApi(error, padrao) {
-    return (error.response && error.response.data && error.response.data.mensagem) || padrao;
+    return (
+        error.response?.data?.mensagem ||
+        padrao
+    );
 }
 
 function tratarSessaoExpirada(error) {
-    if (error.response && error.response.status === 401) {
+    if (error.response?.status === 401) {
         alert('Sessão expirada. Faça login novamente.');
         window.location.href = '../login.html';
         return true;
     }
+
     return false;
 }
 
+// Carrega os cursos do profissional
 async function iniciarGerenciarMateriais() {
     const selectCurso = document.getElementById('mat-curso');
     if (!selectCurso) return;
 
     try {
         const response = await api.get('/meus-cursos');
+
         response.data.forEach(curso => {
             const option = document.createElement('option');
             option.value = curso.id_curso;
             option.textContent = curso.nome;
             selectCurso.appendChild(option);
         });
+
         if (response.data.length === 0) {
-            document.getElementById('mat-aviso').textContent = 'Você ainda não criou nenhum curso. Crie um curso primeiro.';
+            document.getElementById('mat-aviso').textContent =
+                'Você ainda não criou nenhum curso. Crie um curso primeiro.';
         }
+
         const idUrl = new URLSearchParams(window.location.search).get('id');
+
         if (idUrl && response.data.some(c => String(c.id_curso) === idUrl)) {
             selectCurso.value = idUrl;
             await aoMudarCursoMaterial();
         }
+
+        atualizarCamposMaterial();
+
     } catch (error) {
         if (tratarSessaoExpirada(error)) return;
+
         console.error('Erro ao carregar seus cursos:', error);
-        document.getElementById('mat-aviso').textContent = mensagemErroApi(error, 'Não foi possível carregar seus cursos.');
+
+        document.getElementById('mat-aviso').textContent =
+            mensagemErroApi(error, 'Não foi possível carregar seus cursos.');
     }
 }
 
+// Carrega as aulas e os materiais do curso selecionado
 async function aoMudarCursoMaterial() {
     const idCurso = document.getElementById('mat-curso').value;
     const selectAula = document.getElementById('mat-aula');
+
     selectAula.innerHTML = '<option value="">Curso todo</option>';
+
     cancelarEdicaoMaterial();
+
     if (!idCurso) {
         document.getElementById('mat-lista').innerHTML = '';
         return;
     }
+
     try {
         const aulas = await api.get(`/cursos/${idCurso}/aulas`);
+
         aulas.data.forEach(aula => {
             const option = document.createElement('option');
             option.value = aula.id_aula;
             option.textContent = aula.nome;
             selectAula.appendChild(option);
         });
+
     } catch (error) {
         console.error('Erro ao carregar aulas:', error);
     }
+
     await listarMateriaisGerenciar();
 }
 
+// Lista os materiais cadastrados
 async function listarMateriaisGerenciar() {
     const idCurso = document.getElementById('mat-curso').value;
     const lista = document.getElementById('mat-lista');
+
     lista.innerHTML = '';
+
     if (!idCurso) return;
 
     try {
         const response = await api.get(`/cursos/${idCurso}/materiais`);
+
         if (response.data.length === 0) {
             const vazio = document.createElement('p');
             vazio.style.color = 'var(--gray-light)';
@@ -1114,6 +1252,7 @@ async function listarMateriaisGerenciar() {
             lista.appendChild(vazio);
             return;
         }
+
         response.data.forEach(material => {
             const bloco = document.createElement('div');
             bloco.appendChild(criarCardMaterial(material));
@@ -1135,85 +1274,209 @@ async function listarMateriaisGerenciar() {
 
             acoes.appendChild(editar);
             acoes.appendChild(excluir);
+
             bloco.appendChild(acoes);
             lista.appendChild(bloco);
         });
+
     } catch (error) {
         console.error('Erro ao listar materiais:', error);
         lista.textContent = 'Não foi possível carregar os materiais.';
     }
 }
 
+// Prepara o formulário para edição
 function iniciarEdicaoMaterial(material) {
     idMaterialEmEdicao = material.id_material;
+
     document.getElementById('mat-titulo').value = material.titulo;
     document.getElementById('mat-tipo').value = material.tipo;
-    document.getElementById('mat-url').value = material.url;
+    document.getElementById('mat-url').value = material.url || '';
     document.getElementById('mat-aula').value = material.id_aula || '';
-    document.getElementById('btn-salvar-material').textContent = '💾 SALVAR ALTERAÇÕES';
+
+    // O navegador não permite preencher automaticamente um input file.
+    document.getElementById('mat-arquivo').value = '';
+
+    atualizarCamposMaterial();
+
+    if (material.arquivo_url) {
+        document.getElementById('mat-arquivo-ajuda').textContent =
+            'Já existe um arquivo cadastrado. Selecione outro para substituí-lo ou deixe vazio para manter o atual.';
+    }
+
+    document.getElementById('btn-salvar-material').textContent =
+        '💾 SALVAR ALTERAÇÕES';
+
     document.getElementById('btn-cancelar-edicao').style.display = 'block';
+
     document.getElementById('mat-titulo').focus();
 }
 
+// Cancela a edição e limpa o formulário
+
+// Cancela a edição e limpa o formulário sem perder o curso selecionado
 function cancelarEdicaoMaterial() {
     idMaterialEmEdicao = null;
+
     const form = document.getElementById('form-material');
+    const selectCurso = document.getElementById('mat-curso');
+
     if (!form) return;
-    document.getElementById('mat-titulo').value = '';
-    document.getElementById('mat-tipo').value = 'video';
-    document.getElementById('mat-url').value = '';
-    document.getElementById('mat-aula').value = '';
-    document.getElementById('btn-salvar-material').textContent = '✅ ADICIONAR MATERIAL';
+
+    // Guarda o curso atualmente selecionado
+    const cursoSelecionado = selectCurso ? selectCurso.value : '';
+
+    // Limpa os campos do formulário
+    form.reset();
+
+    // Restaura o curso selecionado
+    if (selectCurso) {
+        selectCurso.value = cursoSelecionado;
+    }
+
+    document.getElementById('btn-salvar-material').textContent =
+        '✅ ADICIONAR MATERIAL';
+
     document.getElementById('btn-cancelar-edicao').style.display = 'none';
+
+    atualizarCamposMaterial();
 }
 
+
+// Cadastra ou atualiza um material
 async function salvarMaterial(e) {
     e.preventDefault();
+
     const idCurso = document.getElementById('mat-curso').value;
+
     if (!idCurso) {
         alert('Escolha um curso.');
         return;
     }
+
     const botao = document.getElementById('btn-salvar-material');
-    const corpo = {
-        titulo: document.getElementById('mat-titulo').value.trim(),
-        tipo: document.getElementById('mat-tipo').value,
-        url: document.getElementById('mat-url').value.trim(),
-        id_aula: document.getElementById('mat-aula').value || null
-    };
+    const tipo = document.getElementById('mat-tipo').value;
+    const titulo = document.getElementById('mat-titulo').value.trim();
+    const url = document.getElementById('mat-url').value.trim();
+    const arquivo = document.getElementById('mat-arquivo').files[0] || null;
+    const idAula = document.getElementById('mat-aula').value;
+
+    if (!titulo) {
+        alert('Informe o título do material.');
+        return;
+    }
+
+    if (arquivo && url) {
+        // Ao selecionar arquivo, ele será utilizado no lugar da URL.
+        // A URL não será enviada junto.
+    }
+
+    if (tipo === 'link' && (!url || arquivo)) {
+        alert('Materiais do tipo link devem utilizar somente uma URL.');
+        return;
+    }
+
+    if (tipo !== 'link' && !url && !arquivo && !idMaterialEmEdicao) {
+        alert('Informe uma URL ou selecione um arquivo.');
+        return;
+    }
+
+    if (arquivo && arquivo.size > 50 * 1024 * 1024) {
+        alert('O arquivo ultrapassa o limite de 50 MB.');
+        return;
+    }
+
+    if (arquivo) {
+        const tiposPermitidos = {
+            pdf: ['application/pdf'],
+            video: ['video/mp4', 'video/webm', 'video/ogg']
+        };
+
+        if (!tiposPermitidos[tipo]?.includes(arquivo.type)) {
+            alert('O formato do arquivo não corresponde ao tipo de material escolhido.');
+            return;
+        }
+    }
+
+    // FormData é necessário para enviar arquivos ao Multer.
+    const dados = new FormData();
+
+    dados.append('titulo', titulo);
+    dados.append('tipo', tipo);
+    dados.append('id_aula', idAula);
+
+    // Quando existe arquivo, envia somente o arquivo, sem a URL.
+    if (arquivo) {
+        dados.append('arquivo', arquivo);
+    } else if (url) {
+        dados.append('url', url);
+    }
 
     botao.disabled = true;
+    botao.textContent = '⏳ SALVANDO...';
+
     try {
         if (idMaterialEmEdicao) {
-            await api.put(`/materiais/${idMaterialEmEdicao}`, corpo);
+            await api.put(`/materiais/${idMaterialEmEdicao}`, dados);
         } else {
-            await api.post(`/cursos/${idCurso}/materiais`, corpo);
+            await api.post(`/cursos/${idCurso}/materiais`, dados);
         }
+
         cancelarEdicaoMaterial();
         await listarMateriaisGerenciar();
+
+        alert('Material salvo com sucesso!');
+
     } catch (error) {
         if (tratarSessaoExpirada(error)) return;
+
         console.error('Erro ao salvar material:', error);
-        alert(mensagemErroApi(error, 'Não foi possível salvar o material.'));
+
+        alert(
+            mensagemErroApi(error, 'Não foi possível salvar o material.')
+        );
+
     } finally {
         botao.disabled = false;
+
+        botao.textContent = idMaterialEmEdicao
+            ? '💾 SALVAR ALTERAÇÕES'
+            : '✅ ADICIONAR MATERIAL';
     }
 }
 
+// Exclui um material
 async function excluirMaterial(idMaterial) {
     if (!confirm('Excluir este material?')) return;
+
     try {
         await api.delete(`/materiais/${idMaterial}`);
-        if (idMaterialEmEdicao === idMaterial) cancelarEdicaoMaterial();
+
+        if (idMaterialEmEdicao === idMaterial) {
+            cancelarEdicaoMaterial();
+        }
+
         await listarMateriaisGerenciar();
+
     } catch (error) {
         if (tratarSessaoExpirada(error)) return;
+
         console.error('Erro ao excluir material:', error);
-        alert(mensagemErroApi(error, 'Não foi possível excluir o material.'));
+
+        alert(
+            mensagemErroApi(error, 'Não foi possível excluir o material.')
+        );
     }
 }
 
+// Disponibiliza as funções para o HTML
+window.atualizarCamposMaterial = atualizarCamposMaterial;
 window.aoMudarCursoMaterial = aoMudarCursoMaterial;
 window.salvarMaterial = salvarMaterial;
 window.cancelarEdicaoMaterial = cancelarEdicaoMaterial;
-document.addEventListener('DOMContentLoaded', iniciarGerenciarMateriais);
+
+// Inicialização
+document.addEventListener('DOMContentLoaded', () => {
+    atualizarCamposMaterial();
+    iniciarGerenciarMateriais();
+});

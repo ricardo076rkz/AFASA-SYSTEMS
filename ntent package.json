@@ -1,0 +1,37 @@
+[1mdiff --git a/BancoDeDados/BancoUnico.sql b/BancoDeDados/BancoUnico.sql[m
+[1mindex 1276a1e..9ddfeb9 100644[m
+[1m--- a/BancoDeDados/BancoUnico.sql[m
+[1m+++ b/BancoDeDados/BancoUnico.sql[m
+[36m@@ -460,3 +460,31 @@[m [mFROM information_schema.columns[m
+ WHERE table_schema = 'public' [m
+   AND table_name = 'perfil' [m
+   AND column_name IN ('foto_perfil', 'foto_tipo');[m
+[32m+[m
+[32m+[m[32m-- AFASA SYSTEMS - migration para materiais de estudo[m
+[32m+[m[32m-- Execute uma vez no banco PostgreSQL utilizado pela aplicação.[m
+[32m+[m[32m-- Não apaga nem recria tabelas ou registros existentes.[m
+[32m+[m
+[32m+[m[32mCREATE TABLE IF NOT EXISTS material ([m
+[32m+[m[32m    id_material INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,[m
+[32m+[m[32m    titulo VARCHAR(100) NOT NULL,[m
+[32m+[m[32m    tipo VARCHAR(10) NOT NULL[m
+[32m+[m[32m        CHECK (tipo IN ('video', 'pdf', 'link')),[m
+[32m+[m[32m    url VARCHAR(500) NOT NULL,[m
+[32m+[m[32m    id_curso INT NOT NULL,[m
+[32m+[m[32m    id_aula INT NULL,[m
+[32m+[m[32m    CONSTRAINT fk_material_curso[m
+[32m+[m[32m        FOREIGN KEY (id_curso)[m
+[32m+[m[32m        REFERENCES curso(id_curso)[m
+[32m+[m[32m        ON DELETE CASCADE,[m
+[32m+[m[32m    CONSTRAINT fk_material_aula[m
+[32m+[m[32m        FOREIGN KEY (id_aula)[m
+[32m+[m[32m        REFERENCES aula(id_aula)[m
+[32m+[m[32m        ON DELETE CASCADE[m
+[32m+[m[32m);[m
+[32m+[m
+[32m+[m[32mCREATE INDEX IF NOT EXISTS idx_material_curso[m
+[32m+[m[32m    ON material (id_curso);[m
+[32m+[m
+[32m+[m[32mCREATE INDEX IF NOT EXISTS idx_material_aula[m
+[32m+[m[32m    ON material (id_aula);[m
+\ No newline at end of file[m

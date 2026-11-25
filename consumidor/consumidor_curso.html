@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📎 Materiais de Estudo - AFASA SYSTEMS</title>
+       
+<link rel="stylesheet" href="../css/principal.css">
+</head>
+<body data-tela="materiais">
+<div class="header">
+        <div class="header-content container">
+            <a href="course.html" id="voltar-curso" class="back-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+                </svg>
+                Voltar
+            </a>
+            <a href="home.html" class="header-logo">
+                <img class="logo" src="../imagens/logo.png" alt="Logo">
+            </a>
+        </div>
+    </div>
+    
+
+    <div class="container">
+        <div style="padding: 24px 20px 100px;">
+            <h1 style="font-size: 26px; margin-bottom: 4px;">📎 Materiais de Estudo</h1>
+            <p id="nome-curso" style="color: var(--gray-light); margin-bottom: 20px;"></p>
+            <div id="msg" role="status" style="display:none;"></div>
+
+            <section id="secao-lista">
+                <button id="btn-novo" type="button" class="btn btn-primary" style="margin-bottom: 16px;" hidden>➕ ADICIONAR MATERIAL</button>
+                <div class="course-grid" id="lista"></div>
+            </section>
+
+            <section id="secao-form" hidden>
+                <h2 id="form-titulo" style="font-size: 22px; margin-bottom: 16px;"></h2>
+                <form id="form">
+<div class="form-group">
+<label for="f-titulo">Título (máx. 100 caracteres)</label><input type="text" id="f-titulo" maxlength="100" required>
+</div><div class="form-group">
+<label for="f-descricao">Descrição</label><textarea id="f-descricao" rows="3" maxlength="1000"></textarea>
+</div><div class="form-group">
+<label for="f-tipo">Tipo de material</label><select id="f-tipo"><option value="pdf">📄 PDF</option><option value="video">🎬 Vídeo</option><option value="link">🔗 Link externo</option></select>
+</div><div class="form-group">
+<label for="f-aula">Aula (opcional)</label><select id="f-aula"><option value="">Curso todo</option></select>
+</div><div class="form-group" id="grupo-origem"><label for="f-origem">Origem</label><select id="f-origem"><option value="arquivo">Enviar arquivo (até 15 MB)</option><option value="url">Usar link (URL)</option></select></div><div class="form-group" id="grupo-arquivo"><label for="f-arquivo">Arquivo</label><input type="file" id="f-arquivo"><small id="arquivo-atual" style="color:var(--gray);"></small></div><div class="form-group" id="grupo-url" hidden><label for="f-url">URL</label><input type="url" id="f-url" maxlength="500" placeholder="https://..."></div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 24px;">
+                        <button type="button" class="btn" data-voltar-lista>← CANCELAR</button>
+                        <button type="submit" id="btn-salvar" class="btn btn-primary"></button>
+                    </div>
+                </form>
+            </section>
+
+            <section id="secao-detalhe" hidden>
+                <button type="button" class="btn-secundario" data-voltar-lista style="margin-bottom: 16px;">← Voltar à lista</button>
+                <div id="detalhe-corpo"></div>
+            </section>
+        </div>
+    </div>
+
+       
+<div class="bottom-nav">
+        <a href="home.html" class="nav-item">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
+            </svg>
+            <span>Home</span>
+        </a>
+        <a href="course.html" class="nav-item active">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
+            </svg>
+            <span>Cursos</span>
+        </a>
+        <a href="community.html" class="nav-item">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" />
+            </svg>
+            <span>Comunidade</span>
+        </a>
+        <a href="about.html" class="nav-item">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
+            </svg>
+            <span>Informações</span>
+        </a>
+        <a href="profile.html" class="nav-item">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+            </svg>
+            <span>Perfil</span>
+        </a>
+    </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="../js/roteiro.js"></script>
+<script src="../js/meu-espaco.js"></script>
+<script src="../js/curso-conteudo.js"></script>
+</body>
+</html>
