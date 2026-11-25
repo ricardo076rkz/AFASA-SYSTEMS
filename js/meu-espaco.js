@@ -9,6 +9,8 @@
     const aviso = (mensagem, erro = false) => {
         const el = $('mensagem-editar-perfil');
         if (el) { el.textContent = mensagem; el.className = 'mensagem-perfil ' + (erro ? 'erro' : 'sucesso'); }
+        const geral = $('mensagem-meu-espaco');
+        if (geral) { geral.textContent = mensagem; geral.className = 'mensagem-perfil ' + (erro ? 'erro' : 'sucesso'); }
     };
     const mensagemErro = erro => {
         const status = erro.response?.status;

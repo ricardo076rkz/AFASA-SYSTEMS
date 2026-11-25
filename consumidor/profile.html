@@ -42,6 +42,31 @@
 
     <div class="container">
         <div style="padding: 24px 20px 100px;">
+            <!-- Navegação acessível entre seções de Meu Espaço, sem recarregar a página. -->
+            <nav class="meu-espaco-abas" aria-label="Seções de Meu Espaço" role="tablist">
+                <button type="button" class="meu-espaco-aba ativa" id="aba-perfil" role="tab"
+                    aria-controls="painel-perfil" aria-selected="true" tabindex="0" data-aba="perfil">👤 Perfil</button>
+                <button type="button" class="meu-espaco-aba" id="aba-configuracoes" role="tab"
+                    aria-controls="painel-configuracoes" aria-selected="false" tabindex="-1" data-aba="configuracoes">⚙️ Configurações</button>
+                <button type="button" class="meu-espaco-aba" id="aba-favoritos" role="tab"
+                    aria-controls="painel-favoritos" aria-selected="false" tabindex="-1" data-aba="favoritos">⭐ Favoritos</button>
+                <button type="button" class="meu-espaco-aba" id="aba-gamificacao" role="tab"
+                    aria-controls="painel-gamificacao" aria-selected="false" tabindex="-1" data-aba="gamificacao">🏆 Conquistas e Impacto</button>
+            </nav>
+            <div id="mensagem-meu-espaco" class="mensagem-perfil" role="status" aria-live="polite"></div>
+
+            <section id="painel-perfil" class="meu-espaco-painel" role="tabpanel" aria-labelledby="aba-perfil">
+                <div class="favoritos-secao">
+                <div class="meu-espaco-card">
+                    <h2>👤 Dados da Conta</h2>
+                    <div id="meu-espaco-dados" class="dados-conta" aria-live="polite">Carregando informações...</div>
+                </div>
+                </div>
+            </section>
+
+            <section id="painel-gamificacao" class="meu-espaco-painel" role="tabpanel"
+                aria-labelledby="aba-gamificacao" hidden>
+                <p class="meu-espaco-ajuda">Conquistas e indicadores de impacto exibidos como demonstração do protótipo.</p>
             <h2 style="font-size: 20px; margin-bottom: 16px;">🏆 Conquistas Recentes</h2>
             <div class="course-grid">
                 <div class="stat-card" style="text-align: left; padding: 20px;">
@@ -87,20 +112,11 @@
                 </div>
             </div>
 
-            <!-- MEU ESPAÇO: dados reais da conta e favoritos são carregados pela API. -->
-            <section class="favoritos-secao" aria-label="Dados da conta e favoritos">
-                <div class="meu-espaco-card">
-                    <h2>👤 Dados da Conta</h2>
-                    <div id="meu-espaco-dados" class="dados-conta" aria-live="polite">Carregando informações...</div>
-                </div>
-                <div class="meu-espaco-card">
-                    <h2>⭐ Meus Favoritos</h2>
-                    <h3>📚 Cursos favoritos</h3>
-                    <div id="favoritos-cursos" class="favoritos-lista" aria-live="polite"></div>
-                    <h3>▶ Aulas favoritas</h3>
-                    <div id="favoritos-aulas" class="favoritos-lista" aria-live="polite"></div>
-                </div>
             </section>
+
+            <section id="painel-configuracoes" class="meu-espaco-painel" role="tabpanel"
+                aria-labelledby="aba-configuracoes" hidden>
+                <p class="meu-espaco-ajuda">Altere seu nome, e-mail ou foto. As alterações serão salvas na sua conta.</p>
             <h2 style="font-size: 20px; margin: 32px 0 16px;">⚙️ Configurações</h2>
             <div class="course-grid">
                 <div class="stat-card" style="text-align: left; padding: 16px; cursor: pointer;">
@@ -131,6 +147,20 @@
                     </div>
                 </div>
             </div>
+            </section>
+
+            <section id="painel-favoritos" class="meu-espaco-painel" role="tabpanel"
+                aria-labelledby="aba-favoritos" hidden>
+                <div class="favoritos-secao">
+                <div class="meu-espaco-card">
+                    <h2>⭐ Meus Favoritos</h2>
+                    <h3>📚 Cursos favoritos</h3>
+                    <div id="favoritos-cursos" class="favoritos-lista" aria-live="polite"></div>
+                    <h3>▶ Aulas favoritas</h3>
+                    <div id="favoritos-aulas" class="favoritos-lista" aria-live="polite"></div>
+                </div>
+                </div>
+            </section>
             <a href="../profissional/profissional-dashboard.html" id="atalho-painel" class="btn btn-primary"
                 style="display: none; margin-top: 24px;">⬅️ Voltar ao Painel Profissional</a>
             <a href="../login.html" onclick="handleLogout(); return false;" class="btn"
@@ -222,6 +252,46 @@
 
 
     <!-- Lógica compartilhada: login/redirecionamento por perfil, curtidas, FAQ, gráfico de ganhos, navegação ativa etc. -->
+    <!-- Navegação independente da API: alterna painéis mesmo com falha de login ou rede. -->
+    <script>
+        (() => {
+            function iniciarNavegacao() {
+                const abas = Array.from(document.querySelectorAll('.meu-espaco-aba[data-aba]'));
+                if (!abas.length) return;
+                const selecionar = (id, foco = false) => {
+                    abas.forEach(botao => {
+                        const selecionada = botao.dataset.aba === id;
+                        botao.classList.toggle('ativa', selecionada);
+                        botao.setAttribute('aria-selected', String(selecionada));
+                        botao.tabIndex = selecionada ? 0 : -1;
+                        const painel = document.getElementById('painel-' + botao.dataset.aba);
+                        if (painel) {
+                            painel.hidden = !selecionada;
+                            painel.style.display = selecionada ? '' : 'none';
+                        }
+                        if (selecionada && foco) botao.focus();
+                    });
+                };
+                abas.forEach((botao, indice) => {
+                    botao.addEventListener('click', () => selecionar(botao.dataset.aba));
+                    botao.addEventListener('keydown', evento => {
+                        let indiceNovo;
+                        if (evento.key === 'ArrowRight') indiceNovo = (indice + 1) % abas.length;
+                        else if (evento.key === 'ArrowLeft') indiceNovo = (indice - 1 + abas.length) % abas.length;
+                        else if (evento.key === 'Home') indiceNovo = 0;
+                        else if (evento.key === 'End') indiceNovo = abas.length - 1;
+                        else return;
+                        evento.preventDefault();
+                        selecionar(abas[indiceNovo].dataset.aba, true);
+                    });
+                });
+                selecionar('perfil');
+            }
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', iniciarNavegacao, { once: true });
+            } else iniciarNavegacao();
+        })();
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="../js/roteiro.js"></script>
     <script src="../js/meu-espaco.js"></script>

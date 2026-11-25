@@ -481,3 +481,81 @@
     border-radius: 8px;
     padding: 10px;
 }
+
+/* Meu Espaço: abas Perfil, Configurações e Favoritos */
+.meu-espaco-abas {
+    display: flex;
+    gap: 8px;
+    margin: 0 0 18px;
+    padding: 6px;
+    background: #191919;
+    border: 1px solid #343434;
+    border-radius: 14px;
+}
+.meu-espaco-aba {
+    flex: 1;
+    min-width: 0;
+    padding: 12px 8px;
+    background: transparent;
+    color: #d4d4d4;
+    border: 1px solid transparent;
+    border-radius: 10px;
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+}
+.meu-espaco-aba:hover { background: #282828; color: #fff; }
+.meu-espaco-aba.ativa {
+    background: #2ecc71;
+    color: #121212;
+}
+.meu-espaco-aba:focus-visible { outline: 2px solid #ff8c00; outline-offset: 2px; }
+.meu-espaco-painel[hidden] { display: none !important; }
+.meu-espaco-painel { color: #f5f5f5; }
+.meu-espaco-ajuda { color: #c8c8c8; margin: 8px 0 18px; }
+#mensagem-meu-espaco:empty { display: none; }
+#mensagem-meu-espaco:not(:empty) { padding: 10px 12px; margin: 0 0 14px; border-radius: 8px; background: #1c1c1c; }
+@media (max-width: 420px) {
+    .meu-espaco-abas { gap: 3px; padding: 4px; }
+    .meu-espaco-aba { font-size: 12px; padding: 11px 3px; }
+}
+
+
+/* Quatro abas responsivas: Perfil, Configurações, Favoritos e Gamificação */
+.meu-espaco-abas { flex-wrap: wrap; }
+.meu-espaco-aba { flex: 1 1 145px; }
+.meu-espaco-painel[hidden] { display: none !important; }
+#painel-gamificacao .stats-grid, #painel-gamificacao .course-grid { margin-bottom: 16px; }
+/* Edição e exclusão dos posts */
+.post-campos {
+    border: 0;
+    margin: 0;
+    padding: 0;
+    min-width: 0;
+}
+
+.post-description {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+.post-editor {
+    padding: 16px;
+}
+
+.post-editor textarea {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 12px;
+    border: 1px solid var(--zinc-800);
+    border-radius: 8px;
+    background: var(--bg-card);
+    color: var(--white);
+    font: inherit;
+    resize: vertical;
+}
+
+.post-campos:disabled {
+    opacity: 0.6;
+}
